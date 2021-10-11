@@ -1,0 +1,102 @@
+/*==================================================
+======================= SLIDER =====================
+====================================================*/
+
+.splide {
+  margin: auto;
+
+  .slide-hover {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    position: absolute;
+    padding: 0.8rem;
+    background-color: rgba(0, 0, 0, 0.8);
+    width: 100%;
+    height: 100%;
+    left: 0;
+    bottom: -300px;
+    -webkit-transition: 0.5s;
+    transition: 0.5s;
+  }
+
+  li.splide__slide.is-visible:hover .slide-hover {
+    bottom: 0;
+    -webkit-transition: 0.5s;
+    transition: 0.5s;
+  }
+
+  li.splide__slide {
+    border: 2px solid $rs-three;
+  }
+
+  .splide__pagination {
+    display: none!important;
+  }
+
+  .slide-title {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 600;
+    padding-bottom: 1.5rem;
+    color: #fff;
+  }
+
+  .slide-content {
+    text-align: center;
+    color: #fff;
+  }
+
+  .splide__arrow {
+    position: absolute;
+    z-index: 1;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3.3em;
+    height: 3.3em;
+    border-radius: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    padding: 0;
+    opacity: 0.7;
+    background: #e5007e;
+    -webkit-transition: 0.5s;
+    transition: 350ms;
+  }
+
+  .splide__arrow--next {
+    right: 0;
+    color: #fff;
+  }
+
+  .splide__arrow--prev {
+    left: 0;
+    color: #fff;
+  }
+
+  .prev-icon:before {
+    display: flex;
+    font-family: 'MaterialDesignIcons';
+    content: "\f140";
+    font-size: 3rem;
+  }
+
+  .next-icon:before {
+    display: flex;
+    font-family: 'MaterialDesignIcons';
+    content: "\f145";
+    font-size: 3rem;
+  }
+}

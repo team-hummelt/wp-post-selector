@@ -1,0 +1,38 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2021-08-01 22:00+0200\n"
+"PO-Revision-Date: 2021-08-01 22:00+0200\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.0\n"
+"X-Poedit-Basepath: ..\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-KeywordsList: __;_e;esc_html;esc_html__;esc_att;esc_attr__;"
+"esc_attr_e\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: inc/plugin-data/node_modules\n"
+
+#: inc/plugin-data/build/index.js:2885 inc/plugin-data/src/index.js:26
+msgid "Post Selector"
+msgstr ""
+
+#: inc/plugin-data/build/index.js:2934 inc/plugin-data/src/index.js:79
+msgid " gutenberg post selector BY Jens Wiecker"
+msgstr ""
+
+#: inc/plugin-data/build/index.js:2934 inc/plugin-data/src/index.js:80
+msgid "Gutenberg GRID SLIDER"
+msgstr ""
+
+#: inc/plugin-data/build/index.js:3191 inc/plugin-data/src/index.js:290
+msgid "Hover background colour"
+msgstr "Hover Hintergrundfarbe"
+
+#: inc/plugin-data/build/index.js:3201 inc/plugin-data/src/index.js:306
+msgid "Select posts"
+msgstr "Beiträge auswählen"

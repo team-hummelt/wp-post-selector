@@ -1,0 +1,6 @@
+.idea
+.github
+.vscode
+
+/inc/plugin-data/src/
+/inc/plugin-data/node_modules/
