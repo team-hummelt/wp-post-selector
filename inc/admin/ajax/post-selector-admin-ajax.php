@@ -213,6 +213,266 @@ switch ( $method ) {
 
 		break;
 
+    case'post_galerie_handle':
+
+        $type = filter_input( INPUT_POST, 'type', FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH );
+        $bezeichnung = filter_input( INPUT_POST, 'bezeichnung', FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH );
+        $beschreibung = filter_input( INPUT_POST, 'beschreibung', FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH );
+
+        $record->type   = filter_input( INPUT_POST, 'galerie_type', FILTER_VALIDATE_INT );
+        $link = filter_input( INPUT_POST, 'link', FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH );
+        $url = filter_input(INPUT_POST, "url", FILTER_VALIDATE_URL);
+
+        filter_input(INPUT_POST, 'show_bezeichnung', FILTER_SANITIZE_STRING) ? $record->show_bezeichnung = true : $record->show_bezeichnung = false;
+        filter_input(INPUT_POST, 'show_beschreibung', FILTER_SANITIZE_STRING) ? $record->show_beschreibung = true : $record->show_beschreibung = false;
+
+        filter_input(INPUT_POST, 'hover_aktiv', FILTER_SANITIZE_STRING) ? $record->hover_aktiv = true : $record->hover_aktiv = false;
+        filter_input(INPUT_POST, 'hover_title_aktiv', FILTER_SANITIZE_STRING) ? $record->hover_title_aktiv = true : $record->hover_title_aktiv = false;
+        filter_input(INPUT_POST, 'hover_beschreibung_aktiv', FILTER_SANITIZE_STRING) ? $record->hover_beschreibung_aktiv = true : $record->hover_beschreibung_aktiv = false;
+        filter_input(INPUT_POST, 'lightbox_aktiv', FILTER_SANITIZE_STRING) ? $record->lightbox_aktiv = true : $record->lightbox_aktiv = false;
+        filter_input(INPUT_POST, 'caption_aktiv', FILTER_SANITIZE_STRING) ? $record->caption_aktiv = true : $record->caption_aktiv = false;
+
+        $img_size = filter_input( INPUT_POST, 'image_size', FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH );
+
+        $record->is_link = false;
+        if($url){
+            $record->link = $url;
+        } elseif ($link) {
+            $record->link = $link;
+            $record->is_link = true;
+        } else {
+            $record->link = '';
+        }
+
+        if(!$type){
+            $responseJson->msg = 'Ein Fehler ist aufgetreten!';
+            $responseJson->status = false;
+            return $responseJson;
+        }
+
+        if(!$bezeichnung) {
+            $bezeichnung = 'Galerie-' .apply_filters('get_ps_generate_random_id',4,0,4);
+        }
+
+        switch ($record->type){
+            case '1':
+                $slider_id   = filter_input( INPUT_POST, 'slider_id', FILTER_VALIDATE_INT );
+
+                $typeSettings = [
+                  'slider_id' => $slider_id,
+                  'img_size' => $img_size
+                ];
+                break;
+            case'2':
+                filter_input(INPUT_POST, 'galerie_crop_aktiv', FILTER_SANITIZE_STRING) ? $galerie_crop_aktiv = true : $galerie_crop_aktiv = false;
+                $img_width   = filter_input( INPUT_POST, 'img_width', FILTER_VALIDATE_INT );
+                $img_height   = filter_input( INPUT_POST, 'img_height', FILTER_VALIDATE_INT );
+                $typeSettings = [
+                    'img_size' => $img_size,
+                    'crop' => $galerie_crop_aktiv,
+                    'img_width' => $img_width ?: 350,
+                    'img_height' => !$img_height &&  !$galerie_crop_aktiv ? 280 : $img_height
+                ];
+                break;
+            case '3':
+                $img_width   = filter_input( INPUT_POST, 'img_width', FILTER_VALIDATE_INT );
+                $typeSettings = [
+                    'img_size' => $img_size,
+                    'img_width' => $img_width ?: 350,
+                ];
+                break;
+            default:
+                $typeSettings = [];
+        }
+
+        if(!$typeSettings){
+            $responseJson->msg = 'kein Galerie Type ausgewählt!';
+            return $responseJson;
+        }
+        $record->type_settings = json_encode($typeSettings);
+        $record->bezeichnung = esc_html($bezeichnung);
+        $record->beschreibung = esc_textarea($beschreibung);
+
+        switch ($type){
+            case'insert':
+                $insert = apply_filters('post_selector_set_galerie', $record);
+                if(!$insert->id) {
+                    $responseJson->msg = $insert->msg;
+                    $responseJson->status = false;
+                    return $responseJson;
+                }
+                $responseJson->id = $insert->id;
+                $args = sprintf('WHERE id=%d', $insert->id);
+                $galerie = apply_filters('post_selector_get_galerie','');
+                if(!$galerie->status){
+                    $responseJson->msg = 'Ein Fehler ist aufgetreten!';
+                    $responseJson->status = false;
+                    return $responseJson;
+                }
+
+                $responseJson->images = false;
+                $responseJson->galerie = $galerie->record;
+                $responseJson->show_galerie = true;
+                $responseJson->reset = true;
+                $responseJson->status = true;
+                break;
+
+            case 'update':
+                $id   = filter_input( INPUT_POST, 'id', FILTER_VALIDATE_INT );
+                if(!$id){
+
+                    $responseJson->msg = 'Ein Fehler ist aufgetreten!';
+                    $responseJson->status = false;
+                    return $responseJson;
+                }
+                $record->id = $id;
+                apply_filters('post_selector_update_galerie', $record);
+                $responseJson->msg = 'Änderungen erfolgreich gespeichert!';
+
+                break;
+        }
+        $responseJson->status = true;
+        break;
+
+    case 'get_galerie_data':
+        $id   = filter_input( INPUT_POST, 'id', FILTER_VALIDATE_INT );
+        $type = filter_input( INPUT_POST, 'type', FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH );
+
+        $responseJson->status = true;
+        $responseJson->type = $type;
+        switch ($type) {
+            case'galerie-toast':
+                $galerie = apply_filters('post_selector_get_galerie','');
+                $responseJson->galerie = $galerie->record;
+                return $responseJson;
+        }
+
+        if(!$id || !$type){
+            $responseJson->msg = 'Ein Fehler ist aufgetreten!';
+            $responseJson->status = false;
+            return $responseJson;
+        }
+
+        $pages = apply_filters('post_selector_get_theme_pages', false);
+        $post = apply_filters('post_selector_get_theme_posts', false);
+        if ($post) {
+            $responseJson->sitesSelect = array_merge_recursive($pages, $post);
+        } else {
+            $responseJson->sitesSelect = $pages;
+        }
+        $responseJson->galerieSelect = apply_filters('get_galerie_types_select','');
+
+        $galerieArgs = sprintf('WHERE id=%d', $id);
+        $galerie = apply_filters('post_selector_get_galerie',$galerieArgs, false);
+        $responseJson->record = $galerie->record;
+
+        $galerie->record->type_settings = json_decode($galerie->record->type_settings);
+
+
+        $args = sprintf('WHERE galerie_id=%d', $id);
+        $images = apply_filters('post_selector_get_images',$args);
+
+        if($images->status){
+            $img_arr = [];
+            foreach ($images->record as $tmp){
+                $src = wp_get_attachment_image_src( $tmp->img_id, 'medium', false );
+                $url = wp_get_attachment_image_src( $tmp->img_id, 'large', false );
+                $img_item = [
+                    'id' => $tmp->id,
+                    'src' => $src[0],
+                    'url' => $url[0],
+                    'img_id' => $tmp->img_id,
+                    'bezeichnung' => $tmp->img_bezeichnung,
+                    'beschreibung' => $tmp->beschreibung,
+                    'title' => $tmp->img_title
+                ];
+                $img_arr[] = $img_item;
+            }
+            $img_arr ? $responseJson->images = $img_arr : $responseJson->images = false;
+        }
+        break;
+
+    case 'delete_image':
+        $id   = filter_input( INPUT_POST, 'id', FILTER_VALIDATE_INT );
+        if(!$id){
+            $responseJson->msg = 'Ein Fehler ist aufgetreten!';
+            $responseJson->status = false;
+            return $responseJson;
+        }
+        apply_filters('post_selector_delete_image', $id);
+        $responseJson->id = $id;
+        $responseJson->status = true;
+        $responseJson->msg = 'Bild gelöscht!';
+        break;
+
+    case 'add_galerie_image':
+        $type   = filter_input( INPUT_POST, 'type', FILTER_SANITIZE_STRING,FILTER_FLAG_STRIP_HIGH );
+        $record->img_title   = filter_input( INPUT_POST, 'img_title', FILTER_SANITIZE_STRING,FILTER_FLAG_STRIP_HIGH );
+        $record->img_beschreibung   = filter_input( INPUT_POST, 'img_beschreibung', FILTER_SANITIZE_STRING,FILTER_FLAG_STRIP_HIGH );
+        $record->img_caption   = filter_input( INPUT_POST, 'img_caption', FILTER_SANITIZE_STRING,FILTER_FLAG_STRIP_HIGH );
+
+        switch ($type){
+            case 'insert':
+                $galerie_id   = filter_input( INPUT_POST, 'galerie_id', FILTER_VALIDATE_INT );
+                $image_id   = filter_input( INPUT_POST, 'image_id', FILTER_VALIDATE_INT );
+                $record->galerie_id = (int) $galerie_id;
+                $record->img_id = (int) $image_id;
+                $insert = apply_filters('post_selector_set_image', $record);
+                $responseJson->id = $insert->id;
+                break;
+            case'update':
+                $record->id   = filter_input( INPUT_POST, 'id', FILTER_VALIDATE_INT );
+                if(!$record->id ){
+                    $responseJson->msg = 'Ein Fehler ist aufgetreten!';
+                    $responseJson->status = false;
+                    return $responseJson;
+                }
+                filter_input(INPUT_POST, 'hover_aktiv', FILTER_SANITIZE_STRING) ? $record->hover_aktiv = true : $record->hover_aktiv = false;
+                filter_input(INPUT_POST, 'hover_title_aktiv', FILTER_SANITIZE_STRING) ? $record->hover_title_aktiv = true : $record->hover_title_aktiv = false;
+                filter_input(INPUT_POST, 'hover_beschreibung_aktiv', FILTER_SANITIZE_STRING) ? $record->hover_beschreibung_aktiv = true : $record->hover_beschreibung_aktiv = false;
+                filter_input(INPUT_POST, 'lightbox_aktiv', FILTER_SANITIZE_STRING) ? $record->lightbox_aktiv = true : $record->lightbox_aktiv = false;
+                filter_input(INPUT_POST, 'caption_aktiv', FILTER_SANITIZE_STRING) ? $record->caption_aktiv = true : $record->caption_aktiv = false;
+                filter_input(INPUT_POST, 'galerie_settings_aktiv', FILTER_SANITIZE_STRING) ? $record->galerie_settings_aktiv = true : $record->galerie_settings_aktiv = false;
+
+                $link = filter_input( INPUT_POST, 'link', FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH );
+                $url = filter_input(INPUT_POST, "url", FILTER_VALIDATE_URL);
+
+                $record->is_link = false;
+                if($url){
+                    $record->link = $url;
+                } elseif ($link) {
+                    $record->link = $link;
+                    $record->is_link = true;
+                } else {
+                    $record->link = '';
+                }
+
+                apply_filters('post_selector_update_image', $record);
+                $responseJson->msg = 'Änderungen gespeichert!';
+                break;
+        }
+
+        $responseJson->status = true;
+        break;
+
+    case 'delete_galerie':
+        $id   = filter_input( INPUT_POST, 'id', FILTER_VALIDATE_INT );
+        $type = filter_input( INPUT_POST, 'type', FILTER_SANITIZE_STRING );
+        if(!$id || !$type){
+            $responseJson->msg = 'Ein Fehler ist aufgetreten!';
+            $responseJson->status = false;
+            return $responseJson;
+        }
+        apply_filters('post_selector_delete_galerie', $id);
+        $galerie = apply_filters('post_selector_get_galerie','');
+        $responseJson->type = $type;
+        $responseJson->galerie = $galerie->record;
+        $responseJson->status = true;
+        $responseJson->id = $id;
+        $responseJson->msg = 'Galerie gelöscht!';
+        break;
+
+
 	case 'get_slider_data':
 		$id   = filter_input( INPUT_POST, 'id', FILTER_VALIDATE_INT );
 		$type = filter_input( INPUT_POST, 'type', FILTER_SANITIZE_STRING );
@@ -235,12 +495,15 @@ switch ( $method ) {
 			$fetch                    = true;
 			$responseJson->load_toast = true;
 		}
+		//Get Galerie
+        $galerie = apply_filters('post_selector_get_galerie', '');
+        $galerie->status ? $responseJson->galerie = $galerie->record : $responseJson->galerie = false;
 
-		$load_toast = apply_filters( 'post_selector_get_by_args', $args, $fetch );
+        //Get Slider
+        $load_toast = apply_filters( 'post_selector_get_by_args', $args, $fetch );
 		if ( ! $load_toast->status ) {
 			return $responseJson;
 		}
-
 		$responseJson->record = $load_toast->record;
 		$responseJson->status = true;
 		break;
@@ -264,4 +527,82 @@ switch ( $method ) {
 		$responseJson->status = true;
 		$responseJson->msg    = 'erfolgreich gelöscht!';
 		break;
+
+    case 'get_galerie_modal_data':
+        $pages = apply_filters('post_selector_get_theme_pages', false);
+        $post = apply_filters('post_selector_get_theme_posts', false);
+        if ($post) {
+           $responseJson->sitesSelect = array_merge_recursive($pages, $post);
+        } else {
+           $responseJson->sitesSelect = $pages;
+        }
+
+        $responseJson->galerieSelect = apply_filters('get_galerie_types_select','');
+        $responseJson->status = true;
+        break;
+
+    case'get_image_modal_data':
+        $id   = filter_input( INPUT_POST, 'id', FILTER_VALIDATE_INT );
+
+        if(!$id){
+            $responseJson->msg = 'Ein Fehler ist aufgetreten!';
+            $responseJson->status = false;
+            return $responseJson;
+        }
+
+        $args = sprintf('WHERE id=%d', $id);
+        $image = apply_filters('post_selector_get_images', $args, false);
+        if(!$image->status){
+            $responseJson->msg = 'Ein Fehler ist aufgetreten!';
+            $responseJson->status = false;
+            return $responseJson;
+        }
+
+        $responseJson->record = $image->record;
+        $pages = apply_filters('post_selector_get_theme_pages', false);
+        $post = apply_filters('post_selector_get_theme_posts', false);
+        if ($post) {
+            $responseJson->sitesSelect = array_merge_recursive($pages, $post);
+        } else {
+            $responseJson->sitesSelect = $pages;
+        }
+
+        $responseJson->galerieSelect = apply_filters('get_galerie_types_select','');
+        $responseJson->status = true;
+        break;
+
+    case 'get_galerie_type_data':
+        $typeId   = filter_input( INPUT_POST, 'type_id', FILTER_VALIDATE_INT );
+        $id   = filter_input( INPUT_POST, 'id', FILTER_VALIDATE_INT );
+        if(!$typeId){
+            $responseJson->msg = 'keine Daten gefunden!';
+           return $responseJson;
+        }
+
+        if($id){
+            $galerieArgs = sprintf('WHERE id=%d', $id);
+            $galerie = apply_filters('post_selector_get_galerie',$galerieArgs, false);
+            $galerie->status ? $responseJson->typeSettings = json_decode($galerie->record->type_settings) : $responseJson->typeSettings = false;
+        }
+
+        $responseJson->type = (string) $typeId;
+        switch ($typeId){
+            case '1':
+                $postSlider = apply_filters('post_selector_get_by_args','', true, 'bezeichnung, id');
+                if(!$postSlider->status){
+                    $responseJson->msg = 'kein Slider gefunden!';
+                   return $responseJson;
+                }
+                $responseJson->sliderSelect = $postSlider->record;
+                $responseJson->status = true;
+                $responseJson->disabled = false;
+                break;
+            case '2':
+            case '3':
+                $responseJson->status = true;
+                $responseJson->disabled = false;
+                break;
+        }
+
+        break;
 }

@@ -8,36 +8,59 @@ body .wp-bs-starter-wrapper {
   font-size: 1rem!important;
 }
 
-
-
-
-
-
-/*
-
-.tooltip-inner {
-  background-color: $tooltip-bg;
-  font-size: 1rem;
-  color: #fff;
-  padding: .5rem;
+.check-min-width {
+  min-width: 7.5rem;
 }
 
-.bs-tooltip-end .tooltip-arrow::before, .bs-tooltip-auto[data-popper-placement^=right] .tooltip-arrow::before {
-  border-right-color: $tooltip-bg !important;
+
+.post-selector-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(235px, 100%), 1fr));
+  //gap:5px;
+  column-gap: 5px;
+  row-gap: 10px;
+  background-color: #b9b9b929;
+  border-radius: .25rem;
+  padding: 15px;
+  align-items: center;
+  justify-items: center;
+  img{
+    width: 230px;
+    height: 180px;
+    object-fit: cover;
+    padding: .5rem;
+    border: 1px solid #bbb;
+    border-radius: .25rem;
+  }
 }
 
-.bs-tooltip-start .tooltip-arrow::before, .bs-tooltip-auto[data-popper-placement^=left] .tooltip-arrow::before {
-  border-left-color: $tooltip-bg !important;
-}
 
-.bs-tooltip-bottom .tooltip-arrow::before, .bs-tooltip-auto[data-popper-placement^=bottom] .tooltip-arrow::before {
-  border-bottom-color: $tooltip-bg !important;
-}
 
-.bs-tooltip-top .tooltip-arrow::before, .bs-tooltip-auto[data-popper-placement^=top] .tooltip-arrow::before {
-  border-top-color: $tooltip-bg !important;
-}
-*/
+  /*
+
+  .tooltip-inner {
+    background-color: $tooltip-bg;
+    font-size: 1rem;
+    color: #fff;
+    padding: .5rem;
+  }
+
+  .bs-tooltip-end .tooltip-arrow::before, .bs-tooltip-auto[data-popper-placement^=right] .tooltip-arrow::before {
+    border-right-color: $tooltip-bg !important;
+  }
+
+  .bs-tooltip-start .tooltip-arrow::before, .bs-tooltip-auto[data-popper-placement^=left] .tooltip-arrow::before {
+    border-left-color: $tooltip-bg !important;
+  }
+
+  .bs-tooltip-bottom .tooltip-arrow::before, .bs-tooltip-auto[data-popper-placement^=bottom] .tooltip-arrow::before {
+    border-bottom-color: $tooltip-bg !important;
+  }
+
+  .bs-tooltip-top .tooltip-arrow::before, .bs-tooltip-auto[data-popper-placement^=top] .tooltip-arrow::before {
+    border-top-color: $tooltip-bg !important;
+  }
+  */
 
 
 

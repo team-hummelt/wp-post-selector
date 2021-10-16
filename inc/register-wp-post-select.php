@@ -98,13 +98,13 @@ final class RegisterGutenbergPostSelector {
 		wp_set_script_translations( 'wp-post-selector-script', 'wp-post-selector' );
 	}
 
-
 	/**
 	 * ===================================
 	 * =========== ADMIN PAGES ===========
 	 * ===================================
 	 */
 	public function admin_postselector_settings_page() {
+        wp_enqueue_media();
 		require 'admin/admin-pages/ps-settings.php';
 	}
 
@@ -363,9 +363,28 @@ final class RegisterGutenbergPostSelector {
 		// TODO DASHBOARD STYLES
 		wp_enqueue_style( 'post-selector-admin-dashboard-style', POST_SELECT_PLUGIN_URL . '/inc/assets/admin/css/admin-dashboard-style.css', array(), $post_sle_version, false );
 
-		wp_enqueue_script( 'post-selector-admin', POST_SELECT_PLUGIN_URL . '/inc/assets/admin/js/admin-js.js', array(), $post_sle_version, true );
+		//wp_enqueue_script( 'post-selector-admin', POST_SELECT_PLUGIN_URL . '/inc/assets/admin/js/admin-js.js', array(), $post_sle_version, true );
 
-		wp_enqueue_script( 'jquery' );
+        wp_enqueue_script( 'jquery' );
+        // TODO LIGHTBOX CSS
+        wp_enqueue_style(
+            'post-selector-lightbox-css',
+            POST_SELECT_PLUGIN_URL . '/inc/assets/css/tools/blueimp-gallery.css',
+            array(), $post_sle_version );
+
+
+
+        //TODO LIGHTBOX
+        wp_enqueue_script( 'gutenberg-post-selector-lightbox',
+            POST_SELECT_PLUGIN_URL . '/inc/assets/js/tools/blueimp-gallery.min.js', array(),
+            $post_sle_version, true );
+
+        //TODO LIGHTBOX
+        wp_enqueue_script( 'gutenberg-post-selector-jq-lightbox',
+            POST_SELECT_PLUGIN_URL . '/inc/assets/js/tools/jquery.blueimp-gallery.js', array(),
+            $post_sle_version, true );
+
+
 		wp_enqueue_script( 'post-selector-script', POST_SELECT_PLUGIN_URL . '/inc/assets/admin/js/post-selector-admin.js', array(), $post_sle_version, true );
 	}
 }

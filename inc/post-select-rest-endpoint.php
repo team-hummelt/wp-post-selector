@@ -32,7 +32,6 @@ function post_select_rest_endpoint_get_response( $request ): WP_REST_Response {
 
 	switch ( $method ) {
 		case 'get_post_slider':
-
 			$data = apply_filters('post_selector_get_by_args', '',true, 'id, bezeichnung as name');
 			$retSlid = [];
 			if($data->status){
