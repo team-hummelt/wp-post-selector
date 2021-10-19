@@ -2,9 +2,6 @@
 
 
 namespace Post\Galerie;
-
-use stdClass;
-
 defined('ABSPATH') or die();
 
 /**
@@ -55,7 +52,6 @@ if (!class_exists('PostGalerieTemplates')) {
             if (!$images->status) {
                 return null;
             }
-
 
             $typeSettings = json_decode($galerieSettings->type_settings);
             switch ($galerieSettings->type) {
@@ -112,7 +108,6 @@ if (!class_exists('PostGalerieTemplates')) {
                     <div class="wp-block-hupa-theme-post-list grid-wrapper">
                     <?= $galerieSettings->show_bezeichnung ? '<h3 class="post-galerie-h3">' . $galerieSettings->bezeichnung . '</h3>' : '' ?>
                     <?= $galerieSettings->show_beschreibung ? '<small class="post-small-description">' . $galerieSettings->beschreibung . '</small>' : '' ?>
-
 
                         <div class="<?=$galerieSettings->lightbox_aktiv ? 'light-box-controls' : ''?>">
 
@@ -179,9 +174,7 @@ if (!class_exists('PostGalerieTemplates')) {
                             </div>
                         </div>
                     </div>
-
                     <?php
-                    // print_r($typeSettings);
                     break;
             }
         }
@@ -295,7 +288,8 @@ if (!class_exists('PostGalerieTemplates')) {
                     $aniRand = mt_rand(50, 450);
                     $aniOffset = mt_rand(50, 90);
                     $aniDuration = mt_rand(350, 1000);
-                    $lazy_load_aktiv = ' lazy-image wow animate__fadeInUp" data-wow-offset="50" data-wow-duration="'.$aniDuration.'ms" data-wow-delay="'.$aniRand.'ms"';
+                    SLIDER_LAZY_LOAD_ANIMATION ? $ani = 'wow animate__fadeInUp" data-wow-offset="50" data-wow-duration="'.$aniDuration.'ms" data-wow-delay="'.$aniRand.'ms"' : $ani = '"';
+                    $lazy_load_aktiv = ' lazy-image '.$ani.'';
                 }
                 if ($galerieSettings->type == '1') {
                     $html .= '

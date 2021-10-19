@@ -256,7 +256,7 @@ if (!class_exists('PostSelectorFilter')) {
                 $customTitle = get_post_meta(get_the_ID(), '_hupa_custom_title', true);
                 $customTitle ? $title = $customTitle : $title = get_the_title();
                 $image_id = get_post_thumbnail_id();
-                $thumb_url_array = wp_get_attachment_image_src($image_id, SLIDER_IMAGE_SIZE, false);
+                //$thumb_url_array = wp_get_attachment_image_src($image_id, SLIDER_IMAGE_SIZE, false);
                 //print_r($thumb_url_array);
                 $attachment = (object)$this->wp_get_attachment($image_id);
                 $post_item = [
@@ -265,7 +265,7 @@ if (!class_exists('PostSelectorFilter')) {
                     'img_id' => $image_id,
                     'title' => $title,
                     //'image'        => get_the_post_thumbnail_url(),
-                    'image' => $thumb_url_array[0],
+                    //'image' => $thumb_url_array[0],
                     'permalink' => get_the_permalink(),
                     'author' => get_the_author(),
                     'alt' => $attachment->alt,

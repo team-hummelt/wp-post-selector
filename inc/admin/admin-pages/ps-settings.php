@@ -76,6 +76,9 @@ defined('ABSPATH') or die();
                     <div class="collapse" id="collapseGalerieSite" data-bs-parent="#post_display_parent"> </div>
                 </div><!--parent-->
             </div>
+            <small class="card-body-bottom" style="right: 1.5rem">DB: <i class="hupa-color"><?=POST_SELECT_PLUGIN_DB_VERSION?></i> | Version:
+                <i class="hupa-color">v<?= POST_SELECTOR_PLUGIN_VERSION ?></i>
+            </small>
         </div>
     </div>
 
