@@ -10,7 +10,9 @@ defined( 'ABSPATH' ) or die();
  */
 
 require 'filter/post-selector-filter.php';
+require 'filter/post-galerie-filter.php';
 require 'templates/post-slider.php';
 require 'templates/news-template.php';
+require 'templates/galerie-templates.php';
 
 

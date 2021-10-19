@@ -1,5 +1,5 @@
 <?php
-defined( 'ABSPATH' ) or die();
+defined('ABSPATH') or die();
 /**
  * Post Selector
  * @package Hummelt & Partner WordPress Plugin
@@ -15,33 +15,34 @@ defined( 'ABSPATH' ) or die();
         <div class="card card-license shadow-sm">
             <h5 class="card-header d-flex align-items-center bg-hupa py-4">
                 <i class="icon-hupa-white d-block mt-2" style="font-size: 2rem"></i>&nbsp;
-				<?= __( 'Post Selector', 'bs-formular' ) ?> </h5>
+                <?= __('Post Selector', 'wp-post-selector') ?> </h5>
             <div class="card-body pb-4" style="min-height: 72vh">
                 <div class="d-flex align-items-center">
                     <h5 class="card-title"><i
-                                class="hupa-color fa fa-arrow-circle-right"></i> <?= __( 'Post Selector', 'wp-post-selector' ) ?>
-                        / <span id="currentSideTitle"><?= __( 'Overview', 'bs-formular' ) ?></span>
+                                class="hupa-color fa fa-arrow-circle-right"></i> <?= __('Post Selector', 'wp-post-selector') ?>
+                        / <span id="currentSideTitle"><?= __('Übersicht', 'wp-post-selector') ?></span>
                     </h5>
                 </div>
                 <hr>
                 <div class="settings-btn-group d-block d-md-flex flex-wrap">
-                    <button data-site="<?= __( 'Slider', 'wp-post-selector' ) ?>"
+                    <button data-site="<?= __('Slider', 'wp-post-selector') ?>"
                             type="button"
+                            data-type="slider"
                             id="btnDataSlider"
                             data-bs-toggle="collapse" data-bs-target="#collapsePostSelectOverviewSite"
                             class="btn-post-collapse btn btn-hupa btn-outline-secondary btn-sm active" disabled>
                         <i class="fa fa-sliders"></i>&nbsp;
-						<?= __( 'Slider', 'wp-post-selector' ) ?>
+                        <?= __('Slider', 'wp-post-selector') ?>
                     </button>
 
-                    <!--<button data-site="<?= __( 'Galerie', 'wp-post-selector' ) ?>"
-                            data-type="formular"
+                    <button data-site="<?= __('Galerie', 'wp-post-selector') ?>"
+                            data-type="galerie"
                             type="button" id="postEditCollapseBtn"
                             data-bs-toggle="collapse" data-bs-target="#collapseGalerieSite"
-                            class="btn-post-collapse btn btn-hupa btn-outline-secondary btn-sm"><i
-                                class="fa fa-align-justify"></i>&nbsp;
-						<?= __( 'Galerie', 'wp-post-selector' ) ?>
-                    </button>-->
+                            class="btn-post-collapse btn btn-hupa btn-outline-secondary btn-sm">
+                        <i class="fa fa-image"></i>&nbsp;
+                        <?= __('Galerie', 'wp-post-selector') ?>
+                    </button>
                 </div>
                 <hr>
                 <div id="post_display_parent">
@@ -51,13 +52,14 @@ defined( 'ABSPATH' ) or die();
                         <div class="border rounded mt-1 mb-3 shadow-sm p-3 bg-custom-gray" style="min-height: 53vh">
                             <div class="d-flex align-items-center">
                                 <h5 class="card-title">
-                                    <i class="font-blue fa fa-sliders"></i>&nbsp;<?= __( 'Post Selector Slider', 'bs-formular' ) ?>
+                                    <i class="font-blue fa fa-sliders"></i>&nbsp;<?= __('Post Selector Slider', 'wp-post-selector') ?>
                                 </h5>
                                 <div class="ajax-status-spinner ms-auto d-inline-block mb-2 pe-2"></div>
                             </div>
                             <hr class="mt-1">
                             <div class="d-flex flex-wrap">
-                                <button data-type="insert" class="load-slider-temp btn btn-blue btn-sm">Slider
+                                <button data-type="insert" class="load-slider-temp btn btn-blue btn-sm"><i
+                                            class="fa fa-plus"></i>&nbsp;Slider
                                     hinzufügen
                                 </button>
 
@@ -71,17 +73,12 @@ defined( 'ABSPATH' ) or die();
                         </div>
                     </div>
                     <!--  TODO JOB WARNING Galerie -->
-                    <div class="collapse" id="collapseGalerieSite"
-                         data-bs-parent="#post_display_parent">
-                        <div class="border rounded mt-1 mb-3 shadow-sm p-3 bg-custom-gray" style="min-height: 53vh">
-                            <h5 class="card-title">
-                                <i class="font-blue fa fa-wordpress"></i>&nbsp;<?= __( 'Inbox', 'bs-formular' ) ?>
-                            </h5>
-                            <hr>
-                        </div>
-                    </div>
+                    <div class="collapse" id="collapseGalerieSite" data-bs-parent="#post_display_parent"> </div>
                 </div><!--parent-->
             </div>
+            <small class="card-body-bottom" style="right: 1.5rem">DB: <i class="hupa-color"><?=POST_SELECT_PLUGIN_DB_VERSION?></i> | Version:
+                <i class="hupa-color">v<?= POST_SELECTOR_PLUGIN_VERSION ?></i>
+            </small>
         </div>
     </div>
 
@@ -124,8 +121,8 @@ defined( 'ABSPATH' ) or die();
                     <form class="send-bs-form-jquery-ajax-formular" action="#" method="post">
                         <input type="hidden" name="type" value="demo">
                         <input type="hidden" name="method" value="slider-form-handle">
-                        <input id="modalAction" type="hidden" name="action">
-                        <input id="modalNonce" type="hidden" name="_ajax_nonce">
+                        <input class="modalAction" type="hidden" name="action">
+                        <input class="modalNonce" type="hidden" name="_ajax_nonce">
                         <label for="inputDemoSlider" class="form-label">Demo auswählen</label>
                         <select class="form-select" name="demo_type" id="inputDemoSlider">
                             <option value="1">Beitrags Slider volle Breite</option>
@@ -139,6 +136,26 @@ defined( 'ABSPATH' ) or die();
             </div>
         </div>
     </div>
+
+    <!--MODAL ADD GALERIE-->
+    <div class="modal fade" id="galerieHandleModal" tabindex="-1" aria-labelledby="addGalerieModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-lg">
+            <div class="modal-content"></div>
+        </div>
+    </div>
+
+
 </div>
+
 <div id="snackbar-success"></div>
 <div id="snackbar-warning"></div>
+<div id="blueimp-gallery" class="blueimp-gallery blueimp-gallery-controls" data-filter="">
+    <div class="slides"></div>
+    <h3 class="title"></h3>
+    <a class="prev">‹</a>
+    <a class="next">›</a>
+    <a class="close">×</a>
+    <a class="play-pause"></a>
+    <ol class="indicator"></ol>
+</div>
