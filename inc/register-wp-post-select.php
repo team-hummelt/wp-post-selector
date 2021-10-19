@@ -48,12 +48,17 @@ final class RegisterGutenbergPostSelector {
 			return;
 		}
 		add_action( 'init', array( $this, 'gutenberg_block_post_select_register' ) );
-		// TODO Create Database
+        add_action( 'init', array( $this, 'gutenberg_block_post_selector_galerie_register' ) );
+
+        // TODO Create Database
 		add_action( 'init', array( $this, 'post_selector_create_db' ) );
 		//TODO REMOVE REST BY NOT LOGGED IN
 		add_action( 'init', array( $this, 'post_select_removes_api_endpoints_for_not_logged_in' ) );
 		add_action( 'init', array( $this, 'load_post_selector_textdomain' ) );
+
 		add_action( 'enqueue_block_editor_assets', array( $this, 'post_select_plugin_editor_block_scripts' ) );
+        add_action( 'enqueue_block_editor_assets', array( $this, 'post_select_plugin_editor_galerie_scripts' ) );
+
 		add_action( 'enqueue_block_assets', array( $this, 'post_select_plugin_public_scripts' ) );
 		//add_action( 'wp_enqueue_scripts', array( $this, 'post_select_script_text_domain' ), 100 );
 		//add_action( 'init', array( $this, 'post_select_set_script_translations' ) );
@@ -160,6 +165,20 @@ final class RegisterGutenbergPostSelector {
 		add_filter( 'gutenberg_block_post_selector_render', 'gutenberg_block_post_selector_render_filter', 10, 20 );
 	}
 
+    /**
+     * ================================================================
+     * =========== REGISTER GUTENBERG POST-SELECTOR GALERIE ===========
+     * ================================================================
+     */
+    public function gutenberg_block_post_selector_galerie_register() {
+        register_block_type( 'hupa/post-selector-galerie', array(
+            'render_callback' => 'callback_post_selector_galerie',
+            'editor_script'   => 'gutenberg-post-selector-galerie',
+        ) );
+
+        add_filter( 'gutenberg_block_post_selector_galerie_render', 'gutenberg_block_post_selector_galerie_render_filter', 10, 20 );
+    }
+
 	public function post_selector_create_db() {
 		require 'admin/optionen/database/post-selector-database.php';
 		do_action( 'post_selector_formular_plugin_update_dbCheck', false );
@@ -233,25 +252,59 @@ final class RegisterGutenbergPostSelector {
 		);
 	}
 
-	public function post_select_plugin_public_scripts() {
-		$modificated = date( 'YmdHi', filemtime( POST_SELECT_PLUGIN_DATA . '/style-index.css' ) );
 
-		$modificated = date( 'YmdHi', filemtime( POST_SELECT_PLUGIN_DATA . '/inc/assets/css/tools/splide-default.min.css' ) );
-		$modificated = date( 'YmdHi', filemtime( POST_SELECT_PLUGIN_DATA . '/inc/assets/css/tools/splide-skyblue.min.css' ) );
-		$modificated = date( 'YmdHi', filemtime( POST_SELECT_PLUGIN_DATA . '/inc/assets/css/tools/splide-sea-green.min.css' ) );
-		$modificated = date( 'YmdHi', filemtime( POST_SELECT_PLUGIN_DATA . '/inc/assets/css/tools/splide.min.css' ) );
+    /**
+     * =================================================================================
+     * =========== REGISTER GUTENBERG POST-SELECTOR GALERIE JAVASCRIPT | CSS ===========
+     * =================================================================================
+     */
+    public function post_select_plugin_editor_galerie_scripts(): void {
+        $wp_ps_data   = get_file_data( POST_SELECT_PLUGIN_DIR . '/wp-post-selector.php', array( 'Version' => 'Version' ), false );
+        $plugin_asset = require POST_SELECT_PLUGIN_GALERIE_DATA . 'index.asset.php';
+
+        global $wpPs_V;
+        $wpPs_V = $wp_ps_data['Version'];
+
+        // Scripts.
+        wp_enqueue_script(
+            'gutenberg-post-selector-galerie',
+            POST_SELECT_PLUGIN_GALERIE_DATA_URL . 'index.js',
+            $plugin_asset['dependencies'], $plugin_asset['version']
+        );
+
+        // Styles.
+        wp_enqueue_style(
+            'gutenberg-post-selector-galerie', // Handle.
+            POST_SELECT_PLUGIN_GALERIE_DATA_URL . 'index.css', array(), $wpPs_V
+        );
+    }
+
+	public function post_select_plugin_public_scripts() {
+		$modificated = date( 'YmdHi', filemtime( POST_SELECT_PLUGIN_DATA . '/ps-style.css' ) );
+
+		$modificated = date( 'YmdHi', filemtime( POST_SELECT_PLUGIN_DIR . '/inc/assets/css/tools/splide-default.min.css' ) );
+		$modificated = date( 'YmdHi', filemtime( POST_SELECT_PLUGIN_DIR . '/inc/assets/css/tools/splide-skyblue.min.css' ) );
+		$modificated = date( 'YmdHi', filemtime( POST_SELECT_PLUGIN_DIR . '/inc/assets/css/tools/splide-sea-green.min.css' ) );
+		$modificated = date( 'YmdHi', filemtime( POST_SELECT_PLUGIN_DIR . '/inc/assets/css/tools/splide.min.css' ) );
 		$modificated = date( 'YmdHi', filemtime( POST_SELECT_PLUGIN_DIR . '/inc/assets/js/tools/splide.min.js' ) );
 		//$modificated = date( 'YmdHi', filemtime( POST_SELECT_PLUGIN_DIR . '/inc/assets/js/tools/splide-extension-grid.min.js' ) );
 		$modificated = date( 'YmdHi', filemtime( POST_SELECT_PLUGIN_DIR . '/inc/assets/css/bs/bootstrap.min.css' ) );
 		$modificated = date( 'YmdHi', filemtime( POST_SELECT_PLUGIN_DIR . '/inc/assets/js/bs/bootstrap.bundle.min.js' ) );
-		$modificated = date( 'YmdHi', filemtime( POST_SELECT_PLUGIN_DIR . '/inc/assets/css/tools/blueimp-gallery.css' ) );
-		$modificated = date( 'YmdHi', filemtime( POST_SELECT_PLUGIN_DIR . '/inc/assets/js/tools/blueimp-gallery.min.js' ) );
-		$modificated = date( 'YmdHi', filemtime( POST_SELECT_PLUGIN_DIR . '/inc/assets/js/tools/jquery.blueimp-gallery.js' ) );
+		$modificated = date( 'YmdHi', filemtime( POST_SELECT_PLUGIN_DIR . '/inc/assets/css/tools/lightbox/blueimp-gallery.min.css' ) );
+		$modificated = date( 'YmdHi', filemtime( POST_SELECT_PLUGIN_DIR . '/inc/assets/js/tools/lightbox/blueimp-gallery.min.js' ) );
+		//$modificated = date( 'YmdHi', filemtime( POST_SELECT_PLUGIN_DIR . '/inc/assets/js/tools/jquery.blueimp-gallery.js' ) );
+
+        $modificated = date( 'YmdHi', filemtime( POST_SELECT_PLUGIN_DIR . '/inc/assets/js/tools/imagesloaded.pkgd.min.js' ) );
+        $modificated = date( 'YmdHi', filemtime( POST_SELECT_PLUGIN_DIR . '/inc/assets/js/tools/masonry.pkgd.min.js' ) );
+        $modificated = date( 'YmdHi', filemtime( POST_SELECT_PLUGIN_DIR . '/inc/assets/js/tools/wowjs/wow.min.js' ) );
+
+
 		//$modificated = date( 'YmdHi', filemtime( POST_SELECT_PLUGIN_DIR . '/inc/assets/js/tools/post-selector-splide.js' ) );
+
 		// Styles.
 		wp_enqueue_style(
 			'post-selector-public-style',
-			POST_SELECT_PLUGIN_DATA_URL . 'style-index.css',
+			POST_SELECT_PLUGIN_DATA_URL . 'ps-style.css',
 			array(), '' );
 
 		//if nicht Install Starter Theme
@@ -264,9 +317,13 @@ final class RegisterGutenbergPostSelector {
 				array(), $modificated );
 
 			// TODO Bootstrap JS
-			wp_enqueue_script( 'gutenberg-post-selector-bs',
-				POST_SELECT_PLUGIN_URL . '/inc/assets/js/bs/bootstrap.bundle.min.js', array(),
-				$modificated, true );
+            wp_enqueue_script( 'gutenberg-post-selector-bs',
+                POST_SELECT_PLUGIN_URL . '/inc/assets/js/bs/bootstrap.bundle.min.js', array(),
+                $modificated, true );
+            // TODO MASONRY
+            wp_enqueue_script( 'gutenberg-post-selector-masonry-pkgd',
+                POST_SELECT_PLUGIN_URL . '/inc/assets/js/tools/masonry.pkgd.min.js', array(),
+                $modificated, true );
 		}
 
 		// TODO SPLIDE CSS
@@ -297,19 +354,19 @@ final class RegisterGutenbergPostSelector {
 		// TODO LIGHTBOX CSS
 		wp_enqueue_style(
 			'post-selector-lightbox-css',
-			POST_SELECT_PLUGIN_URL . '/inc/assets/css/tools/blueimp-gallery.css',
+			POST_SELECT_PLUGIN_URL . '/inc/assets/css/tools/lightbox/blueimp-gallery.min.css',
 			array(), $modificated );
 
 		//TODO LIGHTBOX
 		wp_enqueue_script( 'gutenberg-post-selector-lightbox',
-			POST_SELECT_PLUGIN_URL . '/inc/assets/js/tools/blueimp-gallery.min.js', array(),
+			POST_SELECT_PLUGIN_URL . '/inc/assets/js/tools/lightbox/blueimp-gallery.min.js', array(),
 			$modificated, true );
 
 		//TODO LIGHTBOX
-		wp_enqueue_script( 'gutenberg-post-selector-jq-lightbox',
+	/*	wp_enqueue_script( 'gutenberg-post-selector-jq-lightbox',
 			POST_SELECT_PLUGIN_URL . '/inc/assets/js/tools/jquery.blueimp-gallery.js', array(),
 			$modificated, true );
-
+*/
 		//TODO SLIDER
 		wp_enqueue_script( 'gutenberg-post-selector-splide',
 			POST_SELECT_PLUGIN_URL . '/inc/assets/js/tools/splide.min.js', array(),
@@ -320,10 +377,19 @@ final class RegisterGutenbergPostSelector {
 			POST_SELECT_PLUGIN_URL . '/inc/assets/js/tools/splide-extension-grid.min.js', array(),
 			$modificated, true );*/
 
+        //TODO IMAGES LOADED
+        wp_enqueue_script( 'post-selector-galerie-images-loaded',
+            POST_SELECT_PLUGIN_URL . '/inc/assets/js/tools/imagesloaded.pkgd.min.js', array(),
+            $modificated, true );
+
 		//TODO SLIDER  OPTIONEN
 		wp_enqueue_script( 'gutenberg-post-selector-splide-optionen',
 			POST_SELECT_PLUGIN_URL . '/inc/assets/js/tools/post-selector-splide.js', array(),
 			$modificated, true );
+
+        wp_enqueue_script( 'gutenberg-post-selector-wowjs',
+            POST_SELECT_PLUGIN_URL . '/inc/assets/js/tools/wowjs/wow.min.js', array(),
+            $modificated, true );
 
 		$public_nonce = wp_create_nonce( 'post_selector_public_handle' );
 		wp_register_script( 'post-selector-admin-ajax-script', '', [], '', true );
@@ -369,20 +435,25 @@ final class RegisterGutenbergPostSelector {
         // TODO LIGHTBOX CSS
         wp_enqueue_style(
             'post-selector-lightbox-css',
-            POST_SELECT_PLUGIN_URL . '/inc/assets/css/tools/blueimp-gallery.css',
+            POST_SELECT_PLUGIN_URL . '/inc/assets/admin/css/tools/blueimp-gallery.css',
             array(), $post_sle_version );
 
+        //TODO SORTABLE
+        wp_enqueue_script( 'gutenberg-post-selector-sortable',
+            POST_SELECT_PLUGIN_URL . '/inc/assets/admin/js/tools/Sortable.min.js', array(),
+            $post_sle_version, true );
 
 
         //TODO LIGHTBOX
         wp_enqueue_script( 'gutenberg-post-selector-lightbox',
-            POST_SELECT_PLUGIN_URL . '/inc/assets/js/tools/blueimp-gallery.min.js', array(),
+            POST_SELECT_PLUGIN_URL . '/inc/assets/admin/js/tools/blueimp-gallery.min.js', array(),
             $post_sle_version, true );
 
         //TODO LIGHTBOX
         wp_enqueue_script( 'gutenberg-post-selector-jq-lightbox',
-            POST_SELECT_PLUGIN_URL . '/inc/assets/js/tools/jquery.blueimp-gallery.js', array(),
+            POST_SELECT_PLUGIN_URL . '/inc/assets/admin/js/tools/jquery.blueimp-gallery.js', array(),
             $post_sle_version, true );
+
 
 
 		wp_enqueue_script( 'post-selector-script', POST_SELECT_PLUGIN_URL . '/inc/assets/admin/js/post-selector-admin.js', array(), $post_sle_version, true );

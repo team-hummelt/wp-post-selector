@@ -51,6 +51,21 @@ function post_select_rest_endpoint_get_response( $request ): WP_REST_Response {
 			$response->radio_check = (int) $radio_check;
 			$response->galerie  = [];
 			break;
+
+        case 'get_galerie_data':
+            $galerie = apply_filters('post_selector_get_galerie','', true, 'id, bezeichnung');
+            $retGalerie = [];
+            if ($galerie->status){
+                foreach ($galerie->record as $tmp) {
+                    $galItem = [
+                        'id' => $tmp->id,
+                        'name' => $tmp->bezeichnung
+                    ];
+                    $retGalerie[] = $galItem;
+                }
+            }
+            $response->select  = $retGalerie;
+            break;
 	}
 
 	return new WP_REST_Response( $response, 200 );

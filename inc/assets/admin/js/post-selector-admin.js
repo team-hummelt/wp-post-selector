@@ -46,6 +46,8 @@ jQuery(document).ready(function ($) {
             }
         }
     }
+
+
     $(document).on('submit', '.send-jquery-ajax-modal-formular', function (event) {
         let form_data = $(this).serializeObject();
         send_jquery_post_form_data(form_data);
@@ -204,15 +206,16 @@ jQuery(document).ready(function ($) {
                     if (data.status) {
                         if (attachment.url) {
                             if (attachment.sizes) {
-                                thumb = attachment.sizes.thumbnail.url;
+                                thumb = attachment.sizes.medium.url;
                             } else {
                                 thumb = attachment.url;
                             }
                             html = `
-                           <div id="img${data.id}" class="gallery-item">
+                           <div id="img${data.id}" class="item_${data.id} galerie-item">
                            <a title="${attachment.title}" href="${attachment.url}" data-gallery="">
                            <img class="gallery-img" src="${thumb}" alt="${attachment.alt}">
-                           </a>   
+                           </a>
+                           <i class="postSortableArrow fa fa-arrows position-absolute"></i>    
                            <figcaption class="py-2 text-center">
                            <button data-bs-id="${data.id}"  data-bs-type="image" data-bs-handle="image" data-bs-toggle="modal" data-bs-target="#galerieHandleModal" class="btn btn-blue-outline btn-sm">
                            <i class="fa fa-edit"></i>&nbsp; settings</button>
@@ -301,8 +304,7 @@ jQuery(document).ready(function ($) {
          <textarea class="form-control" name="img_beschreibung"
          id="inputImageBeschreibung" rows="3">${record.img_beschreibung}</textarea>
          </div>
-         <hr>
-         
+         <hr>         
         <div class="form-check form-switch me-3 my-2">
           <input data-type="#imageSettings" class="toggle_form_disabled form-check-input" name="galerie_settings_aktiv" 
           type="checkbox" role="switch" id="hoverGalerieSettingsAktiv" ${record.galerie_settings_aktiv == '1' ? 'checked' : ''}>
@@ -336,37 +338,35 @@ jQuery(document).ready(function ($) {
         html += option;
         html += `</select>
          </div>
-         
        <div class="mb-2">
          <label for="inputSettingsImageUrl" class="col-form-label fw-normal">Bild Link | <span class="font-blue">URL</span></label>
          <input type="text" class="form-control" 
          value="${isSel ? '' : record.link ? record.link : ''}" name="url" id="inputSettingsImageUrl" ${isSel ? 'disabled' : ''}>
         </div>
          <hr>
-        
+          <div class="d-flex flex-wrap"> 
          <div class="form-check form-switch me-3 my-2">
            <input data-type="#imgSettingsHoverOption" class="toggle_form_disabled form-check-input" 
            name="hover_aktiv" type="checkbox" role="switch" id="hoverImageAktiv" ${record.hover_aktiv == '1' ? 'checked' : ''}>
            <label class="form-check-label" for="hoverImageAktiv">Image Hover</label>
         </div>
+        
         <hr>
-        <fieldset id="imgSettingsHoverOption" ${record.hover_aktiv == '1' ? '' : 'disabled'}>
          <div class="d-flex flex-wrap"> 
          <div class="check-min-width form-check form-switch me-3">
            <input class="form-check-input" name="hover_title_aktiv" 
            type="checkbox" role="switch" id="hoverImageTitle" ${record.hover_title_aktiv == '1' ? 'checked' : ''}>
            <label class="form-check-label" for="hoverImageTitle">Image Titel</label>
         </div>
-        
+         <fieldset id="imgSettingsHoverOption" ${record.hover_aktiv == '1' ? '' : 'disabled'}>
         <div class="check-min-width form-check form-switch me-3">
            <input class="form-check-input" name="hover_beschreibung_aktiv" 
            type="checkbox" role="switch" id="hoverImageBeschreibung" ${record.hover_beschreibung_aktiv == '1' ? 'checked' : ''}>
            <label class="form-check-label" for="hoverImageBeschreibung">Image Beschreibung</label>
         </div>
+         </fieldset>
         </div>
-        </fieldset>
-        <hr>
-        <div class="d-flex flex-wrap mb-3"> 
+        <!--<div class="d-flex flex-wrap mb-3"> 
          <div class="check-min-width form-check form-switch me-3">
            <input class="form-check-input" name="lightbox_aktiv" 
            type="checkbox" role="switch" id="lightboxImageAktiv" ${record.lightbox_aktiv == '1' ? 'checked' : ''}>
@@ -378,7 +378,7 @@ jQuery(document).ready(function ($) {
            type="checkbox" role="switch" id="captionImageAktiv" ${record.caption_aktiv == '1' ? 'checked' : ''}>
            <label class="form-check-label" for="captionImageAktiv">Caption anzeigen</label>
         </div>
-        </div>
+        </div>-->
        </fieldset>  
         <div class="modal-footer pt-3">
          <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">
@@ -488,25 +488,31 @@ jQuery(document).ready(function ($) {
          <input type="text" class="form-control" name="url" id="inputImageUrl">
         </div>
          <hr>
-        
-         <div class="form-check form-switch me-3 my-2">
+        <div class="d-flex flex-wrap"> 
+         <div class="check-min-width form-check form-switch me-3 my-2">
            <input data-type="#imgHoverOption" class="toggle_form_disabled form-check-input" name="hover_aktiv" type="checkbox" role="switch" id="hoverAktiv">
            <label class="form-check-label" for="hoverAktiv">Image Hover</label>
         </div>
+        <div id="checkLzModal" class="form-check form-switch me-3 my-2">
+           <input class="form-check-input" name="lazy_load_aktiv" type="checkbox" role="switch" id="LZModalCheck" checked>
+           <label class="form-check-label" for="LZModalCheck">Lazy Load</label>
+        </div>
+        </div>
         <hr>
-        <fieldset id="imgHoverOption" disabled>
+        
          <div class="d-flex flex-wrap"> 
          <div class="check-min-width form-check form-switch me-3">
            <input class="form-check-input" name="hover_title_aktiv" type="checkbox" role="switch" id="hoverTitle" checked>
            <label class="form-check-label" for="hoverTitle">Image Titel</label>
         </div>
-        
+        <fieldset id="imgHoverOption" disabled>
         <div class="check-min-width form-check form-switch me-3">
            <input class="form-check-input" name="hover_beschreibung_aktiv" type="checkbox" role="switch" id="hoverBeschreibung" checked>
            <label class="form-check-label" for="hoverBeschreibung">Image Beschreibung</label>
         </div>
-        </div>
         </fieldset>
+        </div>
+        
         <hr>
         <div class="d-flex flex-wrap mb-3"> 
          <div class="check-min-width form-check form-switch me-3">
@@ -552,7 +558,6 @@ jQuery(document).ready(function ($) {
             return !attr
         });
     });
-
 
 
     /**===============================================
@@ -737,15 +742,15 @@ jQuery(document).ready(function ($) {
                             <label for="inputKategorieSelect" class="col-form-label fw-normal">Galerie Type</label>
                             <select data-class=".galerieOptionField" onchange="this.blur()" class="changeTypeSelect form-select mw-100" 
                             name="galerie_type" id="inputKategorieSelect">`;
-                           $.each(data.galerieSelect, function (key, val) {
-                               let sel = '';
-                               val.id == record.type ? sel = 'selected' : sel = '';
-                               html += `<option value="${val.id}" ${sel}>${val.bezeichnung}</option>`;
-                           });
-                           html += `</select>
+        $.each(data.galerieSelect, function (key, val) {
+            let sel = '';
+            val.id == record.type ? sel = 'selected' : sel = '';
+            html += `<option value="${val.id}" ${sel}>${val.bezeichnung}</option>`;
+        });
+        html += `</select>
                         </div>
                          <div id="typeOptionsFields"></div>`;
-                       html += `<fieldset class="galerieOptionField" disabled>
+        html += `<fieldset class="galerieOptionField" disabled>
                        <hr class="mb-2">
                        <h6 class="mb-2">Galerie Optionen</h6>
                        <div class="d-flex flex-wrap"> 
@@ -768,54 +773,59 @@ jQuery(document).ready(function ($) {
                          <div class="mb-2">
                          <label for="inputPageSelect" class="col-form-label fw-normal">Bild Link | <span class="font-blue">Page/Beitrag</span></label>
                         <select onchange="this.blur()" class="form-select mw-100" name="link" id="inputPageSelect"> `;
-                         let x = 1;
-                         let sel = '';
-                         let option = '<option value="">auswählen ...</option>';
-                         for (const [selectKey, selectVal] of Object.entries(data.sitesSelect)) {
-                             if (x === 1 && selectVal.type == 'page') {
-                                 option += '<option value="-" disabled="" class="SelectSeparator">---------Pages-------- </option>';
-                             }
-                             if (selectVal.first && selectVal.type == 'post') {
-                                 option += '<option value="-" disabled="" class="SelectSeparator">---------Posts--------- </option>';
-                             }
-                             if (data && record.link === `${selectVal.type}#${selectVal.id}`) {
-                                 sel = 'selected';
-                             } else {
-                                 sel = '';
-                             }
-                             option += `<option value="${selectVal.type}#${selectVal.id}" ${sel}>${selectVal.name}</option>`;
-                             x++;
-                         }
-                         html += option;
-                         html += `</select>
+        let x = 1;
+        let sel = '';
+        let option = '<option value="">auswählen ...</option>';
+        for (const [selectKey, selectVal] of Object.entries(data.sitesSelect)) {
+            if (x === 1 && selectVal.type == 'page') {
+                option += '<option value="-" disabled="" class="SelectSeparator">---------Pages-------- </option>';
+            }
+            if (selectVal.first && selectVal.type == 'post') {
+                option += '<option value="-" disabled="" class="SelectSeparator">---------Posts--------- </option>';
+            }
+            if (data && record.link === `${selectVal.type}#${selectVal.id}`) {
+                sel = 'selected';
+            } else {
+                sel = '';
+            }
+            option += `<option value="${selectVal.type}#${selectVal.id}" ${sel}>${selectVal.name}</option>`;
+            x++;
+        }
+        html += option;
+        html += `</select>
                            </div> 
                           <div class="mb-2">
                             <label for="inputImageUrl" class="col-form-label fw-normal">Bild Link | <span class="font-blue">URL</span></label>
                             <input type="text" class="form-control" value="${sel === '' ? '' : record.link}" name="url" id="inputImageUrl" ${sel === '' ? 'disabled' : ''}>
                            </div>
                             <hr>
-                            
-                            <div class="form-check form-switch me-3 my-2">
+                          <div class="d-flex flex-wrap">   
+                            <div class="check-min-width  form-check form-switch me-3 my-2">
                               <input data-type="#imgHoverOption" class="toggle_form_disabled form-check-input" name="hover_aktiv" 
                               type="checkbox" role="switch" id="hoverAktiv" ${record.hover_aktiv == '1' ? 'checked' : ''}>
                               <label class="form-check-label" for="hoverAktiv">Image Hover</label>
+                            </div>
+                            <div class="form-check form-switch my-2 me-3">
+                              <input class="form-check-input" name="lazy_load_aktiv" 
+                              type="checkbox" role="switch" id="lazyLoadCheck" ${record.lazy_load_aktiv == '1' ? 'checked' : ''}>
+                              <label class="form-check-label" for="lazyLoadCheck">Lazy Load</label>
+                           </div>
                            </div>
                            <hr>
-                           <fieldset id="imgHoverOption" ${record.hover_aktiv == '1' ? '' : 'disabled'}>
                             <div class="d-flex flex-wrap"> 
                             <div class="check-min-width form-check form-switch me-3">
                               <input class="form-check-input" name="hover_title_aktiv" 
                               type="checkbox" role="switch" id="hoverTitle" ${record.hover_title_aktiv == '1' ? 'checked' : ''}>
                               <label class="form-check-label" for="hoverTitle">Image Titel</label>
                            </div>
-                           
+                           <fieldset id="imgHoverOption" ${record.hover_aktiv == '1' ? '' : 'disabled'}>
                            <div class="check-min-width form-check form-switch me-3">
                               <input class="form-check-input" name="hover_beschreibung_aktiv" 
                               type="checkbox" role="switch" id="hoverBeschreibung" ${record.hover_beschreibung_aktiv == '1' ? 'checked' : ''}>
                               <label class="form-check-label" for="hoverBeschreibung">Image Beschreibung</label>
                            </div>
+                            </fieldset>
                            </div>
-                           </fieldset>
                            <hr>
                            <div class="d-flex flex-wrap mb-3"> 
                              <div class="check-min-width form-check form-switch me-3">
@@ -840,15 +850,16 @@ jQuery(document).ready(function ($) {
                   </div>
                   <hr>    
                 </div><!--collapse-->
-                <div id="galerie-container" class="post-selector-gallery-grid">`;
+                <div id="galerie-container" class="post-select-sortable post-selector-gallery-grid light-box-controls">`;
 
         if (images) {
             $.each(images, function (key, val) {
                 html += `
-                <div id="img${val.id}" class="gallery-item">
+                <div id="img${val.id}" class="item_${val.id} rounded overflow-hidden galerie-item shadow-sm"> 
                 <a title="${val.title}" href="${val.url}" data-gallery="">
                 <img class="gallery-img" src="${val.src}" alt="">
-                </a>   
+                </a>  
+                <i class="postSortableArrow fa fa-arrows position-absolute"></i> 
                 <figcaption class="py-2 text-center">
                 <button data-bs-id="${val.id}"  data-bs-type="image" data-bs-handle="image" data-bs-toggle="modal" data-bs-target="#galerieHandleModal" class="btn btn-blue-outline btn-sm">
                 <i class="fa fa-edit"></i>&nbsp;settings</button>
@@ -857,6 +868,7 @@ jQuery(document).ready(function ($) {
                 </figcaption>
                 </div>`;
             });
+
         }
         html += `</div><!--galerie-grid-->
                  </div><!--wrapper-->`;
@@ -864,6 +876,7 @@ jQuery(document).ready(function ($) {
         $('#collapseGalerieSite').html(html);
 
         get_galerie_type_optionen(record.type, record.id);
+        load_sortable_event_handler();
     }
 
     function galerie_toasts_overview(data) {
@@ -924,25 +937,33 @@ jQuery(document).ready(function ($) {
             $(fieldClass).prop('disabled', true);
             return false;
         }
+
+
         let typeId = $(this).val();
         get_galerie_type_optionen(typeId);
 
     });
 
-    function get_galerie_type_optionen(typeId, id= false) {
+    function get_galerie_type_optionen(typeId, id = false) {
         $.post(ps_ajax_obj.ajax_url, {
             '_ajax_nonce': ps_ajax_obj.nonce,
             'action': 'PostSelHandle',
             method: 'get_galerie_type_data',
             type_id: typeId,
-            id:id
+            id: id
         }, function (data) {
             let optionsField = $('#typeOptionsFields');
             let typeSelect = $('.changeTypeSelect');
             let html = '';
 
             optionsField.html('');
-            let fieldSetClass= $('.galerieOptionField');
+            let fieldSetClass = $('.galerieOptionField');
+            let checkCaption = $('#captionAktiv');
+            let modalCaption = $('#GalerieCaptionAktiv');
+            let modalLazyLoad = $('#checkLzModal');
+            modalCaption.prop('disabled', false);
+            modalLazyLoad.removeClass('d-none');
+
             $(fieldSetClass).prop('disabled', true);
             if (data.status) {
                 let set = data.typeSettings;
@@ -957,8 +978,8 @@ jQuery(document).ready(function ($) {
                          style="max-width: 100%">`;
                         $.each(data.sliderSelect, function (key, val) {
                             let sel = '';
-                            if(set) {
-                            set.slider_id == val.id ? sel = 'selected' : sel = '';
+                            if (set) {
+                                set.slider_id == val.id ? sel = 'selected' : sel = '';
                             }
                             html += `<option value="${val.id}" ${sel}>${val.bezeichnung}</option>`;
                         });
@@ -970,7 +991,7 @@ jQuery(document).ready(function ($) {
                          <i class="fa fa-caret-down"></i>&nbsp; Bildgröße</b></label>
                          <select onchange="this.blur()" class="form-select" name="image_size" id="changeImageSize">
                          <option value="thumbnail" ${set && set.img_size == 'thumbnail' ? 'selected' : ''}>Thumbnail</option>
-                         <option value="medium" ${set && set.img_size == 'medium' ? 'selected' : ''}>Medium</option>
+                         <option value="medium" ${set && set.img_size == 'medium' ? 'selected' : '' ? !set : 'selected'}>Medium</option>
                          <option value="large" ${set && set.img_size == 'large' ? 'selected' : ''}>Large</option>
                          <option value="full" ${set && set.img_size == 'full' ? 'selected' : ''}>Full</option>
                          </select>
@@ -978,6 +999,8 @@ jQuery(document).ready(function ($) {
                         optionsField.html(html);
                         $(fieldSetClass).prop('disabled', false);
                         typeSelect.removeClass('is-invalid');
+                        checkCaption.prop('disabled', false);
+                        modalLazyLoad.addClass('d-none');
                         break;
                     case '2':
                         html = `
@@ -992,12 +1015,12 @@ jQuery(document).ready(function ($) {
                         <div class="row">
                         <div class="col-lg-6 col-12 mb-2">
                         <label for="inputImgWidth" class="col-form-label fw-normal">Bildbreite (px)</label>
-                        <input type="number" class="form-control" value="${set && set.img_width ? set.img_width : ''}" name="img_width" id="inputImgWidth">
+                        <input type="number" class="form-control" value="${set && set.img_width ? set.img_width : '' ? !set : '260'}" name="img_width" id="inputImgWidth">
                         </div>
                         
                         <div class="col-lg-6 col-12 mb-2">
                         <label for="inputImgHeight" class="col-form-label fw-normal">Bildhöhe (px)</span></label>
-                        <input type="number" class="form-control" value="${set && set.img_width ? set.img_height : ''}" 
+                        <input type="number" class="form-control" value="${set && set.img_width ? set.img_height : '' ? !ser : '160'}" 
                         name="img_height" id="inputImgHeight" ${set && set.crop ? 'disabled' : ''}>
                         </div>
                        
@@ -1006,38 +1029,208 @@ jQuery(document).ready(function ($) {
                         <i class="fa fa-caret-down"></i>&nbsp; Bildgröße</b></label>
                         <select onchange="this.blur()" class="form-select w-100" name="image_size" id="changeImageSize">
                         <option value="thumbnail" ${set && set.img_size == 'thumbnail' ? 'selected' : ''}>Thumbnail</option>
-                        <option value="medium" ${set && set.img_size == 'medium' ? 'selected' : ''}>Medium</option>
+                        <option value="medium" ${set && set.img_size == 'medium' ? 'selected' : '' ? !set.img_size : 'selected'}>Medium</option>
                         <option value="large" ${set && set.img_size == 'large' ? 'selected' : ''}>Large</option>
                         <option value="full" ${set && set.img_size == 'full' ? 'selected' : ''}>Full</option>
                         </select>
                         </div> 
-                        </div>`;
+                        </div>
+                        <hr>
+                        <h5>Breakpoints <small class="small">( Responsive )</small></h5>
+                        <div class="form-text">Eigenschaften die in einer bestimmten
+                         Bildschirmbreite geändert werden sollen.
+                        </div>
+                        <hr>
+                        <h6>Breackpoint XL 1200px</h6>
+                         <hr>
+                         <div class="row">
+                        <div class="col-lg-6 col-12 mb-2">
+                        <label for="inputXLGridColums" class="col-form-label fw-normal">Row column ( min: 1 | max: 6 )</label>
+                        <input type="number" min="1" max="6" value="${set ? set.xl_grid_column ? set.xl_grid_column : '' : '5'}" 
+                        class="form-control" name="xl_grid_column" id="inputXLGridColums">
+                        </div>
+                        <div class="col-lg-6 col-12 mb-2">
+                        <label for="inputXlGridGutter" class="col-form-label fw-normal">Gutter ( min: 1 | max: 6 )</label>
+                        <input type="number" min="1" max="6" value="${set ? set.xl_grid_gutter ? set.xl_grid_gutter : '' : '1'}" 
+                        class="form-control" name="xl_grid_gutter" id="inputXlGridGutter">
+                        </div>
+                        </div>
+
+                         <hr>
+                        <h6>Breackpoint LG 992px</h6>
+                         <hr>
+                         <div class="row">
+                        <div class="col-lg-6 col-12 mb-2">
+                        <label for="inputLGGridColums" class="col-form-label fw-normal">Row column ( min: 1 | max: 6 )</label>
+                        <input type="number" min="1" max="6" value="${set ? set.lg_grid_column ? set.lg_grid_column : '' : '4'}" 
+                        class="form-control" name="lg_grid_column" id="inputLGGridColums">
+                        </div>
+                        <div class="col-lg-6 col-12 mb-2">
+                        <label for="inputlGGridGutter" class="col-form-label fw-normal">Gutter ( min: 1 | max: 6 )</label>
+                        <input type="number" min="1" max="6" value="${set ? set.lg_grid_gutter ? set.lg_grid_gutter : '' : '1'}" 
+                        class="form-control" name="lg_grid_gutter" id="inputlGGridGutter">
+                        </div>
+                        </div>
+                        
+                       <hr>
+                        <h6>Breackpoint MD 768px</h6>
+                         <hr>
+                         <div class="row">
+                        <div class="col-lg-6 col-12 mb-2">
+                        <label for="inputMdGridColums" class="col-form-label fw-normal">Row column ( min: 1 | max: 6 )</label>
+                        <input type="number" min="1" max="6" value="${set ? set.md_grid_column ? set.md_grid_column : '' : '3'}" 
+                        class="form-control" name="md_grid_column" id="inputMdGridColums">
+                        </div>
+                        <div class="col-lg-6 col-12 mb-2">
+                        <label for="inputMdGridGutter" class="col-form-label fw-normal">Gutter ( min: 1 | max: 6 )</label>
+                        <input type="number" min="1" max="6" value="${set ? set.md_grid_gutter ? set.md_grid_gutter : '' : '1'}" 
+                        class="form-control" name="md_grid_gutter" id="inputMdGridGutter">
+                        </div>
+                        </div>
+                        
+                       <hr>
+                        <h6>Breackpoint SM 576px</h6>
+                         <hr>
+                         <div class="row">
+                        <div class="col-lg-6 col-12 mb-2">
+                        <label for="inputSMGridColums" class="col-form-label fw-normal">Row column ( min: 1 | max: 6 )</label>
+                        <input type="number" min="1" max="6" value="${set ? set.sm_grid_column ? set.sm_grid_column : '' : '2'}" 
+                        class="form-control" name="sm_grid_column" id="inputSMGridColums">
+                        </div>
+                        <div class="col-lg-6 col-12 mb-2">
+                        <label for="inputSmGridGutter" class="col-form-label fw-normal">Gutter ( min: 1 | max: 6 )</label>
+                        <input type="number" min="1" max="6" value="${set ? set.sm_grid_gutter ? set.sm_grid_gutter : '' : '1'}" 
+                        class="form-control" name="sm_grid_gutter" id="inputSmGridGutter">
+                        </div>
+                        </div>
+                        
+                       <hr>
+                        <h6>Breackpoint XS 450px</h6>
+                         <hr>
+                         <div class="row">
+                        <div class="col-lg-6 col-12 mb-2">
+                        <label for="inputXsGridColums" class="col-form-label fw-normal">Row column ( min: 1 | max: 6 )</label>
+                        <input type="number" min="1" max="6" value="${set ? set.xs_grid_column ? set.xs_grid_column : '' : '1'}" 
+                        class="form-control" name="xs_grid_column" id="inputXsGridColums">
+                        </div>
+                        <div class="col-lg-6 col-12 mb-2">
+                        <label for="inputXsGridGutter" class="col-form-label fw-normal">Gutter ( min: 1 | max: 6 )</label>
+                        <input type="number" min="1" max="6" value="${set ? set.xs_grid_gutter ? set.xs_grid_gutter : '' : '1'}" 
+                        class="form-control" name="xs_grid_gutter" id="inputXsGridGutter">
+                        </div>
+                        </div>
+                        `;
                         optionsField.html(html);
                         $(fieldSetClass).prop('disabled', false);
                         typeSelect.removeClass('is-invalid');
+                        checkCaption.prop('disabled', false);
                         break;
                     case '3':
                         html = `
-                        <h6 class="font-blue"><i class="fa fa-gears"></i> Galerie Einstellungen</h6>
+                        <h6 class="font-blue pt-3"><i class="fa fa-gears"></i> Galerie Einstellungen</h6>
                         <div class="row">
-                        <div class="col-lg-6 col-12 mb-2">
-                        <label for="inputImgWidth" class="col-form-label fw-normal">Bildgröße max. (px)</label>
-                        <input type="number" value="${set && set.img_width ? set.img_width : ''}" class="form-control" name="img_width" id="inputImgWidth">
-                        </div>
                         <div class="col-lg-6 col-12 mb-2">
                         <label for="changeImageSize" class="col-form-label fw-normal"><b class="font-blue">
                         <i class="fa fa-caret-down"></i>&nbsp; Bildgröße</b></label>
                         <select onchange="this.blur()" class="form-select w-100" name="image_size" id="changeImageSize">
                         <option value="thumbnail" ${set && set.img_size == 'thumbnail' ? 'selected' : ''}>Thumbnail</option>
-                        <option value="medium" ${set && set.img_size == 'medium' ? 'selected' : ''}>Medium</option>
+                        <option value="medium" ${set && set.img_size == 'medium' ? 'selected' : '' ? !set : 'selected'}>Medium</option>
                         <option value="large" ${set && set.img_size == 'large' ? 'selected' : ''}>Large</option>
                         <option value="full" ${set && set.img_size == 'full' ? 'selected' : ''}>Full</option>
                         </select>
                         </div> 
-                        </div>`;
+                        </div>
+                        <hr>
+                        <h5>Breakpoints <small class="small">( Responsive )</small></h5>
+                        <div class="form-text">Eigenschaften die in einer bestimmten
+                         Bildschirmbreite geändert werden sollen.
+                        </div>
+                        <hr>
+                        <h6>Breackpoint XL 1200px</h6>
+                         <hr>
+                         <div class="row">
+                        <div class="col-lg-6 col-12 mb-2">
+                        <label for="inputXLColums" class="col-form-label fw-normal">Row column ( min: 1 | max: 6 )</label>
+                        <input type="number" min="1" max="6" value="${set && set.xl_column ? set.xl_column : '' ? '' : '6'}" 
+                        class="form-control" name="xl_column" id="inputXLColums">
+                        </div>
+                        <div class="col-lg-6 col-12 mb-2">
+                        <label for="inputXlGutter" class="col-form-label fw-normal">Gutter ( min: 1 | max: 6 )</label>
+                        <input type="number" min="1" max="6" value="${set && set.xl_gutter ? set.xl_gutter : '' ? '' : '1'}" 
+                        class="form-control" name="xl_gutter" id="inputXlGutter">
+                        </div>
+                        </div>
+
+                         <hr>
+                        <h6>Breackpoint LG 992px</h6>
+                         <hr>
+                         <div class="row">
+                        <div class="col-lg-6 col-12 mb-2">
+                        <label for="inputLGColums" class="col-form-label fw-normal">Row column ( min: 1 | max: 6 )</label>
+                        <input type="number" min="1" max="6" value="${set && set.lg_column ? set.lg_column : '' ? '' : '5'}" 
+                        class="form-control" name="lg_column" id="inputLGColums">
+                        </div>
+                        <div class="col-lg-6 col-12 mb-2">
+                        <label for="inputlGGutter" class="col-form-label fw-normal">Gutter ( min: 1 | max: 6 )</label>
+                        <input type="number" min="1" max="6" value="${set && set.lg_gutter ? set.lg_gutter : '' ? '' : '1'}" 
+                        class="form-control" name="lg_gutter" id="inputlGGutter">
+                        </div>
+                        </div>
+                        
+                       <hr>
+                        <h6>Breackpoint MD 768px</h6>
+                         <hr>
+                         <div class="row">
+                        <div class="col-lg-6 col-12 mb-2">
+                        <label for="inputMdColums" class="col-form-label fw-normal">Row column ( min: 1 | max: 6 )</label>
+                        <input type="number" min="1" max="6" value="${set && set.md_column ? set.md_column : '' ? '' : '4'}" 
+                        class="form-control" name="md_column" id="inputMdColums">
+                        </div>
+                        <div class="col-lg-6 col-12 mb-2">
+                        <label for="inputMdGutter" class="col-form-label fw-normal">Gutter ( min: 1 | max: 6 )</label>
+                        <input type="number" min="1" max="6" value="${set && set.md_gutter ? set.md_gutter : '' ? '' : '1'}" 
+                        class="form-control" name="md_gutter" id="inputMdGutter">
+                        </div>
+                        </div>
+                        
+                       <hr>
+                        <h6>Breackpoint SM 576px</h6>
+                         <hr>
+                         <div class="row">
+                        <div class="col-lg-6 col-12 mb-2">
+                        <label for="inputSMColums" class="col-form-label fw-normal">Row column ( min: 1 | max: 6 )</label>
+                        <input type="number" min="1" max="6" value="${set && set.sm_column ? set.sm_column : '' ? '' : '3'}" 
+                        class="form-control" name="sm_column" id="inputSMColums">
+                        </div>
+                        <div class="col-lg-6 col-12 mb-2">
+                        <label for="inputSmGutter" class="col-form-label fw-normal">Gutter ( min: 1 | max: 6 )</label>
+                        <input type="number" min="1" max="6" value="${set && set.sm_gutter ? set.sm_gutter : '' ? '' : '1'}" 
+                        class="form-control" name="sm_gutter" id="inputSmGutter">
+                        </div>
+                        </div>
+                        
+                       <hr>
+                        <h6>Breackpoint XS 450px</h6>
+                         <hr>
+                         <div class="row">
+                        <div class="col-lg-6 col-12 mb-2">
+                        <label for="inputXsColums" class="col-form-label fw-normal">Row column ( min: 1 | max: 6 )</label>
+                        <input type="number" min="1" max="6" value="${set && set.xs_column ? set.xs_column : '' ? '' : '2'}" 
+                        class="form-control" name="xs_column" id="inputXsColums">
+                        </div>
+                        <div class="col-lg-6 col-12 mb-2">
+                        <label for="inputXsGutter" class="col-form-label fw-normal">Gutter ( min: 1 | max: 6 )</label>
+                        <input type="number" min="1" max="6" value="${set && set.xs_gutter ? set.xs_gutter : '' ? '' : '1'}" 
+                        class="form-control" name="xs_gutter" id="inputXsGutter">
+                        </div>
+                        </div>
+                        `;
                         optionsField.html(html);
                         $(fieldSetClass).prop('disabled', false);
                         typeSelect.removeClass('is-invalid');
+                        checkCaption.prop('checked', false);
+                        checkCaption.prop('disabled', true);
+                        modalCaption.prop('disabled', true);
                         break;
                 }
             } else {
@@ -1306,9 +1499,20 @@ jQuery(document).ready(function ($) {
         <input type="number" name="preload_pages" value="${sld ? sld.preload_pages ? sld.preload_pages : '' : 1}" 
         placeholder="z.B. 1" class="form-control" id="InputPreloadPages">
         </div>
-
         </div>
-        
+        <div class="row">
+        <div class="col-md-6 col-lg-4 col-xl-3 mb-3">
+        <label for="selectImgSize" class="form-label">Bildgröße </label>
+        <select class="form-select w-100 " name="img_size" id="selectImgSize" >
+        <option value="thumbnail"${sld ? sld.img_size == 'thumbnail' ? 'selected' : '' : ''}>thumbnail</option>
+        <option value="medium" ${sld && sld.img_size == 'medium' ? 'selected' : 'selected'}>medium</option>
+        <option value="large" ${sld && sld.img_size == 'large' ? 'selected' : ''}>large</option>
+        <option value="full" ${sld && sld.img_size == 'full' ? 'selected' : ''}>full</option>
+        </select>
+        </div>
+        <div class="col-md-6 col-lg-4 col-xl-3 mb-3"></div>
+        </div>
+
         <hr>
         <div class="row pt-3">
         <div class="col-sm-6 col-md-4 col-xl-2 mb-3">
@@ -1349,7 +1553,7 @@ jQuery(document).ready(function ($) {
         for="rewindCheck">aktiv</label>
         </div>
         </div>
-   
+
         
        <div class="col-sm-6 col-md-4 col-xl-2 mb-3">
        <label 
@@ -1741,6 +1945,8 @@ jQuery(document).ready(function ($) {
         $('#slideFormWrapper').html(html);
     }
 
+
+
     /**=============================================
      ================ Löschen Modal ================
      ===============================================
@@ -1770,6 +1976,63 @@ jQuery(document).ready(function ($) {
             modalTitle.innerHTML = `<i class="fa fa-trash-o"></i>&nbsp; ${formType} löschen`;
         });
     }
+
+
+
+
+    /**================================================
+     ================ IMAGES SORTABLES ================
+     ==================================================
+     */
+    function load_sortable_event_handler(){
+        let postSelectSortable = document.getElementById("galerie-container");
+        let elementArray = [];
+
+        const sortable = Sortable.create(postSelectSortable, {
+            animation: 300,
+            //filter: ".adminBox",
+            handle: ".postSortableArrow",
+            //group: 'a',
+            ghostClass: 'sortable-ghost',
+            forceFallback: true,
+            scroll: true,
+            bubbleScroll: true,
+            scrollSensitivity: 150,
+            easing: "cubic-bezier(0.4, 0.0, 0.2, 1)",
+            scrollSpeed: 20,
+            emptyInsertThreshold: 5,
+            dataIdAttr: 'data-id',
+            onMove: function (evt) {
+
+
+            },
+            setData: function (/** DataTransfer */dataTransfer, /** HTMLElement*/dragEl) {
+                dataTransfer.setData('Text', dragEl.textContent); // `dataTransfer` object of HTML5 DragEvent
+
+            },
+            onUpdate: function (evt) {
+                elementArray = [];
+                evt.to.childNodes.forEach(postSelectSortable => {
+                    if (postSelectSortable.className) {
+                        elementArray.push(postSelectSortable.className);
+                    }
+                });
+
+                $.post(ps_ajax_obj.ajax_url, {
+                    '_ajax_nonce': ps_ajax_obj.nonce,
+                    'action': 'PostSelHandle',
+                    method: 'image_change_position',
+                    data:elementArray
+                });
+                // send_xhr_form_data(changeSelect, false);
+            }
+        });
+    }
+
+    $(document).on('mousedown', '.postSortableArrow', function() {
+
+
+    });
 
     /**=============================================
      ================ FORM Serialize ================
@@ -1812,6 +2075,9 @@ jQuery(document).ready(function ($) {
             x.className = x.className.replace("show", "");
         }, 3000);
     }
+
+
+
 });
 
 function createRandomInteger(length) {
@@ -1823,3 +2089,4 @@ function createRandomInteger(length) {
     }
     return randomCodes;
 }
+

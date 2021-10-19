@@ -22,7 +22,7 @@
 
 defined( 'ABSPATH' ) or die();
 //DEFINE CONSTANT
-const POST_SELECT_PLUGIN_DB_VERSION = '1.0.3';
+const POST_SELECT_PLUGIN_DB_VERSION = '1.0.2';
 const POST_SELECT_MIN_PHP_VERSION = '8.0';
 const POST_SELECT_MIN_WP_VERSION = '5.7';
 
@@ -38,8 +38,12 @@ define('POST_SELECT_PLUGIN_URL', plugins_url('wp-post-selector'));
 const POST_SELECT_PLUGIN_INC = POST_SELECT_PLUGIN_DIR . DIRECTORY_SEPARATOR . 'inc' . DIRECTORY_SEPARATOR;
 //PLUGIN DATA PATH
 const POST_SELECT_PLUGIN_DATA = POST_SELECT_PLUGIN_INC  . 'plugin-data' . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR;
+//PLUGIN DATA GALERIE PATH
+const POST_SELECT_PLUGIN_GALERIE_DATA = POST_SELECT_PLUGIN_INC  . 'galerie-data' . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR;
 //PLUGIN DATA URL
 define('POST_SELECT_PLUGIN_DATA_URL', plugins_url('wp-post-selector').'/inc/plugin-data/build/');
+//PLUGIN DATA URL
+define('POST_SELECT_PLUGIN_GALERIE_DATA_URL', plugins_url('wp-post-selector').'/inc/galerie-data/build/');
 
 /**
  * REGISTER PLUGIN

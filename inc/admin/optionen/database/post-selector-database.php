@@ -31,6 +31,7 @@ function post_selector_formular_theme_jal_install() {
         is_link  BOOLEAN NULL,
         hover_aktiv  BOOLEAN NOT NULL DEFAULT FALSE,
         hover_title_aktiv  BOOLEAN NOT NULL DEFAULT TRUE,
+        lazy_load_aktiv BOOLEAN NOT NULL DEFAULT TRUE,
         hover_beschreibung_aktiv  BOOLEAN NOT NULL DEFAULT TRUE,  
         lightbox_aktiv  BOOLEAN NOT NULL DEFAULT TRUE,
         caption_aktiv  BOOLEAN NOT NULL DEFAULT TRUE, 
@@ -47,6 +48,7 @@ function post_selector_formular_theme_jal_install() {
         id int(11) NOT NULL AUTO_INCREMENT,
         galerie_id mediumint(11) NOT NULL,
         img_id int(11) NOT NULL,
+        position int(11) NOT NULL DEFAULT 0,
         img_caption varchar(128) NULL,
         img_title varchar(128) NULL, 
         img_beschreibung text NULL,
@@ -56,8 +58,6 @@ function post_selector_formular_theme_jal_install() {
         hover_aktiv BOOLEAN NOT NULL DEFAULT FALSE,
         hover_title_aktiv BOOLEAN NOT NULL DEFAULT FALSE,
         hover_beschreibung_aktiv BOOLEAN NOT NULL DEFAULT FALSE,      
-        lightbox_aktiv BOOLEAN NOT NULL DEFAULT FALSE,
-        caption_aktiv BOOLEAN NOT NULL DEFAULT FALSE,
         created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
        PRIMARY KEY (id)
      ) $charset_collate;";

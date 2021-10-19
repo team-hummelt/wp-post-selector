@@ -26,6 +26,7 @@ switch ( $method ) {
 		}
 		$bezeichnung = filter_input( INPUT_POST, 'bezeichnung', FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH );
 
+        $img_size = filter_input( INPUT_POST, 'img_size', FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH );
 
 		//Input CheckBoxen
 		filter_input( INPUT_POST, 'autoplay', FILTER_SANITIZE_STRING ) ? $autoplay = 1 : $autoplay = 0;
@@ -103,6 +104,7 @@ switch ( $method ) {
 		$demo_type = filter_input( INPUT_POST, 'demo_type', FILTER_SANITIZE_NUMBER_INT );
 
 		$sliderSettings = [
+		    'img_size'       => $img_size,
 			'autoplay'       => $autoplay,
 			'cover'          => $cover,
 			'trim_space'     => $trim_space,
@@ -232,6 +234,8 @@ switch ( $method ) {
         filter_input(INPUT_POST, 'lightbox_aktiv', FILTER_SANITIZE_STRING) ? $record->lightbox_aktiv = true : $record->lightbox_aktiv = false;
         filter_input(INPUT_POST, 'caption_aktiv', FILTER_SANITIZE_STRING) ? $record->caption_aktiv = true : $record->caption_aktiv = false;
 
+        filter_input(INPUT_POST, 'lazy_load_aktiv', FILTER_SANITIZE_STRING) ? $record->lazy_load_aktiv = true : $record->lazy_load_aktiv = false;
+
         $img_size = filter_input( INPUT_POST, 'image_size', FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH );
 
         $record->is_link = false;
@@ -267,18 +271,67 @@ switch ( $method ) {
                 filter_input(INPUT_POST, 'galerie_crop_aktiv', FILTER_SANITIZE_STRING) ? $galerie_crop_aktiv = true : $galerie_crop_aktiv = false;
                 $img_width   = filter_input( INPUT_POST, 'img_width', FILTER_VALIDATE_INT );
                 $img_height   = filter_input( INPUT_POST, 'img_height', FILTER_VALIDATE_INT );
+
+                $xl_grid_column = filter_input( INPUT_POST, 'xl_grid_column', FILTER_SANITIZE_STRING);
+                $xl_grid_gutter = filter_input( INPUT_POST, 'xl_grid_gutter', FILTER_SANITIZE_STRING);
+
+                $lg_grid_column = filter_input( INPUT_POST, 'lg_grid_column', FILTER_SANITIZE_STRING);
+                $lg_grid_gutter = filter_input( INPUT_POST, 'lg_grid_gutter', FILTER_SANITIZE_STRING);
+
+                $md_grid_column = filter_input( INPUT_POST, 'md_grid_column', FILTER_SANITIZE_STRING);
+                $md_grid_gutter = filter_input( INPUT_POST, 'md_grid_gutter', FILTER_SANITIZE_STRING);
+
+                $sm_grid_column = filter_input( INPUT_POST, 'sm_grid_column', FILTER_SANITIZE_STRING);
+                $sm_grid_gutter = filter_input( INPUT_POST, 'sm_grid_gutter', FILTER_SANITIZE_STRING);
+
+                $xs_grid_column = filter_input( INPUT_POST, 'xs_grid_column', FILTER_SANITIZE_STRING);
+                $xs_grid_gutter = filter_input( INPUT_POST, 'xs_grid_gutter', FILTER_SANITIZE_STRING);
+
                 $typeSettings = [
                     'img_size' => $img_size,
                     'crop' => $galerie_crop_aktiv,
-                    'img_width' => $img_width ?: 350,
-                    'img_height' => !$img_height &&  !$galerie_crop_aktiv ? 280 : $img_height
+                    'img_width' => $img_width ?: 260,
+                    'img_height' => !$img_height &&  !$galerie_crop_aktiv ? 160 : $img_height,
+                    'xl_grid_column' => $xl_grid_column ?: 5,
+                    'xl_grid_gutter' => $xl_grid_gutter ?: 1,
+                    'lg_grid_column' => $lg_grid_column ?: 4,
+                    'lg_grid_gutter' => $lg_grid_gutter ?: 1,
+                    'md_grid_column' => $md_grid_column ?: 3,
+                    'md_grid_gutter' => $md_grid_gutter ?: 1,
+                    'sm_grid_column' => $sm_grid_column ?: 2,
+                    'sm_grid_gutter' => $sm_grid_gutter ?: 1,
+                    'xs_grid_column' => $xs_grid_column ?: 1,
+                    'xs_grid_gutter' => $xs_grid_gutter ?: 1
                 ];
                 break;
             case '3':
-                $img_width   = filter_input( INPUT_POST, 'img_width', FILTER_VALIDATE_INT );
+                $xl_column = filter_input( INPUT_POST, 'xl_column', FILTER_SANITIZE_STRING);
+                $xl_gutter = filter_input( INPUT_POST, 'xl_gutter', FILTER_SANITIZE_STRING);
+
+                $lg_column = filter_input( INPUT_POST, 'lg_column', FILTER_SANITIZE_STRING);
+                $lg_gutter = filter_input( INPUT_POST, 'lg_gutter', FILTER_SANITIZE_STRING);
+
+                $md_column = filter_input( INPUT_POST, 'md_column', FILTER_SANITIZE_STRING);
+                $md_gutter = filter_input( INPUT_POST, 'md_gutter', FILTER_SANITIZE_STRING);
+
+                $sm_column = filter_input( INPUT_POST, 'sm_column', FILTER_SANITIZE_STRING);
+                $sm_gutter = filter_input( INPUT_POST, 'sm_gutter', FILTER_SANITIZE_STRING);
+
+                $xs_column = filter_input( INPUT_POST, 'xs_column', FILTER_SANITIZE_STRING);
+                $xs_gutter = filter_input( INPUT_POST, 'xs_gutter', FILTER_SANITIZE_STRING);
+
                 $typeSettings = [
-                    'img_size' => $img_size,
-                    'img_width' => $img_width ?: 350,
+                    'img_size'  => $img_size,
+                    'xl_column' => $xl_column ?: 6,
+                    'xl_gutter' => $xl_gutter ?: 2,
+                    'lg_column' => $lg_column ?: 5,
+                    'lg_gutter' => $lg_gutter ?: 1,
+                    'md_column' => $md_column ?: 4,
+                    'md_gutter' => $md_gutter ?: 1,
+                    'sm_column' => $sm_column ?: 3,
+                    'sm_gutter' => $sm_gutter ?: 1,
+                    'xs_column' => $xs_column ?: 2,
+                    'xs_gutter' => $xs_gutter ?: 1
                 ];
                 break;
             default:
@@ -369,7 +422,7 @@ switch ( $method ) {
         $galerie->record->type_settings = json_decode($galerie->record->type_settings);
 
 
-        $args = sprintf('WHERE galerie_id=%d', $id);
+        $args = sprintf('WHERE galerie_id=%d ORDER BY position ASC', $id);
         $images = apply_filters('post_selector_get_images',$args);
 
         if($images->status){
@@ -430,8 +483,6 @@ switch ( $method ) {
                 filter_input(INPUT_POST, 'hover_aktiv', FILTER_SANITIZE_STRING) ? $record->hover_aktiv = true : $record->hover_aktiv = false;
                 filter_input(INPUT_POST, 'hover_title_aktiv', FILTER_SANITIZE_STRING) ? $record->hover_title_aktiv = true : $record->hover_title_aktiv = false;
                 filter_input(INPUT_POST, 'hover_beschreibung_aktiv', FILTER_SANITIZE_STRING) ? $record->hover_beschreibung_aktiv = true : $record->hover_beschreibung_aktiv = false;
-                filter_input(INPUT_POST, 'lightbox_aktiv', FILTER_SANITIZE_STRING) ? $record->lightbox_aktiv = true : $record->lightbox_aktiv = false;
-                filter_input(INPUT_POST, 'caption_aktiv', FILTER_SANITIZE_STRING) ? $record->caption_aktiv = true : $record->caption_aktiv = false;
                 filter_input(INPUT_POST, 'galerie_settings_aktiv', FILTER_SANITIZE_STRING) ? $record->galerie_settings_aktiv = true : $record->galerie_settings_aktiv = false;
 
                 $link = filter_input( INPUT_POST, 'link', FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH );
@@ -550,7 +601,7 @@ switch ( $method ) {
             return $responseJson;
         }
 
-        $args = sprintf('WHERE id=%d', $id);
+        $args = sprintf('WHERE id=%d ORDER BY position ASC', $id);
         $image = apply_filters('post_selector_get_images', $args, false);
         if(!$image->status){
             $responseJson->msg = 'Ein Fehler ist aufgetreten!';
@@ -604,5 +655,20 @@ switch ( $method ) {
                 break;
         }
 
+        break;
+    case'image_change_position':
+       $regEx = '/(\d{1,6})/i';
+        if($_POST['data']){
+            $position = 1;
+            foreach ($_POST['data'] as $tmp){
+                preg_match($regEx, $tmp, $hit);
+                if($hit[0]){
+                    apply_filters('post_update_sortable_position',$hit[0], $position);
+                    $position++;
+                }
+            }
+        }
+
+        $responseJson->status = true;
         break;
 }
