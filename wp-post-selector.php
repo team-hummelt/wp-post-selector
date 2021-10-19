@@ -10,23 +10,23 @@
  * Plugin Name:       Post-Selector - Gutenberg Block Plugin
  * Plugin URI:        https://www.hummelt-werbeagentur.de/leistungen/
  * Description:       Auswahl von Beiträgen im Gutenberg-Block Editor mit verschiedenen Ausgabeoptionen.
- * Version:           1.0.2
+ * Version:           1.0.3
  * Author:            Jens Wiecker
  * License:           GPLv2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Requires PHP:      8.0
  * Requires at least: 5.8
  * Tested up to:      5.8
- * Stable tag:        1.0.2
+ * Stable tag:        1.0.3
  */
 
 defined( 'ABSPATH' ) or die();
 //DEFINE CONSTANT
-const POST_SELECT_PLUGIN_DB_VERSION = '1.0.0';
+const POST_SELECT_PLUGIN_DB_VERSION = '1.0.3';
 const POST_SELECT_MIN_PHP_VERSION = '8.0';
 const POST_SELECT_MIN_WP_VERSION = '5.7';
 
-const SLIDER_IMAGE_SIZE = 'large';
+const SLIDER_LAZY_LOAD_ANIMATION = false;
 
 //PLUGIN ROOT PATH
 define('POST_SELECT_PLUGIN_DIR', dirname(__FILE__));
@@ -38,8 +38,15 @@ define('POST_SELECT_PLUGIN_URL', plugins_url('wp-post-selector'));
 const POST_SELECT_PLUGIN_INC = POST_SELECT_PLUGIN_DIR . DIRECTORY_SEPARATOR . 'inc' . DIRECTORY_SEPARATOR;
 //PLUGIN DATA PATH
 const POST_SELECT_PLUGIN_DATA = POST_SELECT_PLUGIN_INC  . 'plugin-data' . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR;
+//PLUGIN DATA GALERIE PATH
+const POST_SELECT_PLUGIN_GALERIE_DATA = POST_SELECT_PLUGIN_INC  . 'galerie-data' . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR;
 //PLUGIN DATA URL
 define('POST_SELECT_PLUGIN_DATA_URL', plugins_url('wp-post-selector').'/inc/plugin-data/build/');
+//PLUGIN DATA URL
+define('POST_SELECT_PLUGIN_GALERIE_DATA_URL', plugins_url('wp-post-selector').'/inc/galerie-data/build/');
+//PLUGIN VERSION
+$ps_plugin_data = get_file_data(dirname(__FILE__) . '/wp-post-selector.php', array('Version' => 'Version'), false);
+define( "POST_SELECTOR_PLUGIN_VERSION", $ps_plugin_data['Version']);
 
 /**
  * REGISTER PLUGIN

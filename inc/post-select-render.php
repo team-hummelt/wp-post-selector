@@ -27,3 +27,16 @@ function gutenberg_block_post_selector_render_filter($query,$attributes) {
 	return ob_get_clean();
     }
 }
+
+//GALERIE
+function callback_post_selector_galerie( $attributes ) {
+    return apply_filters( 'gutenberg_block_post_selector_galerie_render', $attributes);
+}
+
+function gutenberg_block_post_selector_galerie_render_filter($attributes){
+    if ($attributes ) {
+        ob_start();
+        apply_filters('load_galerie_templates', $attributes);
+        return ob_get_clean();
+    }
+}

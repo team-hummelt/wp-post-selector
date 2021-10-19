@@ -50,11 +50,6 @@ if ( ! class_exists( 'PostSliderTemplates' ) ) {
 		private function render_splide_template( $settings, $attr, $data ) {
 
 			$rand = apply_filters( 'get_ps_generate_random_id', 12, 0 );
-			if ( isset( $attr->lightBoxActive ) && $attr->lightBoxActive ) {
-				$dataGallery = 'data-gallery=""';
-			} else {
-				$dataGallery = '';
-			}
 
 			if ( isset( $attr->hoverBGColor ) && $attr->hoverBGColor && isset($attr->TextColor) && $attr->TextColor) {
 				$bGColor = $attr->hoverBGColor.'d9';
@@ -87,21 +82,25 @@ if ( ! class_exists( 'PostSliderTemplates' ) ) {
 
 			$count = count((array) $data);
 			$settings->arrows && $count > 0 ? $arrows  = '' : $arrows = 'd-none';
-			$settings->label ? $padding = 'style="padding-bottom:3rem!important"' : $padding = '';
+			$settings->label ? $padding = 'style="padding-bottom:2.5rem!important"' : $padding = '';
+            $settings->label ? $arrow_bt = 'style="margin-top:-1.25rem"' : $arrow_bt = '';
 			?>
             <div class="wp-block-hupa-theme-post-list">
                 <div data-id="<?= $attr->selectedSlider ?>" data-rand="<?= $rand ?>" class="splide splide<?= $rand ?>">
                     <div class="splide__arrows <?=$arrows?>">
-                        <button class="splide__arrow splide__arrow--prev">
+                        <button class="splide__arrow splide__arrow--prev" <?=$arrow_bt?>>
                             <i class="fa fa-angle-left"></i>
                         </button>
-                        <button class="splide__arrow splide__arrow--next">
+                        <button class="splide__arrow splide__arrow--next" <?=$arrow_bt?>>
                             <i class="fa fa-angle-right"></i>
                         </button>
                     </div>
                     <div class="splide__track" <?=$padding?>>
-                        <div class="splide__list">
+                        <div class="splide__list <?=$attr->lightBoxActive ? 'light-box-controls' : ''?>">
 							<?php foreach ( $data as $tmp ):
+
+                                $img_src_url = wp_get_attachment_image_src($tmp->img_id, $settings->img_size, false);
+                                $img_full_url = wp_get_attachment_image_src($tmp->img_id, 'large', false);
 								if($attr->radioMedienLink == 2) {
 									$src = $tmp->href;
                                     } else {
@@ -125,7 +124,7 @@ if ( ! class_exists( 'PostSliderTemplates' ) ) {
 								?>
                                 <div class="splide__slide">
                                     <img class="splide-img" alt="<?= $tmp->alt ?>"
-                                         data-splide-lazy="<?= $tmp->image ?>" src="<?= $tmp->image ?>"/>
+                                         data-splide-lazy="<?= $img_src_url[0] ?>" src="<?= $img_src_url[0] ?>"/>
                                     <div class="slide-hover <?=$settings->hover ? '' : 'd-none'?>"<?=$bgStyle?>>
                                         <div class="hover-wrapper">
                                             <div class="hover-headline"><?=$title?></div>
@@ -134,9 +133,9 @@ if ( ! class_exists( 'PostSliderTemplates' ) ) {
                                                   <?=$excerpt?>
                                                 <?php endif; ?>
                                             </div>
-                                            <div class="hover-button">
-                                                <a title="<?=$title?>" <?=$dataGallery?> href="<?=$src?>" class="btn-hover" <?=$btnOut?>> <i class="fa fa-image"></i> </a>
-                                                <a href="<?=$tmp->permalink?>" class="btn-hover <?=$btnShowLink?>" title="Link zum Beitrag" <?=$btnOut?>> <i class="fa fa-list"></i> </a>
+                                            <div class="hover-button mt-auto" style="background-color: <?=$attr->hoverBGColor?>">
+                                                <a data-control="single" title="<?=$title?>" href="<?=$img_full_url[0]?>" class="img-link btn-grid-hover btn-img" <?=$btnOut?>></a>
+                                                <a href="<?=$tmp->permalink?>" class="btn-grid-hover btn-link <?=$btnShowLink?>" title="Link zum Beitrag" <?=$btnOut?>> </a>
                                             </div>
                                         </div>
                                     </div>
@@ -149,7 +148,6 @@ if ( ! class_exists( 'PostSliderTemplates' ) ) {
                     </div>
                 </div>
             </div>
-
 		<?php
 		}
 	}
