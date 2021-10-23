@@ -70,6 +70,11 @@ if (!class_exists('PostSelectorGalerieFilter')) {
             //JOB WARNING HELPER
             //GET Galerie Types Select
             add_filter('get_galerie_types_select', array($this, 'getGalerieTypesSelect'));
+            //GET Animate Type
+            add_filter('post_selector_get_animate_select', array($this, 'postSelectorGetAnimateSelect'));
+            //GET Image FileSize
+            add_filter('post_select_file_size_convert', array($this, 'PostSelectFileSizeConvert'));
+
         }
 
 
@@ -93,9 +98,11 @@ if (!class_exists('PostSelectorGalerieFilter')) {
                     'show_bezeichnung' => $record->show_bezeichnung,
                     'show_beschreibung' => $record->show_beschreibung,
                     'beschreibung' => $record->beschreibung,
-                    'lazy_load_aktiv' => $record->lazy_load_aktiv
+                    'lazy_load_aktiv' => $record->lazy_load_aktiv,
+                    'lazy_load_ani_aktiv' => $record->lazy_load_ani_aktiv,
+                    'animate_select' => $record->animate_select
                 ),
-                array('%s', '%d', '%s', '%s','%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%s', '%d')
+                array('%s', '%d', '%s', '%s','%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%s', '%d', '%d', '%s')
             );
 
             $return = new stdClass();
@@ -133,10 +140,12 @@ if (!class_exists('PostSelectorGalerieFilter')) {
                     'show_bezeichnung' => $record->show_bezeichnung,
                     'show_beschreibung' => $record->show_beschreibung,
                     'beschreibung' => $record->beschreibung,
-                    'lazy_load_aktiv' => $record->lazy_load_aktiv
+                    'lazy_load_aktiv' => $record->lazy_load_aktiv,
+                    'lazy_load_ani_aktiv' => $record->lazy_load_ani_aktiv,
+                    'animate_select' => $record->animate_select
                 ),
                 array('id' => $record->id),
-                array('%s', '%d', '%s','%s', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%s', '%d'),
+                array('%s', '%d', '%s','%s', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%s', '%d', '%d', '%s'),
                 array('%d')
             );
         }
@@ -261,7 +270,7 @@ if (!class_exists('PostSelectorGalerieFilter')) {
             $return->count = 0;
             $fetchMethod ? $fetch = 'get_results' : $fetch = 'get_row';
             $table = $wpdb->prefix . $this->table_images;
-            $col ? $select = $col : $select = '*';
+            $col ? $select = $col : $select = '*, DATE_FORMAT(created_at, \'%d.%m.%Y %H:%i:%s\') AS created';
             $result = $wpdb->$fetch("SELECT {$select}  FROM {$table} {$args}");
             if (!$result) {
                 return $return;
@@ -309,6 +318,126 @@ if (!class_exists('PostSelectorGalerieFilter')) {
             ];
 
             return apply_filters('psArrayToObject', $types);
+        }
+
+        public function postSelectorGetAnimateSelect(): object
+        {
+            $seekers = array("bounce", "flash", "pulse", "rubberBand", "shakeX", "headShake", "swing", "tada", "wobble", "jello", "heartBeat");
+            $entrances = array("backInDown", "backInLeft", "backInRight", "backInUp");
+            //$back_exits = array("backOutDown","backOutLeft","backOutRight","backOutUp");
+            $bouncing = array("bounceIn", "bounceInDown", "bounceInLeft", "bounceInRight", "bounceInUp");
+            $fade = array("fadeIn", "fadeInDown", "fadeInDownBig", "fadeInLeft", "fadeInLeftBig", "fadeInRight", "fadeInRightBig", "fadeInUp", "fadeInUpBig", "fadeInTopLeft", "fadeInTopRight",
+                "fadeInBottomLeft", "fadeInBottomRight");
+            $flippers = array("flip", "flipInX", "flipInY", "flipOutX", "flipOutY");
+            $lightspeed = array("lightSpeedInRight", "lightSpeedInLeft", "lightSpeedOutRight", "lightSpeedOutLeft");
+            $rotating = array("rotateIn", "rotateInDownLeft", "rotateInDownRight", "rotateInUpLeft", "rotateInUpRight");
+            $zooming = array("zoomIn", "zoomInDown", "zoomInLeft", "zoomInRight", "zoomInUp");
+            $sliding = array("slideInDown", "slideInLeft", "slideInRight", "slideInUp");
+
+            $ani_arr = array();
+            for ($i = 0; $i < count($seekers); $i++) {
+                $ani_item = array(
+                    "animate" => $seekers[$i]
+                );
+                $ani_arr[] = $ani_item;
+            }
+
+            $ani_arr[] = array("value" => '-', "animate" => '----', "divider" => true);
+
+            for ($i = 0; $i < count($entrances); $i++) {
+                $ani_item = array(
+                    "animate" => $entrances[$i]
+                );
+                $ani_arr[] = $ani_item;
+            }
+
+            $ani_arr[] = array("value" => '-', "animate" => '----', "divider" => true);
+
+
+            for ($i = 0; $i < count($bouncing); $i++) {
+                $ani_item = array(
+                    "animate" => $bouncing[$i]
+                );
+                $ani_arr[] = $ani_item;
+            }
+
+            $ani_arr[] = array("value" => '-', "animate" => '----', "divider" => true);
+
+            for ($i = 0; $i < count($fade); $i++) {
+                $ani_item = array(
+                    "animate" => $fade[$i]
+                );
+                $ani_arr[] = $ani_item;
+            }
+
+            $ani_arr[] = array("value" => '-', "animate" => '----', "divider" => true);
+
+            for ($i = 0; $i < count($flippers); $i++) {
+                $ani_item = array(
+                    "animate" => $flippers[$i]
+                );
+                $ani_arr[] = $ani_item;
+            }
+
+            $ani_arr[] = array("value" => '-', "animate" => '----', "divider" => true);
+
+            for ($i = 0; $i < count($lightspeed); $i++) {
+                $ani_item = array(
+                    "animate" => $lightspeed[$i]
+                );
+                $ani_arr[] = $ani_item;
+            }
+
+            $ani_arr[] = array("value" => '-', "animate" => '----', "divider" => true);
+
+            for ($i = 0; $i < count($rotating); $i++) {
+                $ani_item = array(
+                    "animate" => $rotating[$i]
+                );
+                $ani_arr[] = $ani_item;
+            }
+
+            $ani_arr[] = array("value" => '-', "animate" => '----', "divider" => true);
+
+            for ($i = 0; $i < count($zooming); $i++) {
+                $ani_item = array(
+                    "animate" => $zooming[$i]
+                );
+                $ani_arr[] = $ani_item;
+            }
+
+            $ani_arr[] = array("value" => '-', "animate" => '----', "divider" => true);
+
+            for ($i = 0; $i < count($sliding); $i++) {
+                $ani_item = array(
+                    "animate" => $sliding[$i]
+                );
+                $ani_arr[] = $ani_item;
+            }
+
+            return apply_filters('arrayToObject', $ani_arr);
+        }
+
+        function PostSelectFileSizeConvert(float $bytes): string
+        {
+            $result = '';
+            $bytes = floatval($bytes);
+            $arBytes = array(
+                0 => array("UNIT" => "TB", "VALUE" => pow(1024, 4)),
+                1 => array("UNIT" => "GB", "VALUE" => pow(1024, 3)),
+                2 => array("UNIT" => "MB", "VALUE" => pow(1024, 2)),
+                3 => array("UNIT" => "KB", "VALUE" => 1024),
+                4 => array("UNIT" => "B", "VALUE" => 1),
+            );
+
+            foreach ($arBytes as $arItem) {
+                if ($bytes >= $arItem["VALUE"]) {
+                    $result = $bytes / $arItem["VALUE"];
+                    $result = str_replace(".", ",", strval(round($result, 2))) . " " . $arItem["UNIT"];
+                    break;
+                }
+            }
+            return $result;
         }
 
     }//endClass

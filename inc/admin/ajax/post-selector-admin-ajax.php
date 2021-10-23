@@ -218,11 +218,11 @@ switch ( $method ) {
     case'post_galerie_handle':
 
         $type = filter_input( INPUT_POST, 'type', FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH );
-        $bezeichnung = filter_input( INPUT_POST, 'bezeichnung', FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH );
-        $beschreibung = filter_input( INPUT_POST, 'beschreibung', FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH );
-
+        $bezeichnung = filter_input( INPUT_POST, 'bezeichnung', FILTER_SANITIZE_STRING );
+        $beschreibung = filter_input( INPUT_POST, 'beschreibung', FILTER_SANITIZE_STRING );
+        $record->animate_select = filter_input( INPUT_POST, 'animate_select', FILTER_SANITIZE_STRING );
         $record->type   = filter_input( INPUT_POST, 'galerie_type', FILTER_VALIDATE_INT );
-        $link = filter_input( INPUT_POST, 'link', FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH );
+        $link = filter_input( INPUT_POST, 'link', FILTER_SANITIZE_STRING);
         $url = filter_input(INPUT_POST, "url", FILTER_VALIDATE_URL);
 
         filter_input(INPUT_POST, 'show_bezeichnung', FILTER_SANITIZE_STRING) ? $record->show_bezeichnung = true : $record->show_bezeichnung = false;
@@ -235,6 +235,8 @@ switch ( $method ) {
         filter_input(INPUT_POST, 'caption_aktiv', FILTER_SANITIZE_STRING) ? $record->caption_aktiv = true : $record->caption_aktiv = false;
 
         filter_input(INPUT_POST, 'lazy_load_aktiv', FILTER_SANITIZE_STRING) ? $record->lazy_load_aktiv = true : $record->lazy_load_aktiv = false;
+        filter_input(INPUT_POST, 'lazy_load_ani_aktiv', FILTER_SANITIZE_STRING) ? $record->lazy_load_ani_aktiv = true : $record->lazy_load_ani_aktiv = false;
+
 
         $img_size = filter_input( INPUT_POST, 'image_size', FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH );
 
@@ -388,11 +390,12 @@ switch ( $method ) {
         break;
 
     case 'get_galerie_data':
-        $id   = filter_input( INPUT_POST, 'id', FILTER_VALIDATE_INT );
-        $type = filter_input( INPUT_POST, 'type', FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH );
 
+        $id   = filter_input( INPUT_POST, 'id', FILTER_VALIDATE_INT );
+        $type = filter_input( INPUT_POST, 'type', FILTER_SANITIZE_STRING);
         $responseJson->status = true;
         $responseJson->type = $type;
+
         switch ($type) {
             case'galerie-toast':
                 $galerie = apply_filters('post_selector_get_galerie','');
@@ -405,6 +408,8 @@ switch ( $method ) {
             $responseJson->status = false;
             return $responseJson;
         }
+
+        $responseJson->aniSelect = apply_filters('post_selector_get_animate_select', false);
 
         $pages = apply_filters('post_selector_get_theme_pages', false);
         $post = apply_filters('post_selector_get_theme_posts', false);
@@ -425,8 +430,8 @@ switch ( $method ) {
         $args = sprintf('WHERE galerie_id=%d ORDER BY position ASC', $id);
         $images = apply_filters('post_selector_get_images',$args);
 
+        $img_arr = [];
         if($images->status){
-            $img_arr = [];
             foreach ($images->record as $tmp){
                 $src = wp_get_attachment_image_src( $tmp->img_id, 'medium', false );
                 $url = wp_get_attachment_image_src( $tmp->img_id, 'large', false );
@@ -441,12 +446,13 @@ switch ( $method ) {
                 ];
                 $img_arr[] = $img_item;
             }
-            $img_arr ? $responseJson->images = $img_arr : $responseJson->images = false;
         }
+        $img_arr ? $responseJson->images = $img_arr : $responseJson->images = false;
         break;
 
     case 'delete_image':
         $id   = filter_input( INPUT_POST, 'id', FILTER_VALIDATE_INT );
+        $responseJson->type   = filter_input( INPUT_POST, 'type', FILTER_SANITIZE_STRING );
         if(!$id){
             $responseJson->msg = 'Ein Fehler ist aufgetreten!';
             $responseJson->status = false;
@@ -587,7 +593,7 @@ switch ( $method ) {
         } else {
            $responseJson->sitesSelect = $pages;
         }
-
+        $responseJson->aniSelect = apply_filters('post_selector_get_animate_select', false);
         $responseJson->galerieSelect = apply_filters('get_galerie_types_select','');
         $responseJson->status = true;
         break;
@@ -650,6 +656,7 @@ switch ( $method ) {
                 break;
             case '2':
             case '3':
+                $responseJson->aniSelect = apply_filters('post_selector_get_animate_select', false);
                 $responseJson->status = true;
                 $responseJson->disabled = false;
                 break;
@@ -670,5 +677,100 @@ switch ( $method ) {
         }
 
         $responseJson->status = true;
+        break;
+
+    case'delete_images_array':
+        if($_POST['images']){
+            foreach ($_POST['images'] as $tmp){
+                $id = filter_var($tmp, FILTER_VALIDATE_INT);
+                apply_filters('post_selector_delete_image', $id);
+            }
+
+            $responseJson->status = true;
+        }
+        break;
+
+    case 'galerie_data_table':
+        $id   = filter_input( INPUT_POST, 'id', FILTER_VALIDATE_INT );
+        $query = '';
+        $columns = array(
+            "",
+            "",
+            "img_title",
+            "created_at",
+            "",
+            "",
+            "",
+            ""
+        );
+
+        if (isset($_POST['search']['value'])) {
+         $query = 'WHERE ( galerie_id='. $id .'
+         AND ( img_title LIKE "%' . $_POST['search']['value'] . '%"
+         OR created_at LIKE "%' . $_POST['search']['value'] . '%"
+         OR img_caption LIKE "%' . $_POST['search']['value'] . '%"
+         OR img_beschreibung LIKE "%' . $_POST['search']['value'] . '%"
+       ) ) ';
+        } else {
+            $query = 'WHERE galerie_id='.$id.'';
+        }
+
+        if (isset($_POST['order'])) {
+            $query .= ' ORDER BY ' . $columns[$_POST['order']['0']['column']] . ' ' . $_POST['order']['0']['dir'] . ' ';
+        } else {
+            $query .= ' ORDER BY position ASC';
+        }
+
+        $limit = '';
+        if ($_POST["length"] != -1) {
+            $limit = ' LIMIT ' . $_POST['start'] . ', ' . $_POST['length'];
+        }
+
+        $table = apply_filters('post_selector_get_images',$query . $limit);
+        $data_arr = array();
+        if (!$table->status) {
+            return $responseJson = array(
+                "draw" => $_POST['draw'],
+                "recordsTotal" => 0,
+                "recordsFiltered" => 0,
+                "data" => $data_arr
+            );
+        }
+
+        foreach ($table->record as $tmp) {
+
+            $checkbox = '<div class="form-check mb-0 pb-0">
+                         <input data-id="'.$tmp->id.'"  class="form-check-input check-table-items" type="checkbox">
+                         </div>';
+            $img_src = wp_get_attachment_image_src($tmp->img_id);
+            $img_full = wp_get_attachment_image_src($tmp->img_id, 'full');
+            $imgMeta = wp_get_attachment_metadata($tmp->img_id);
+            $file = get_attached_file( $tmp->img_id ) ;
+            $size = filesize($file);
+
+            $finfo = new finfo(FILEINFO_MIME_TYPE);
+            $mimeType = $finfo->file($file);
+            $date = explode(' ', $tmp->created);
+            $data_item = array();
+            $data_item[] = $checkbox;
+            $data_item[] = '<a data-gallery="" title="'.$tmp->img_title.'" href="'.$img_full[0].'"><img src="'.$img_src[0].'" alt="" width="50"></a>';
+            $data_item[] = $tmp->img_title;
+            $data_item[] = '<span class="d-none">' . $tmp->created_at . '</span><b class="strong-font-weight">' . $date[0] . '</b><small style="font-size: .9rem" class="d-block">' . $date[1] . ' Uhr</small>';
+            $data_item[] = $mimeType;
+            $data_item[] = apply_filters('post_select_file_size_convert', $size);
+
+            $data_item[] = $imgMeta['width'] . 'x' .$imgMeta['height'] . ' (px)';
+            $data_item[] = '<button data-bs-id="'.$tmp->id.'" data-bs-type="image" data-bs-handle="image" data-bs-toggle="modal" data-bs-target="#galerieHandleModal" class="btn btn-blue-outline btn-sm"><i class="fa fa-gear"></i>&nbsp; settings</button>';
+            $data_item[] = '<button type="button" data-bs-id="'.$tmp->id.'" data-bs-type="table" data-bs-method="delete_image" data-bs-toggle="modal" data-bs-target="#formDeleteModal" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i>&nbsp; löschen</button>';
+            $data_arr[] = $data_item;
+        }
+
+        $tbCount = apply_filters('post_selector_get_images', 'WHERE galerie_id='.$id.'');
+        $responseJson = array(
+            "draw" => $_POST['draw'],
+            "recordsTotal" => $tbCount->count,
+            "recordsFiltered" => $tbCount->count,
+            "data" => $data_arr,
+        );
         break;
 }
