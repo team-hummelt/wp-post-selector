@@ -84,8 +84,9 @@ if ( ! class_exists( 'PostSliderTemplates' ) ) {
 			$settings->arrows && $count > 0 ? $arrows  = '' : $arrows = 'd-none';
 			$settings->label ? $padding = 'style="padding-bottom:2.5rem!important"' : $padding = '';
             $settings->label ? $arrow_bt = 'style="margin-top:-1.25rem"' : $arrow_bt = '';
+            $attr->className ? $customCss =  $attr->className : $customCss = '';
 			?>
-            <div class="wp-block-hupa-theme-post-list">
+            <div class="wp-block-hupa-theme-post-list <?=$customCss?>">
                 <div data-id="<?= $attr->selectedSlider ?>" data-rand="<?= $rand ?>" class="splide splide<?= $rand ?>">
                     <div class="splide__arrows <?=$arrows?>">
                         <button class="splide__arrow splide__arrow--prev" <?=$arrow_bt?>>

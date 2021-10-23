@@ -14,7 +14,7 @@ body .wp-bs-starter-wrapper {
 
 
 .post-selector-gallery-grid {
- display: grid;
+  display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(230px, 230px), 1fr));
   //gap:5px;
   column-gap: 5px;
@@ -343,13 +343,13 @@ table.dataTable.table-striped > tbody > tr.odd {
     border: 1px solid #a1a1a1;
     padding: .5rem;
     cursor: move;
-   // z-index: 9999 !important;
+    // z-index: 9999 !important;
   }
 
-.galerie-item {
-position: relative;
-  cursor: move;
-}
+  .galerie-item {
+    position: relative;
+    cursor: move;
+  }
 
   .sortable-chosen {
     i.fa {
@@ -357,6 +357,7 @@ position: relative;
       background-color: greenyellow;
       border-color: #3c434a;
     }
+
     img {
       opacity: .9;
     }
@@ -372,6 +373,7 @@ position: relative;
     display: none;
     //cursor: move!important;
   }
+
   .small {
     font-size: .875rem;
   }
@@ -610,10 +612,14 @@ position: relative;
     z-index: 99999 !important;
   }
 
-  .btn:focus, .btn:active, .active.btn:active, .active.btn:focus {
+  .btn:focus, .btn:active, .active.btn:active, .active.btn:focus,.page-link:focus {
     outline: none !important;
     box-shadow: none;
   }
+.page-link:focus {
+    background-color: #fff;
+  }
+
 
   .btn-blue {
     color: #fff;
@@ -787,11 +793,12 @@ position: relative;
     height: 2rem;
     border-radius: .25rem;
     border: 1px solid rgba(255, 255, 255, 0.4);
-    cursor:move;
+    cursor: move;
     color: #ffffffa3;
     background-color: rgba(0, 0, 0, 0.4);
     font-size: 1.4rem;
     transition: all 300ms;
+
     &:hover {
       color: #3c434a;
       background-color: greenyellow;
@@ -1002,6 +1009,25 @@ position: relative;
     }
   }
 
+  .galerie-change-view {
+    margin: 0 0.25rem 0 0;
+    display: block;
+    color: #8f8f8f;
+    cursor: pointer;
+    font-size: 1.7rem;
+    transition: all 250ms ease-in-out;
+    min-width: 2.1rem;
+
+    &.active {
+      color: $wp-blue;
+      font-size: 200%;
+      pointer-events: none;
+    }
+
+    &:hover:not(.active) {
+      color: #7d9bb0;
+    }
+  }
 }
 
 //end WRAPPER

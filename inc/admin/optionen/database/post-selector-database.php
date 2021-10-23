@@ -32,6 +32,8 @@ function post_selector_formular_theme_jal_install() {
         hover_aktiv  BOOLEAN NOT NULL DEFAULT FALSE,
         hover_title_aktiv  BOOLEAN NOT NULL DEFAULT TRUE,
         lazy_load_aktiv BOOLEAN NOT NULL DEFAULT TRUE,
+        lazy_load_ani_aktiv BOOLEAN NOT NULL DEFAULT TRUE,
+        animate_select varchar(60) NULL,
         hover_beschreibung_aktiv  BOOLEAN NOT NULL DEFAULT TRUE,  
         lightbox_aktiv  BOOLEAN NOT NULL DEFAULT TRUE,
         caption_aktiv  BOOLEAN NOT NULL DEFAULT TRUE, 

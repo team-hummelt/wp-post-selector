@@ -121,8 +121,9 @@ final class RegisterGutenbergPostSelector {
 		wp_enqueue_script( 'post-selector-admin-ajax-script' );
 		wp_localize_script( 'post-selector-admin-ajax-script', 'ps_ajax_obj', array(
 			'ajax_url' => admin_url( 'admin-ajax.php' ),
-			'nonce'    => $title_nonce
-		) );
+			'nonce'    => $title_nonce,
+            'data_table'      => POST_SELECT_PLUGIN_URL . '/inc/assets/json/DataTablesGerman.json'
+		));
 	}
 
 	/**
@@ -429,6 +430,8 @@ final class RegisterGutenbergPostSelector {
 		// TODO DASHBOARD STYLES
 		wp_enqueue_style( 'post-selector-admin-dashboard-style', POST_SELECT_PLUGIN_URL . '/inc/assets/admin/css/admin-dashboard-style.css', array(), $post_sle_version, false );
 
+        // TODO DataTable STYLES
+        wp_enqueue_style( 'post-selector-admin-data-table', POST_SELECT_PLUGIN_URL . '/inc/assets/admin/css/tools/dataTables.bootstrap5.min.css', array(), $post_sle_version, false );
 		//wp_enqueue_script( 'post-selector-admin', POST_SELECT_PLUGIN_URL . '/inc/assets/admin/js/admin-js.js', array(), $post_sle_version, true );
 
         wp_enqueue_script( 'jquery' );
@@ -454,6 +457,16 @@ final class RegisterGutenbergPostSelector {
             POST_SELECT_PLUGIN_URL . '/inc/assets/admin/js/tools/jquery.blueimp-gallery.js', array(),
             $post_sle_version, true );
 
+        //DataTables
+        wp_enqueue_script( 'gutenberg-post-selector-jq-data-table',
+            POST_SELECT_PLUGIN_URL . '/inc/assets/admin/js/tools/data-table/jquery.dataTables.min.js', array(),
+            $post_sle_version, true );
+        wp_enqueue_script( 'gutenberg-post-selector-bs5-data-table',
+            POST_SELECT_PLUGIN_URL . '/inc/assets/admin/js/tools/data-table/dataTables.bootstrap5.min.js', array(),
+            $post_sle_version, true );
+        wp_enqueue_script( 'gutenberg-post-selector-data-table-galerie',
+            POST_SELECT_PLUGIN_URL . '/inc/assets/admin/js/tools/data-table/data-table-galerie.js', array(),
+            $post_sle_version, true );
 
 
 		wp_enqueue_script( 'post-selector-script', POST_SELECT_PLUGIN_URL . '/inc/assets/admin/js/post-selector-admin.js', array(), $post_sle_version, true );

@@ -52,6 +52,7 @@ if (!class_exists('PostGalerieTemplates')) {
             if (!$images->status) {
                 return null;
             }
+            $attributes['className'] ? $customCss =  $attributes['className'] : $customCss = '';
 
             $typeSettings = json_decode($galerieSettings->type_settings);
             switch ($galerieSettings->type) {
@@ -68,7 +69,7 @@ if (!class_exists('PostGalerieTemplates')) {
                     $settings->label ? $padding = 'style="padding-bottom:2.5rem!important"' : $padding = '';
                     $settings->label ? $arrow_bt = 'style="margin-top:-1.25rem"' : $arrow_bt = '';
                     ?>
-                    <div class="wp-block-hupa-theme-post-list">
+                    <div class="wp-block-hupa-theme-post-list <?=$customCss?>">
                         <?= $galerieSettings->show_bezeichnung ? '<h3 class="post-galerie-h3">' . $galerieSettings->bezeichnung . '</h3>' : '' ?>
                         <?= $galerieSettings->show_beschreibung ? '<small class="post-small-description">' . $galerieSettings->beschreibung . '</small>' : '' ?>
                         <div data-id="<?= $typeSettings->slider_id ?>" data-rand="<?= $rand ?>"
@@ -105,7 +106,7 @@ if (!class_exists('PostGalerieTemplates')) {
                     $ts->lg_grid_gutter ? $lg_grid_gutter = $ts->lg_grid_gutter : $lg_grid_gutter = 1;
                     $ts->xl_grid_gutter ? $xl_grid_gutter = $ts->xl_grid_gutter : $xl_grid_gutter = 1;
                      ?>
-                    <div class="wp-block-hupa-theme-post-list grid-wrapper">
+                    <div class="wp-block-hupa-theme-post-list grid-wrapper <?=$customCss?>">
                     <?= $galerieSettings->show_bezeichnung ? '<h3 class="post-galerie-h3">' . $galerieSettings->bezeichnung . '</h3>' : '' ?>
                     <?= $galerieSettings->show_beschreibung ? '<small class="post-small-description">' . $galerieSettings->beschreibung . '</small>' : '' ?>
 
@@ -150,7 +151,7 @@ if (!class_exists('PostGalerieTemplates')) {
                     $ts->xl_gutter ? $xl_gutter = $ts->xl_gutter : $xl_gutter = 1;
                     ?>
 
-                    <div class="wp-block-hupa-theme-post-list masonry-grid-wrapper">
+                    <div class="wp-block-hupa-theme-post-list masonry-grid-wrapper <?=$customCss?>">
                     <?= $galerieSettings->show_bezeichnung ? '<h3 class="post-galerie-h3">' . $galerieSettings->bezeichnung . '</h3>' : '' ?>
                     <?= $galerieSettings->show_beschreibung ? '<small class="post-small-description">' . $galerieSettings->beschreibung . '</small>' : '' ?>
                     <div class="<?=$galerieSettings->lightbox_aktiv ? 'light-box-controls' : ''?>">
@@ -285,10 +286,11 @@ if (!class_exists('PostGalerieTemplates')) {
 
                 $lazy_load_aktiv = '"';
                 if($galerieSettings->lazy_load_aktiv){
+                    $galerieSettings->animate_select ? $animate_select = $galerieSettings->animate_select : $animate_select = 'fadeInUp';
                     $aniRand = mt_rand(50, 450);
                     $aniOffset = mt_rand(50, 90);
                     $aniDuration = mt_rand(350, 1000);
-                    SLIDER_LAZY_LOAD_ANIMATION ? $ani = 'wow animate__fadeInUp" data-wow-offset="50" data-wow-duration="'.$aniDuration.'ms" data-wow-delay="'.$aniRand.'ms"' : $ani = '"';
+                    $galerieSettings->lazy_load_ani_aktiv ? $ani = 'wow animate__'.$animate_select.'" data-wow-offset="50" data-wow-duration="'.$aniDuration.'ms" data-wow-delay="'.$aniRand.'ms"' : $ani = '"';
                     $lazy_load_aktiv = ' lazy-image '.$ani.'';
                 }
                 if ($galerieSettings->type == '1') {
