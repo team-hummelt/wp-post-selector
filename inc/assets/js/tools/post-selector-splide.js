@@ -107,7 +107,6 @@ document.addEventListener('DOMContentLoaded', function () {
             xhr.onreadystatechange = function () {
                 if (this.readyState === 4 && this.status === 200) {
                     let data = JSON.parse(this.responseText);
-                    console.log(data.sendSettings)
                     if (data.status) {
                         let settings = data.sendSettings;
                         new Splide('.splide.splide' + rand, {
