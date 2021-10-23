@@ -54,7 +54,7 @@ switch ( $method ) {
 				'gapXs'     => $settings->gap_xs,
 			],
 			576  => [
-				'perPagSm' => $settings->pro_page_sm ?: '',
+				'perPageSm' => $settings->pro_page_sm ?: '',
 				'heightSm'  => $settings->height_sm,
 				'widthSm'   => $settings->width_sm,
 				'gapSm'     => $settings->gap_sm,
@@ -119,7 +119,7 @@ switch ( $method ) {
 			'heightXs'  => $settings->height_xs,
 			'widthXs'   => $settings->width_xs,
 			'gapXs'     => $settings->gap_xs,
-			'perPagSm' => $settings->pro_page_sm ?: '',
+			'perPageSm' => $settings->pro_page_sm ?: '',
 			'heightSm'  => $settings->height_sm,
 			'widthSm'   => $settings->width_sm,
 			'gapSm'     => $settings->gap_sm,

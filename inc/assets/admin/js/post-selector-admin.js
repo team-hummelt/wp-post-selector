@@ -109,12 +109,19 @@ jQuery(document).ready(function ($) {
      ===================================================
      */
     $(document).on('click', ".btn-delete-items", function () {
+
+        if ($(this).attr('data-type') == 'images') {
+            delete_selected_images();
+            return false;
+        }
+
         $.post(ps_ajax_obj.ajax_url, {
             '_ajax_nonce': ps_ajax_obj.nonce,
             'action': 'PostSelHandle',
             method: $(this).attr('data-method'),
             id: $(this).attr('data-id'),
             type: $(this).attr('data-type'),
+            'data_method': $(this).attr('data-method'),
         }, function (data) {
             if (data.status) {
                 switch (data.type) {
@@ -123,6 +130,13 @@ jQuery(document).ready(function ($) {
                         break;
                     case'galerie':
                         galerie_toasts_overview(data);
+                        break;
+                    case 'grid':
+                        $('#img' + data.id).remove();
+                        break;
+                    case'table':
+                        let table = $('#TableGalerie').DataTable();
+                        table.draw('page');
                         break;
                 }
                 if (data.msg) {
@@ -148,6 +162,96 @@ jQuery(document).ready(function ($) {
             label.prop('disabled', false);
         }
     });
+
+    /**===================================================
+     ================ CHANGE GRID | DATA TABLE ================
+     =====================================================
+     */
+    $(document).on('click', ".galerie-change-view", function () {
+        $('.galerie-change-view').toggleClass('active');
+        $('.change-overview').toggleClass('d-none');
+
+        let type = $(this).attr('data-type');
+        let tableWrapper = $('#galerie-table');
+        let galerieId = tableWrapper.attr('data-id');
+        switch (type) {
+            case 'grid':
+                 load_galerie_item(galerieId, 'galerie-images');
+                break;
+            case'table':
+                if (tableWrapper.hasClass('is-loaded')) {
+                    let table = $('#TableGalerie').DataTable();
+                    table.draw('page');
+                    return false;
+                }
+                let html = `
+                           <div class="d-flex flex-wrap py-1"> 
+                           <div class="d-block py-1">
+                           <select name="option" class="galerie-multi-select form-select-sm">
+                           <option value="">Mehrfachauswahl</option>
+                           <option value="delete">ausgewählte löschen</option>
+                           </select>
+                           </div>
+                           <div class="d-block py-1">
+                           <button class="dataTableExecBtn btn btn-outline-secondary btn-sm ms-1" disabled>ausführen</button>
+                           </div>
+                           </div>
+                           <hr class="mt-0 mb-2">
+                     <table id="TableGalerie" class="table table-striped table-bordered nowrap w-100 light-box-controls">
+                        <thead>
+                        <tr>
+                            <th class="pb-1">
+                            <div class="form-check mb-0 pb-0">
+                            <input class="form-check-input select-all-table" type="checkbox">
+                            </div>
+                            </th>
+                            <th></th>
+                            <th>Titel</th>
+                            <th>Datei erstellt</th>
+                            <th>Dateityp</th>
+                            <th>Dateigröße</th>
+                            <th>Bildgröße</th>
+                            <th>Settings</th>
+                            <th>löschen</th>
+                        </tr>
+                        </thead>
+                        <tfoot>
+                        <tr>
+                            <th class="pb-1">
+                            <div class="form-check mb-0 pb-0">
+                            <input class="form-check-input select-all-table" type="checkbox">
+                            </div>
+                            </th>
+                            <th></th>
+                            <th>Titel</th>
+                            <th>Datei erstellt</th>
+                            <th>Dateityp</th>
+                            <th>Dateigröße</th>
+                            <th>Bildgröße</th>
+                            <th>Settings</th>
+                            <th>löschen</th>
+                        </tr>
+                        </tfoot>
+                    </table>
+                           <div class="d-flex flex-wrap py-2"> 
+                           <div class="d-block py-1">
+                           <select name="option" class="galerie-multi-select form-select-sm">
+                           <option value="">Mehrfachauswahl</option>
+                           <option value="delete">ausgewählte löschen</option>
+                           </select>
+                           </div>
+                           <div class="d-block py-1">
+                           <button class="dataTableExecBtn btn btn-outline-secondary btn-sm ms-1" disabled>ausführen</button>
+                           </div>
+                           </div>
+                `;
+                tableWrapper.html(html);
+                tableWrapper.addClass('is-loaded');
+                load_galerie_data_table(galerieId);
+                break;
+        }
+    });
+
 
     /**================================================
      ================ BTN TOGGLE AKTIV ================
@@ -219,7 +323,7 @@ jQuery(document).ready(function ($) {
                            <figcaption class="py-2 text-center">
                            <button data-bs-id="${data.id}"  data-bs-type="image" data-bs-handle="image" data-bs-toggle="modal" data-bs-target="#galerieHandleModal" class="btn btn-blue-outline btn-sm">
                            <i class="fa fa-edit"></i>&nbsp; settings</button>
-                           <button data-id="${data.id}" class="btn-delete-image btn btn-outline-danger btn-sm"> 
+                           <button data-bs-id="${data.id}" data-bs-type="grid" data-bs-method="delete_image" data-bs-toggle="modal" data-bs-target="#formDeleteModal" class="btn btn-outline-danger btn-sm"> 
                            <i class="fa fa-trash"></i>&nbsp; löschen</button>
                            </figcaption>
                            </div>`;
@@ -345,7 +449,7 @@ jQuery(document).ready(function ($) {
         </div>
          <hr>
           <div class="d-flex flex-wrap"> 
-         <div class="form-check form-switch me-3 my-2">
+         <div class="form-check form-switch me-3">
            <input data-type="#imgSettingsHoverOption" class="toggle_form_disabled form-check-input" 
            name="hover_aktiv" type="checkbox" role="switch" id="hoverImageAktiv" ${record.hover_aktiv == '1' ? 'checked' : ''}>
            <label class="form-check-label" for="hoverImageAktiv">Image Hover</label>
@@ -493,11 +597,40 @@ jQuery(document).ready(function ($) {
            <input data-type="#imgHoverOption" class="toggle_form_disabled form-check-input" name="hover_aktiv" type="checkbox" role="switch" id="hoverAktiv">
            <label class="form-check-label" for="hoverAktiv">Image Hover</label>
         </div>
-        <div id="checkLzModal" class="form-check form-switch me-3 my-2">
+        <div id="checkLzModal" class="checkLzModal form-check form-switch me-3 my-2">
            <input class="form-check-input" name="lazy_load_aktiv" type="checkbox" role="switch" id="LZModalCheck" checked>
            <label class="form-check-label" for="LZModalCheck">Lazy Load</label>
         </div>
+        <div class="checkLzModal form-check form-switch me-3 my-2">
+           <input class="form-check-input toggle_form_disabled" data-type="#inputAnimateSelect" name="lazy_load_ani_aktiv" 
+           type="checkbox" role="switch" id="LZAniModalCheck" checked>
+           <label class="form-check-label" for="LZAniModalCheck">Lazy Load Animation</label>
         </div>
+        </div>
+        
+        <div class="checkLzModal mb-2">
+          <hr>
+          <label for="inputAnimateSelect" class="checkLzModal col-form-label fw-normal">Animation auswählen</label>
+          <select onchange="this.blur()" class="checkLzModal form-select" 
+          name="animate_select" id="inputAnimateSelect">
+          <option value="">auswählen ...</option>`;
+        let aniClass = '';
+        let aniValue = '';
+        let animationSelect = '';
+        for (const [selectKey, selectVal] of Object.entries(data.aniSelect)) {
+            if (selectVal.divider) {
+                aniClass = " disabled class\"SelectSeparator\"";
+                aniValue = selectVal.value;
+            } else {
+                aniClass = "";
+                aniValue = selectVal.animate;
+            }
+            aniValue == 'fadeInUp' ? animationSelect = 'selected' : animationSelect = '';
+
+            html += `<option value="${aniValue}" ${aniClass} ${animationSelect}>${selectVal.animate} </option>`;
+        }
+        html += `</select>
+        </div> 
         <hr>
         
          <div class="d-flex flex-wrap"> 
@@ -650,6 +783,7 @@ jQuery(document).ready(function ($) {
     });
 
     function load_galerie_item(id, type) {
+
         $.post(ps_ajax_obj.ajax_url, {
             '_ajax_nonce': ps_ajax_obj.nonce,
             'action': 'PostSelHandle',
@@ -707,7 +841,12 @@ jQuery(document).ready(function ($) {
                     <i class="fa fa-mail-reply-all"></i>&nbsp; zur Übersicht
                     </button>
                  </div>
-                <hr> 
+                <hr class="mb-1"> 
+                <div class="d-flex align-items-center ps-3">
+                <i data-type="grid" class="galerie-change-view active fa fa-th"></i>
+                <i data-type="table" class="galerie-change-view fa fa-th-list"></i>
+                </div>
+                <hr class="mt-1">
                 <div class="collapse" id="editGalerie">
                     <div class="card p-3">
                     <form class="send-bs-form-jquery-ajax-formular" action="#" method="post">
@@ -772,7 +911,7 @@ jQuery(document).ready(function ($) {
                          <hr class="mb-3 mt-2">
                          <div class="mb-2">
                          <label for="inputPageSelect" class="col-form-label fw-normal">Bild Link | <span class="font-blue">Page/Beitrag</span></label>
-                        <select onchange="this.blur()" class="form-select mw-100" name="link" id="inputPageSelect"> `;
+                        <select onchange="this.blur()" class="form-select" name="link" id="inputPageSelect"> `;
         let x = 1;
         let sel = '';
         let option = '<option value="">auswählen ...</option>';
@@ -805,12 +944,42 @@ jQuery(document).ready(function ($) {
                               type="checkbox" role="switch" id="hoverAktiv" ${record.hover_aktiv == '1' ? 'checked' : ''}>
                               <label class="form-check-label" for="hoverAktiv">Image Hover</label>
                             </div>
-                            <div class="form-check form-switch my-2 me-3">
+                            <div class="checkLzModal form-check form-switch my-2 me-3">
                               <input class="form-check-input" name="lazy_load_aktiv" 
                               type="checkbox" role="switch" id="lazyLoadCheck" ${record.lazy_load_aktiv == '1' ? 'checked' : ''}>
                               <label class="form-check-label" for="lazyLoadCheck">Lazy Load</label>
                            </div>
-                           </div>
+                           
+                          <div class="checkLzModal form-check form-switch me-3 my-2">
+                            <input class="form-check-input toggle_form_disabled" data-type="#inputAnimateSelect" name="lazy_load_ani_aktiv" 
+                            type="checkbox" role="switch" id="LZAniModalCheck" ${record.lazy_load_ani_aktiv == '1' ? 'checked' : ''}>
+                            <label class="form-check-label" for="LZAniModalCheck">Lazy Load Animation</label>
+                          </div>
+                        </div>
+                        
+                        <div class="checkLzModal mb-2">
+                         <hr>
+                         <label for="inputAnimateSelect" class="checkLzModal col-form-label fw-normal">Animation auswählen</label>
+                         <select onchange="this.blur()" class="checkLzModal form-select" 
+                         name="animate_select" id="inputAnimateSelect" ${record.lazy_load_ani_aktiv == '1' ? '' : 'disabled'}>
+                         <option value="">auswählen ...</option>`;
+        let aniClass = '';
+        let aniValue = '';
+        let animationSelect = '';
+        for (const [selectKey, selectVal] of Object.entries(data.aniSelect)) {
+            if (selectVal.divider) {
+                aniClass = " disabled class=\"SelectSeparator\"";
+                aniValue = selectVal.value;
+            } else {
+                aniClass = "";
+                aniValue = selectVal.animate;
+            }
+            aniValue == record.animate_select ? animationSelect = 'selected' : animationSelect = '';
+            html += `<option value="${aniValue}" ${aniClass} ${animationSelect}>${selectVal.animate} </option>`;
+        }
+        html += `</select>
+                       </div> 
+                           
                            <hr>
                             <div class="d-flex flex-wrap"> 
                             <div class="check-min-width form-check form-switch me-3">
@@ -850,7 +1019,7 @@ jQuery(document).ready(function ($) {
                   </div>
                   <hr>    
                 </div><!--collapse-->
-                <div id="galerie-container" class="post-select-sortable post-selector-gallery-grid light-box-controls">`;
+                <div id="galerie-container" class="post-select-sortable post-selector-gallery-grid light-box-controls change-overview">`;
 
         if (images) {
             $.each(images, function (key, val) {
@@ -863,7 +1032,7 @@ jQuery(document).ready(function ($) {
                 <figcaption class="py-2 text-center">
                 <button data-bs-id="${val.id}"  data-bs-type="image" data-bs-handle="image" data-bs-toggle="modal" data-bs-target="#galerieHandleModal" class="btn btn-blue-outline btn-sm">
                 <i class="fa fa-edit"></i>&nbsp;settings</button>
-                <button data-id="${val.id}" class="btn-delete-image btn btn-outline-danger btn-sm">
+                <button data-bs-id="${val.id}" data-bs-type="grid" data-bs-method="delete_image" data-bs-toggle="modal" data-bs-target="#formDeleteModal" class="btn btn-outline-danger btn-sm">
                 <i class="fa fa-trash"></i>&nbsp;löschen</button>
                 </figcaption>
                 </div>`;
@@ -871,6 +1040,8 @@ jQuery(document).ready(function ($) {
 
         }
         html += `</div><!--galerie-grid-->
+                <div id="galerie-table" data-id="${record.id}" class="change-overview table-responsive container-fluid pb-5 pt-4 d-none"></div>
+                
                  </div><!--wrapper-->`;
 
         $('#collapseGalerieSite').html(html);
@@ -960,7 +1131,7 @@ jQuery(document).ready(function ($) {
             let fieldSetClass = $('.galerieOptionField');
             let checkCaption = $('#captionAktiv');
             let modalCaption = $('#GalerieCaptionAktiv');
-            let modalLazyLoad = $('#checkLzModal');
+            let modalLazyLoad = $('.checkLzModal');
             modalCaption.prop('disabled', false);
             modalLazyLoad.removeClass('d-none');
 
@@ -1946,7 +2117,6 @@ jQuery(document).ready(function ($) {
     }
 
 
-
     /**=============================================
      ================ Löschen Modal ================
      ===============================================
@@ -1968,6 +2138,13 @@ jQuery(document).ready(function ($) {
                 case 'galerie':
                     formType = 'Galerie';
                     break;
+                case 'images':
+                    formType = 'Bilder';
+                    break;
+                case 'grid':
+                case'table':
+                    formType = 'Bild';
+                    break;
             }
             document.querySelector('.btn-delete-items').setAttribute('data-id', id);
             document.querySelector('.btn-delete-items').setAttribute('data-method', method);
@@ -1977,14 +2154,109 @@ jQuery(document).ready(function ($) {
         });
     }
 
+    /**=========================================================
+     ================ Galerie Table Check Image ================
+     ===========================================================
+     */
 
+    $(document).on('click', ".check-table-items", function () {
+        let parentTr = $(this).parents('tr');
+        if ($(this).prop('checked')) {
+            parentTr.addClass('table-warning');
+        } else {
+            parentTr.removeClass('table-warning');
+        }
+    })
+
+    /**=============================================================
+     ================ Galerie Table Check ALL IMAGE ================
+     ===============================================================
+     */
+
+    $(document).on('click', ".select-all-table", function () {
+        let item = $('.check-table-items');
+        let selfClass = $('.select-all-table');
+        if ($(this).prop('checked')) {
+            item.parents('tr').addClass('table-warning');
+            item.prop('checked', true);
+            selfClass.prop('checked', true);
+        } else {
+            item.parents('tr').removeClass('table-warning');
+            item.prop('checked', false);
+            selfClass.prop('checked', false);
+        }
+    })
+
+    /**===========================================================
+     ================ Galerie Change Multi Select ================
+     =============================================================
+     */
+
+    $(document).on('change', ".galerie-multi-select", function () {
+        let select = $(this).val();
+        let btnExec = $('.dataTableExecBtn');
+        if (select) {
+            if (select == 'delete') {
+                btnExec.attr('data-bs-type', 'images').attr('data-bs-toggle', 'modal').attr('data-bs-target', '#formDeleteModal');
+                btnExec.attr('data-bs-id', 1).attr('data-bs-method', 'delete_images')
+            }
+            btnExec.prop('disabled', false).removeClass('btn-outline-secondary').addClass('btn-blue');
+        } else {
+            btnExec.prop('disabled', true).removeClass('btn-blue').addClass('btn-outline-secondary');
+        }
+    })
+
+    /**=================================================================
+     ================ Galerie Delete ALL Checked IMAGES ================
+     ===================================================================
+     */
+
+    $(document).on('click', ".dataTableExecBtn", function () {
+
+
+    })
+
+    function delete_selected_images() {
+        let items = $('.check-table-items');
+        let itemsArray = [];
+        let i = 0;
+        items.each(function (idx) {
+            if (this.checked) {
+                let id = items.eq(idx).attr('data-id');
+                itemsArray[i] = (id);
+                i++;
+            }
+        });
+
+        $.ajax({
+            url: ps_ajax_obj.ajax_url,
+            type: "POST",
+            data: {
+                'method': 'delete_images_array',
+                'images': itemsArray,
+                '_ajax_nonce': ps_ajax_obj.nonce,
+                'action': 'PostSelHandle',
+            },
+            success: function (data) {
+                if (data.status) {
+                    let table = $('#TableGalerie').DataTable();
+                    table.draw('page');
+                    $('.select-all-table').prop('checked', false);
+                }
+            },
+            error: function (xhr, resp, text) {
+                // show error to console
+                console.log(xhr, resp, text);
+            }
+        });
+    }
 
 
     /**================================================
      ================ IMAGES SORTABLES ================
      ==================================================
      */
-    function load_sortable_event_handler(){
+    function load_sortable_event_handler() {
         let postSelectSortable = document.getElementById("galerie-container");
         let elementArray = [];
 
@@ -2022,14 +2294,74 @@ jQuery(document).ready(function ($) {
                     '_ajax_nonce': ps_ajax_obj.nonce,
                     'action': 'PostSelHandle',
                     method: 'image_change_position',
-                    data:elementArray
+                    data: elementArray
                 });
                 // send_xhr_form_data(changeSelect, false);
             }
         });
     }
 
-    $(document).on('mousedown', '.postSortableArrow', function() {
+    /**=======================================================
+     ================ LOAD GALERIE DATA TABLE ================
+     =========================================================
+     */
+
+    function load_galerie_data_table(galerieId) {
+        let galerieTable = $('#TableGalerie').DataTable({
+            "language": {
+                "url": ps_ajax_obj.data_table
+            },
+
+            "columns": [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+
+                {
+                    "width": "5%"
+                },
+                {
+                    "width": "5%"
+                }
+            ],
+            columnDefs: [{
+                orderable: false,
+                targets: [0, 1, 4, 5, 6, 7, 8]
+            },
+                {
+                    targets: [1],
+                    className: 'text-center'
+                },
+                {
+                    targets: ['_all'],
+                    className: 'align-middle'
+                }
+            ],
+            "processing": true,
+            "serverSide": true,
+            "order": [],
+            "ajax": {
+                url: ps_ajax_obj.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'PostSelHandle',
+                    '_ajax_nonce': ps_ajax_obj.nonce,
+                    'id': galerieId,
+                    method: 'galerie_data_table'
+                }
+            }
+        });
+
+        galerieTable.on('draw', function () {
+            $('.select-all-table').prop('checked', false);
+        });
+    }
+
+    $(document).on('mousedown', '.postSortableArrow', function () {
 
 
     });
@@ -2075,7 +2407,6 @@ jQuery(document).ready(function ($) {
             x.className = x.className.replace("show", "");
         }, 3000);
     }
-
 
 
 });
