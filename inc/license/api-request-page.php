@@ -52,6 +52,12 @@ switch ($data->make_id) {
         delete_option('post_selector_client_secret');
         deactivate_plugins( POST_SELECT_SLUG_PATH );
         break;
+    case'send_versions':
+        $backMsg = [
+            'status' => true,
+            'theme_version' => POST_SELECTOR_PLUGIN_VERSION,
+        ];
+        break;
     default:
         $backMsg = [
           'status' => false

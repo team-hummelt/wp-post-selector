@@ -20,6 +20,11 @@ Auswahl von Beiträgen im Gutenberg-Block Editor mit verschiedenen Ausgabeoption
 
 == Changelog ==
 
+= 1.0.5 =
+* WP-Rest gefixt
+* API Versionskontrolle hinzugefügt
+
+
 = 1.0.4 =
 * Galerie Tabellenübersicht mit Mehrfachauswahl hinzugefügt
 * LazyLoad Animation hinzugefügt
