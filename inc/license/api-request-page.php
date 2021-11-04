@@ -55,7 +55,7 @@ switch ($data->make_id) {
     case'send_versions':
         $backMsg = [
             'status' => true,
-            'theme_version' => POST_SELECTOR_PLUGIN_VERSION,
+            'theme_version' => 'v'.POST_SELECTOR_PLUGIN_VERSION,
         ];
         break;
     default:
