@@ -2,6 +2,8 @@
 
 namespace Block\PostSelector;
 
+use JetBrains\PhpStorm\NoReturn;
+
 defined( 'ABSPATH' ) or die();
 
 /**
@@ -53,7 +55,7 @@ final class RegisterGutenbergPostSelector {
         // TODO Create Database
 		add_action( 'init', array( $this, 'post_selector_create_db' ) );
 		//TODO REMOVE REST BY NOT LOGGED IN
-		add_action( 'init', array( $this, 'post_select_removes_api_endpoints_for_not_logged_in' ) );
+		//add_action( 'init', array( $this, 'post_select_removes_api_endpoints_for_not_logged_in' ) );
 		add_action( 'init', array( $this, 'load_post_selector_textdomain' ) );
 
 		add_action( 'enqueue_block_editor_assets', array( $this, 'post_select_plugin_editor_block_scripts' ) );
