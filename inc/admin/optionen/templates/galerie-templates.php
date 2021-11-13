@@ -295,6 +295,8 @@ if (!class_exists('PostGalerieTemplates')) {
                     $galerieSettings->lazy_load_ani_aktiv ? $ani = 'wow animate__' . $animate_select . '" data-wow-offset="50" data-wow-duration="' . $aniDuration . 'ms" data-wow-delay="' . $aniRand . 'ms"' : $ani = '"';
                     $lazy_load_aktiv = ' lazy-image ' . $ani . '';
                 }
+
+                $attr->hoverBGColor ? $bgHoverStyle = 'style="background-color:' . $attr->hoverBGColor . '"' : $bgHoverStyle = '';
                 if ($galerieSettings->type == '1') {
                     $html .= '
                      <div class="splide__slide">
@@ -308,7 +310,7 @@ if (!class_exists('PostGalerieTemplates')) {
                                 <div class="post-excerpt">
                                     ' . $img_beschreibung . '
                                 </div>
-                                <div class="hover-button mt-auto" style="background-color: ' . $attr->hoverBGColor . '">
+                                <div class="hover-button mt-auto" '.$bgHoverStyle.'>
                                     <a title="' . $title . '" ' . $data_control . ' href="' . $img_full[0] . '" class="' . $img_link . ' btn-grid-hover btn-img' . $lightbox_none . '" ' . $btnOut . '></a>
                                     <a href="' . $link . '" class="btn-grid-hover btn-link' . $btnShowLink . '" title="' . $link . '" ' . $btnOut . '></a>
                                 </div>
@@ -321,7 +323,6 @@ if (!class_exists('PostGalerieTemplates')) {
                 }// GALERIE 1
 
                 if ($galerieSettings->type == '2') {
-
                     $typeSettings->crop ? $height = $typeSettings->img_width : $height = $typeSettings->img_height;
                     $style = 'style="
                     width:' . $typeSettings->img_width . 'px;
@@ -338,7 +339,7 @@ if (!class_exists('PostGalerieTemplates')) {
                                 <div class="post-excerpt">
                                     ' . $img_beschreibung . '
                                 </div>
-                                <div class="hover-button mt-auto" style="background-color: ' . $attr->hoverBGColor . '">
+                                <div class="hover-button mt-auto" '.$bgHoverStyle.'>
                                     <a title="' . $title . '" ' . $data_control . ' href="' . $img_full[0] . '" class="' . $img_link . ' btn-grid-hover btn-img' . $lightbox_none . '" ' . $btnOut . '></a>
                                     <a href="' . $link . '" class="btn-grid-hover btn-link' . $btnShowLink . '" title="' . $link . '" ' . $btnOut . '></a>
                                  </div>
@@ -350,7 +351,6 @@ if (!class_exists('PostGalerieTemplates')) {
                           </div>';
                 }
                 if ($galerieSettings->type == '3') {
-
                     $html .= '<div class="col grid-item">
                              ' . $lightbox_start . '
                               <img class="rounded masonry-grid-class' . $lazy_load_aktiv . '  alt="' . $attachment['alt'] . '" src="' . $img_src[0] . '"  data-src="' . $img_src[0] . '">              
@@ -361,10 +361,10 @@ if (!class_exists('PostGalerieTemplates')) {
                                 <div class="post-excerpt">
                                     ' . $img_beschreibung . '
                                 </div>
-                                <div class="hover-button mt-auto" style="background-color: ' . $attr->hoverBGColor . '">
+                                <div class="hover-button mt-auto" '.$bgHoverStyle.'>
                                     <a title="' . $title . '" ' . $data_control . ' href="' . $img_full[0] . '" class="' . $img_link . ' btn-grid-hover btn-img' . $lightbox_none . '" ' . $btnOut . '></a>
                                     <a href="' . $link . '" class="btn-grid-hover btn-link' . $btnShowLink . '" title="' . $link . '" ' . $btnOut . '></a>
-                                 </div>
+                                 </div>  
                              </div>
                             </div>
                           </div>';
