@@ -3,7 +3,7 @@ Contributors: jwiecker
 Tags: Gutenberg, Custom Posts
 Requires at least: 5.8
 Tested up to: 5.8
-Stable tag: 1.0.4
+Stable tag: 1.0.6
 Requires PHP: 8.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -19,6 +19,9 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Auswahl von Beiträgen im Gutenberg-Block Editor mit verschiedenen Ausgabeoptionen.
 
 == Changelog ==
+
+= 1.0.6 =
+* Fix Grid-Container -> Grid-Galerie | Masonry Galerie
 
 = 1.0.5 =
 * WP-Rest gefixt

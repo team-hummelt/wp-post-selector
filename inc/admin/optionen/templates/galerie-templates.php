@@ -52,7 +52,7 @@ if (!class_exists('PostGalerieTemplates')) {
             if (!$images->status) {
                 return null;
             }
-            $attributes['className'] ? $customCss =  $attributes['className'] : $customCss = '';
+            $attributes['className'] ? $customCss = $attributes['className'] : $customCss = '';
 
             $typeSettings = json_decode($galerieSettings->type_settings);
             switch ($galerieSettings->type) {
@@ -69,7 +69,7 @@ if (!class_exists('PostGalerieTemplates')) {
                     $settings->label ? $padding = 'style="padding-bottom:2.5rem!important"' : $padding = '';
                     $settings->label ? $arrow_bt = 'style="margin-top:-1.25rem"' : $arrow_bt = '';
                     ?>
-                    <div class="wp-block-hupa-theme-post-list <?=$customCss?>">
+                    <div class="wp-block-hupa-theme-post-list <?= $customCss ?>">
                         <?= $galerieSettings->show_bezeichnung ? '<h3 class="post-galerie-h3">' . $galerieSettings->bezeichnung . '</h3>' : '' ?>
                         <?= $galerieSettings->show_beschreibung ? '<small class="post-small-description">' . $galerieSettings->beschreibung . '</small>' : '' ?>
                         <div data-id="<?= $typeSettings->slider_id ?>" data-rand="<?= $rand ?>"
@@ -83,7 +83,7 @@ if (!class_exists('PostGalerieTemplates')) {
                                 </button>
                             </div>
                             <div class="splide__track" <?= $padding ?>>
-                                <div class="splide__list <?=$galerieSettings->lightbox_aktiv ? 'light-box-controls' : ''?>">
+                                <div class="splide__list <?= $galerieSettings->lightbox_aktiv ? 'light-box-controls' : '' ?>">
                                     <?= $html ?>
                                 </div>
                             </div>
@@ -92,8 +92,8 @@ if (!class_exists('PostGalerieTemplates')) {
                     <?php
                     break;
                 case '2':
-                     $html = $this->render_galerie_slider_template($galerieSettings, $typeSettings, $images->record, $images->count, $attributes);
-                     $ts = $typeSettings;
+                    $html = $this->render_galerie_slider_template($galerieSettings, $typeSettings, $images->record, $images->count, $attributes);
+                    $ts = $typeSettings;
                     $ts->xs_grid_column ? $xs_grid_column = $ts->xs_grid_column : $xs_grid_column = 5;
                     $ts->sm_grid_column ? $sm_grid_column = $ts->sm_grid_column : $sm_grid_column = 4;
                     $ts->md_grid_column ? $md_grid_column = $ts->md_grid_column : $md_grid_column = 3;
@@ -105,38 +105,39 @@ if (!class_exists('PostGalerieTemplates')) {
                     $ts->md_grid_gutter ? $md_grid_gutter = $ts->md_grid_gutter : $md_grid_gutter = 1;
                     $ts->lg_grid_gutter ? $lg_grid_gutter = $ts->lg_grid_gutter : $lg_grid_gutter = 1;
                     $ts->xl_grid_gutter ? $xl_grid_gutter = $ts->xl_grid_gutter : $xl_grid_gutter = 1;
-                     ?>
-                    <div class="wp-block-hupa-theme-post-list grid-wrapper <?=$customCss?>">
-                    <?= $galerieSettings->show_bezeichnung ? '<h3 class="post-galerie-h3">' . $galerieSettings->bezeichnung . '</h3>' : '' ?>
-                    <?= $galerieSettings->show_beschreibung ? '<small class="post-small-description">' . $galerieSettings->beschreibung . '</small>' : '' ?>
+                    ?>
+                    <div class="wp-block-hupa-theme-post-list grid-wrapper <?= $customCss ?>">
+                        <?= $galerieSettings->show_bezeichnung ? '<h3 class="post-galerie-h3">' . $galerieSettings->bezeichnung . '</h3>' : '' ?>
+                        <?= $galerieSettings->show_beschreibung ? '<small class="post-small-description">' . $galerieSettings->beschreibung . '</small>' : '' ?>
 
-                        <div class="<?=$galerieSettings->lightbox_aktiv ? 'light-box-controls' : ''?>">
+                        <div class="<?= $galerieSettings->lightbox_aktiv ? 'light-box-controls' : '' ?>">
 
-                        <div class="post-selector-grid-gutter mb-3">
-                        <?php
-                           $grid_cols = '<div class="row
-                                        row-cols-'.$xs_grid_column.'
-                                        row-cols-sm-'.$sm_grid_column.'
-                                        row-cols-md-'.$md_grid_column.'
-                                        row-cols-lg-'.$lg_grid_column.'
-                                        row-cols-xl-'.$xl_grid_column.'
-                                        g-'.$xs_grid_gutter.'
-                                        g-sm-'.$sm_grid_gutter.'
-                                        g-md-'.$md_grid_gutter.'
-                                        g-lg-'.$lg_grid_gutter.'
-                                        g-xl-'.$xl_grid_gutter.'">';
-                                $grid_cols = preg_replace(array('/<!--(.*)-->/Uis',"/[[:blank:]]+/"),array('',' '),str_replace(array("\n","\r","\t"),'', $grid_cols));
-                                $html = preg_replace(array('/<!--(.*)-->/Uis',"/[[:blank:]]+/"),array('',' '),str_replace(array("\n","\r","\t"),'', $html));
+                            <div class="post-selector-grid-gutter mb-3">
+                                <?php
+                                $grid_cols = '<div class="row
+                                        row-cols-' . $xs_grid_column . '
+                                        row-cols-sm-' . $sm_grid_column . '
+                                        row-cols-md-' . $md_grid_column . '
+                                        row-cols-lg-' . $lg_grid_column . '
+                                        row-cols-xl-' . $xl_grid_column . '
+                                        g-' . $xs_grid_gutter . '
+                                        g-sm-' . $sm_grid_gutter . '
+                                        g-md-' . $md_grid_gutter . '
+                                        g-lg-' . $lg_grid_gutter . '
+                                        g-xl-' . $xl_grid_gutter . '">';
+                                $grid_cols = preg_replace(array('/<!--(.*)-->/Uis', "/[[:blank:]]+/"), array('', ' '), str_replace(array("\n", "\r", "\t"), '', $grid_cols));
+                                $html = preg_replace(array('/<!--(.*)-->/Uis', "/[[:blank:]]+/"), array('', ' '), str_replace(array("\n", "\r", "\t"), '', $html));
                                 echo $grid_cols . $html; ?>
                             </div>
                         </div>
                     </div>
-                <?php
+                    </div>
+                    <?php
                     break;
                 case'3':
 
                     $html = $this->render_galerie_slider_template($galerieSettings, $typeSettings, $images->record, $images->count, $attributes);
-                     $ts = $typeSettings;
+                    $ts = $typeSettings;
 
                     $ts->xs_column ? $xs_column = $ts->xs_column : $xs_column = 6;
                     $ts->sm_column ? $sm_column = $ts->sm_column : $sm_column = 5;
@@ -151,29 +152,30 @@ if (!class_exists('PostGalerieTemplates')) {
                     $ts->xl_gutter ? $xl_gutter = $ts->xl_gutter : $xl_gutter = 1;
                     ?>
 
-                    <div class="wp-block-hupa-theme-post-list masonry-grid-wrapper <?=$customCss?>">
-                    <?= $galerieSettings->show_bezeichnung ? '<h3 class="post-galerie-h3">' . $galerieSettings->bezeichnung . '</h3>' : '' ?>
-                    <?= $galerieSettings->show_beschreibung ? '<small class="post-small-description">' . $galerieSettings->beschreibung . '</small>' : '' ?>
-                    <div class="<?=$galerieSettings->lightbox_aktiv ? 'light-box-controls' : ''?>">
-                        <div class="post-selector-grid mb-3">
-                            <?php
-                            $grid_cols = '<div class="row
-                                        row-cols-'.$xs_column.'
-                                        row-cols-sm-'.$sm_column.'
-                                        row-cols-md-'.$md_column.'
-                                        row-cols-lg-'.$lg_column.'
-                                        row-cols-xl-'.$xl_column.'
-                                        g-'.$xs_gutter.'
-                                        g-sm-'.$sm_gutter.'
-                                        g-md-'.$md_gutter.'
-                                        g-lg-'.$lg_gutter.'
-                                        g-xl-'.$xl_gutter.'">';
+                    <div class="wp-block-hupa-theme-post-list masonry-grid-wrapper <?= $customCss ?>">
+                        <?= $galerieSettings->show_bezeichnung ? '<h3 class="post-galerie-h3">' . $galerieSettings->bezeichnung . '</h3>' : '' ?>
+                        <?= $galerieSettings->show_beschreibung ? '<small class="post-small-description">' . $galerieSettings->beschreibung . '</small>' : '' ?>
+                        <div class="<?= $galerieSettings->lightbox_aktiv ? 'light-box-controls' : '' ?>">
+                            <div class="post-selector-grid mb-3">
+                                <?php
+                                $grid_cols = '<div class="row
+                                        row-cols-' . $xs_column . '
+                                        row-cols-sm-' . $sm_column . '
+                                        row-cols-md-' . $md_column . '
+                                        row-cols-lg-' . $lg_column . '
+                                        row-cols-xl-' . $xl_column . '
+                                        g-' . $xs_gutter . '
+                                        g-sm-' . $sm_gutter . '
+                                        g-md-' . $md_gutter . '
+                                        g-lg-' . $lg_gutter . '
+                                        g-xl-' . $xl_gutter . '">';
 
-                            $grid_cols = preg_replace(array('/<!--(.*)-->/Uis',"/[[:blank:]]+/"),array('',' '),str_replace(array("\n","\r","\t"),'', $grid_cols));
-                            $html = preg_replace(array('/<!--(.*)-->/Uis',"/[[:blank:]]+/"),array('',' '),str_replace(array("\n","\r","\t"),'', $html));
-                            echo $grid_cols . $html; ?>
+                                $grid_cols = preg_replace(array('/<!--(.*)-->/Uis', "/[[:blank:]]+/"), array('', ' '), str_replace(array("\n", "\r", "\t"), '', $grid_cols));
+                                $html = preg_replace(array('/<!--(.*)-->/Uis', "/[[:blank:]]+/"), array('', ' '), str_replace(array("\n", "\r", "\t"), '', $html));
+                                echo $grid_cols . $html; ?>
                             </div>
                         </div>
+                    </div>
                     </div>
                     <?php
                     break;
@@ -196,7 +198,7 @@ if (!class_exists('PostGalerieTemplates')) {
                 $caption_aktiv = $galerieSettings->caption_aktiv;
 
 
-                if ($attr->hoverBGColor && $attr->TextColor) {
+                if (isset($attr->hoverBGColor) && isset($attr->TextColor)) {
                     $bGColor = $attr->hoverBGColor . 'd9';
                     $textColor = $attr->TextColor . 'ff';
                     $btnBGHover = $attr->TextColor;
@@ -240,7 +242,7 @@ if (!class_exists('PostGalerieTemplates')) {
                     setup_postdata($post);
                     $link = get_permalink();
                 }
-                if($galerieSettings->type == '1') {
+                if ($galerieSettings->type == '1') {
                     $control = 'data-control="single"';
                 } else {
                     $control = 'data-control="control"';
@@ -252,21 +254,21 @@ if (!class_exists('PostGalerieTemplates')) {
                 $data_control = '';
 
                 if (!$hover_aktiv && $lightbox_aktiv) {
-                    $lightbox_start = '<a '.$control.' class="img-link slider-href-link" title="' . $title . '" href="' . $img_full[0] . '">';
+                    $lightbox_start = '<a ' . $control . ' class="img-link slider-href-link" title="' . $title . '" href="' . $img_full[0] . '">';
                     $lightbox_end = '</a>';
                 }
-                if($hover_aktiv && $lightbox_aktiv){
+                if ($hover_aktiv && $lightbox_aktiv) {
                     $lightbox_start = '';
                     $lightbox_end = '';
                     $lightbox_none = '';
                     $data_control = $control;
                 }
 
-                if($hover_aktiv && !$lightbox_aktiv){
+                if ($hover_aktiv && !$lightbox_aktiv) {
                     $lightbox_none = ' d-none';
                 }
 
-                if(!$hover_aktiv && $lightbox_aktiv && $link || !$hover_aktiv && !$lightbox_aktiv && $link){
+                if (!$hover_aktiv && $lightbox_aktiv && $link || !$hover_aktiv && !$lightbox_aktiv && $link) {
                     $lightbox_start = '<a class="slider-href-link" title="' . $title . '" href="' . $link . '">';
                     $lightbox_end = '</a>';
                 }
@@ -280,19 +282,21 @@ if (!class_exists('PostGalerieTemplates')) {
 
                 $caption ?: $caption_none = 'd-none';
                 $img_link = 'img-link';
-                if(!$hover_aktiv){
+                if (!$hover_aktiv) {
                     $img_link = '';
                 }
 
                 $lazy_load_aktiv = '"';
-                if($galerieSettings->lazy_load_aktiv){
+                if ($galerieSettings->lazy_load_aktiv) {
                     $galerieSettings->animate_select ? $animate_select = $galerieSettings->animate_select : $animate_select = 'fadeInUp';
                     $aniRand = mt_rand(50, 450);
                     $aniOffset = mt_rand(50, 90);
                     $aniDuration = mt_rand(350, 1000);
-                    $galerieSettings->lazy_load_ani_aktiv ? $ani = 'wow animate__'.$animate_select.'" data-wow-offset="50" data-wow-duration="'.$aniDuration.'ms" data-wow-delay="'.$aniRand.'ms"' : $ani = '"';
-                    $lazy_load_aktiv = ' lazy-image '.$ani.'';
+                    $galerieSettings->lazy_load_ani_aktiv ? $ani = 'wow animate__' . $animate_select . '" data-wow-offset="50" data-wow-duration="' . $aniDuration . 'ms" data-wow-delay="' . $aniRand . 'ms"' : $ani = '"';
+                    $lazy_load_aktiv = ' lazy-image ' . $ani . '';
                 }
+
+                $attr->hoverBGColor ? $bgHoverStyle = 'style="background-color:' . $attr->hoverBGColor . '"' : $bgHoverStyle = '';
                 if ($galerieSettings->type == '1') {
                     $html .= '
                      <div class="splide__slide">
@@ -306,8 +310,8 @@ if (!class_exists('PostGalerieTemplates')) {
                                 <div class="post-excerpt">
                                     ' . $img_beschreibung . '
                                 </div>
-                                <div class="hover-button mt-auto" style="background-color: '.$attr->hoverBGColor.'">
-                                    <a title="' . $title . '" '.$data_control.' href="' . $img_full[0] . '" class="'.$img_link.' btn-grid-hover btn-img' . $lightbox_none . '" ' . $btnOut . '></a>
+                                <div class="hover-button mt-auto" '.$bgHoverStyle.'>
+                                    <a title="' . $title . '" ' . $data_control . ' href="' . $img_full[0] . '" class="' . $img_link . ' btn-grid-hover btn-img' . $lightbox_none . '" ' . $btnOut . '></a>
                                     <a href="' . $link . '" class="btn-grid-hover btn-link' . $btnShowLink . '" title="' . $link . '" ' . $btnOut . '></a>
                                 </div>
                             </div>
@@ -319,16 +323,15 @@ if (!class_exists('PostGalerieTemplates')) {
                 }// GALERIE 1
 
                 if ($galerieSettings->type == '2') {
-
                     $typeSettings->crop ? $height = $typeSettings->img_width : $height = $typeSettings->img_height;
                     $style = 'style="
-                    width:'.$typeSettings->img_width.'px;
-                    height:'.$height.'px;
+                    width:' . $typeSettings->img_width . 'px;
+                    height:' . $height . 'px;
                     "';
 
                     $html .= '<div class="col grid-gutter">
                              ' . $lightbox_start . '
-                              <img class="grid-gutter-image rounded'.$lazy_load_aktiv.'  alt="' . $attachment['alt'] . '" src="' . $img_src[0] . '" data-src="' . $img_src[0] . '" '.$style.'>              
+                              <img class="grid-gutter-image rounded' . $lazy_load_aktiv . '  alt="' . $attachment['alt'] . '" src="' . $img_src[0] . '" data-src="' . $img_src[0] . '" ' . $style . '>              
                             ' . $lightbox_end . '
                             <div class="rounded grid-hover' . $hover_none . '" ' . $bgStyle . '>
                              <div class="hover-wrapper">
@@ -336,22 +339,21 @@ if (!class_exists('PostGalerieTemplates')) {
                                 <div class="post-excerpt">
                                     ' . $img_beschreibung . '
                                 </div>
-                                <div class="hover-button mt-auto" style="background-color: '.$attr->hoverBGColor.'">
-                                    <a title="' . $title . '" '.$data_control.' href="' . $img_full[0] . '" class="'.$img_link.' btn-grid-hover btn-img' . $lightbox_none . '" ' . $btnOut . '></a>
+                                <div class="hover-button mt-auto" '.$bgHoverStyle.'>
+                                    <a title="' . $title . '" ' . $data_control . ' href="' . $img_full[0] . '" class="' . $img_link . ' btn-grid-hover btn-img' . $lightbox_none . '" ' . $btnOut . '></a>
                                     <a href="' . $link . '" class="btn-grid-hover btn-link' . $btnShowLink . '" title="' . $link . '" ' . $btnOut . '></a>
                                  </div>
                              </div>
                             </div>
-                            <div class="grid-caption '.$caption_none.'">
-                              '.$caption.'
+                            <div class="grid-caption ' . $caption_none . '">
+                              ' . $caption . '
                             </div>
                           </div>';
                 }
                 if ($galerieSettings->type == '3') {
-
                     $html .= '<div class="col grid-item">
                              ' . $lightbox_start . '
-                              <img class="rounded masonry-grid-class'.$lazy_load_aktiv.'  alt="' . $attachment['alt'] . '" src="' . $img_src[0] . '"  data-src="' . $img_src[0] . '">              
+                              <img class="rounded masonry-grid-class' . $lazy_load_aktiv . '  alt="' . $attachment['alt'] . '" src="' . $img_src[0] . '"  data-src="' . $img_src[0] . '">              
                             ' . $lightbox_end . '
                             <div class="rounded grid-hover' . $hover_none . '" ' . $bgStyle . '>
                              <div class="hover-wrapper">
@@ -359,10 +361,10 @@ if (!class_exists('PostGalerieTemplates')) {
                                 <div class="post-excerpt">
                                     ' . $img_beschreibung . '
                                 </div>
-                                <div class="hover-button mt-auto" style="background-color: '.$attr->hoverBGColor.'">
-                                    <a title="' . $title . '" '.$data_control.' href="' . $img_full[0] . '" class="'.$img_link.' btn-grid-hover btn-img' . $lightbox_none . '" ' . $btnOut . '></a>
+                                <div class="hover-button mt-auto" '.$bgHoverStyle.'>
+                                    <a title="' . $title . '" ' . $data_control . ' href="' . $img_full[0] . '" class="' . $img_link . ' btn-grid-hover btn-img' . $lightbox_none . '" ' . $btnOut . '></a>
                                     <a href="' . $link . '" class="btn-grid-hover btn-link' . $btnShowLink . '" title="' . $link . '" ' . $btnOut . '></a>
-                                 </div>
+                                 </div>  
                              </div>
                             </div>
                           </div>';
