@@ -10,14 +10,14 @@
  * Plugin Name:       Post-Selector - Gutenberg Block Plugin
  * Plugin URI:        https://www.hummelt-werbeagentur.de/leistungen/
  * Description:       Auswahl von Beiträgen im Gutenberg-Block Editor mit verschiedenen Ausgabeoptionen.
- * Version:           1.0.5
+ * Version:           1.0.6
  * Author:            Jens Wiecker
  * License:           GPLv2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Requires PHP:      8.0
  * Requires at least: 5.8
  * Tested up to:      5.8
- * Stable tag:        1.0.5
+ * Stable tag:        1.0.6
  */
 
 defined( 'ABSPATH' ) or die();
