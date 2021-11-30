@@ -52,7 +52,7 @@ if (!class_exists('PostGalerieTemplates')) {
             if (!$images->status) {
                 return null;
             }
-            $attributes['className'] ? $customCss = $attributes['className'] : $customCss = '';
+            isset($attributes['className']) ? $customCss = $attributes['className'] : $customCss = '';
 
             $typeSettings = json_decode($galerieSettings->type_settings);
             switch ($galerieSettings->type) {
@@ -296,7 +296,7 @@ if (!class_exists('PostGalerieTemplates')) {
                     $lazy_load_aktiv = ' lazy-image ' . $ani . '';
                 }
 
-                $attr->hoverBGColor ? $bgHoverStyle = 'style="background-color:' . $attr->hoverBGColor . '"' : $bgHoverStyle = '';
+                isset($attr->hoverBGColor) ? $bgHoverStyle = 'style="background-color:' . $attr->hoverBGColor . '"' : $bgHoverStyle = '';
                 if ($galerieSettings->type == '1') {
                     $html .= '
                      <div class="splide__slide">
@@ -323,7 +323,7 @@ if (!class_exists('PostGalerieTemplates')) {
                 }// GALERIE 1
 
                 if ($galerieSettings->type == '2') {
-                    $typeSettings->crop ? $height = $typeSettings->img_width : $height = $typeSettings->img_height;
+                    isset($typeSettings->crop) ? $height = $typeSettings->img_width : $height = $typeSettings->img_height;
                     $style = 'style="
                     width:' . $typeSettings->img_width . 'px;
                     height:' . $height . 'px;

@@ -194,9 +194,9 @@ if (!class_exists('PostSelectorFilter')) {
             $record->status = false;
             $sendData = new stdClass();
             $postArr = [];
-            $attributes->imageCheckActive ? $sendData->image = true : $sendData->image = false;
+            isset($attributes->imageCheckActive) ? $sendData->image = true : $sendData->image = false;
 
-            if ($attributes->selectedCat) {
+            if (isset($attributes->selectedCat)) {
                 $sendData->kategorie = true;
                 $attributes->postCount ? $sendData->postCount = $attributes->postCount : $sendData->postCount = '-1';
                 $sendData->katId = $attributes->selectedCat;
@@ -213,7 +213,7 @@ if (!class_exists('PostSelectorFilter')) {
 
                 }
             }
-            if (!$attributes->selectedCat) {
+            if (!isset($attributes->selectedCat)) {
                 if ($attributes->selectedPosts) {
                     foreach ($attributes->selectedPosts as $tmp) {
                         $post = $this->get_posts_by_id($tmp);
@@ -222,15 +222,16 @@ if (!class_exists('PostSelectorFilter')) {
                 }
 
                 $post = $this->postSelectArrayToObject($postArr);
-                switch ($attributes->outputType) {
-                    case '1':
-                        do_action('load_slider_template', $post, $attributes);
-                        break;
-                    case '3':
-                        do_action('load_news_template', $post, $attributes);
-                        break;
+                if (isset($attributes->outputType)) {
+                    switch ($attributes->outputType) {
+                        case '1':
+                            do_action('load_slider_template', $post, $attributes);
+                            break;
+                        case '3':
+                            do_action('load_news_template', $post, $attributes);
+                            break;
+                    }
                 }
-
             }
         }
 
