@@ -81,10 +81,10 @@ if ( ! class_exists( 'PostSliderTemplates' ) ) {
 			}
 
 			$count = count((array) $data);
-			$settings->arrows && $count > 0 ? $arrows  = '' : $arrows = 'd-none';
-			$settings->label ? $padding = 'style="padding-bottom:2.5rem!important"' : $padding = '';
-            $settings->label ? $arrow_bt = 'style="margin-top:-1.25rem"' : $arrow_bt = '';
-            $attr->className ? $customCss =  $attr->className : $customCss = '';
+			isset($settings->arrows) && $count > 0 ? $arrows  = '' : $arrows = 'd-none';
+			isset($settings->label) ? $padding = 'style="padding-bottom:2.5rem!important"' : $padding = '';
+            isset($settings->label) ? $arrow_bt = 'style="margin-top:-1.25rem"' : $arrow_bt = '';
+            isset($attr->className) ? $customCss =  $attr->className : $customCss = '';
 			?>
             <div class="wp-block-hupa-theme-post-list <?=$customCss?>">
                 <div data-id="<?= $attr->selectedSlider ?>" data-rand="<?= $rand ?>" class="splide splide<?= $rand ?>">
@@ -99,20 +99,20 @@ if ( ! class_exists( 'PostSliderTemplates' ) ) {
                     <div class="splide__track" <?=$padding?>>
                         <div class="splide__list <?=$attr->lightBoxActive ? 'light-box-controls' : ''?>">
 							<?php foreach ( $data as $tmp ):
-
-                                $img_src_url = wp_get_attachment_image_src($tmp->img_id, $settings->img_size, false);
+                                isset($settings->img_size) ? $imgSize = $settings->img_size : $imgSize = '';
+                                $img_src_url = wp_get_attachment_image_src($tmp->img_id, $imgSize, false);
                                 $img_full_url = wp_get_attachment_image_src($tmp->img_id, 'large', false);
 								if($attr->radioMedienLink == 2) {
 									$src = $tmp->href;
                                     } else {
 								    $src = $tmp->src;
 								}
-								if($attr->linkCheckActive) {
+								if(isset($attr->linkCheckActive) && $attr->titleCheckActive) {
 								   $btnShowLink = '';
                                 }else {
 									$btnShowLink = 'd-none';
 								}
-								if($attr->titleCheckActive){
+								if(isset($attr->titleCheckActive) && $attr->titleCheckActive){
 								    $title = $tmp->title;
 								}else {
 									$title = '';
@@ -134,7 +134,10 @@ if ( ! class_exists( 'PostSliderTemplates' ) ) {
                                                   <?=$excerpt?>
                                                 <?php endif; ?>
                                             </div>
-                                            <div class="hover-button mt-auto" style="background-color: <?=$attr->hoverBGColor?>">
+                                            <?php
+                                            isset($attr->hoverBGColor) && $attr->hoverBGColor ? $bgColor = 'style="background-color:'.$attr->hoverBGColor.'"' : $bgColor = '';
+                                            ?>
+                                            <div class="hover-button mt-auto" <?=$bgColor?>>
                                                 <a data-control="single" title="<?=$title?>" href="<?=$img_full_url[0]?>" class="img-link btn-grid-hover btn-img" <?=$btnOut?>></a>
                                                 <a href="<?=$tmp->permalink?>" class="btn-grid-hover btn-link <?=$btnShowLink?>" title="Link zum Beitrag" <?=$btnOut?>> </a>
                                             </div>
