@@ -26,6 +26,8 @@ Auswahl von Beiträgen im Gutenberg-Block Editor mit verschiedenen Ausgabeoption
 
 ### Changelog
 ***
+= 1.0.8 =
+* Rest Endpoint Fehler gefixt
 
 = 1.0.7 =
 * Fix Shortcode Fehler

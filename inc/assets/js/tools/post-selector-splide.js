@@ -2,12 +2,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let wow = new WOW(
         {
-            boxClass:     'wow',      // animated element css class (default is wow)
+            boxClass: 'wow',      // animated element css class (default is wow)
             animateClass: 'animate__animated', // animation css class (default is animated)
-            offset:       0,          // distance to the element when triggering the animation (default is 0)
-            mobile:       true,       // trigger animations on mobile devices (default is true)
-            live:         true,       // act on asynchronously loaded content (default is true)
-            callback:     function(box) {
+            offset: 0,          // distance to the element when triggering the animation (default is 0)
+            mobile: true,       // trigger animations on mobile devices (default is true)
+            live: true,       // act on asynchronously loaded content (default is true)
+            callback: function (box) {
                 // the callback is fired every time an animation is started
                 // the argument that is passed in is the DOM node being animated
             },
@@ -17,14 +17,11 @@ document.addEventListener('DOMContentLoaded', function () {
     );
     wow.init();
 
-
-
-
     let siteGalerie = document.querySelector('.top-button');
     let slideGalerie = document.getElementById('blueimp-gallery-slides');
     if (!slideGalerie) {
 
-  let html = `
+        let html = `
    <div id="blueimp-gallery-slides"
      class="blueimp-gallery blueimp-gallery-controls"
      aria-label="image gallery"
@@ -56,12 +53,15 @@ document.addEventListener('DOMContentLoaded', function () {
     </a>
     <ol class="indicator"></ol>
     </div>`;
-        siteGalerie.insertAdjacentHTML('afterend', html);
+        if (siteGalerie) {
+            siteGalerie.insertAdjacentHTML('afterend', html);
+        }
+
     }
 
     let singleGalerie = document.getElementById('blueimp-gallery-single');
-    if(!singleGalerie){
-    let html = `
+    if (!singleGalerie) {
+        let html = `
    <div id="blueimp-gallery-single"
      class="blueimp-gallery blueimp-gallery-controls"
      aria-label="image gallery"
@@ -75,9 +75,10 @@ document.addEventListener('DOMContentLoaded', function () {
        aria-keyshortcuts="Escape">
     </a>
     </div>`;
-    siteGalerie.insertAdjacentHTML('afterend', html);
+        if (siteGalerie) {
+            siteGalerie.insertAdjacentHTML('afterend', html);
+        }
     }
-
 
     let splideImgContainer = document.querySelectorAll('.splide');
     if (splideImgContainer) {
@@ -96,8 +97,8 @@ document.addEventListener('DOMContentLoaded', function () {
         function set_new_splide_instance_settings(rand, slideId) {
             let xhr = new XMLHttpRequest();
             let formData = new FormData();
-            xhr.open('POST', public_ajax_obj.ajax_url, true);
-            formData.append('_ajax_nonce', public_ajax_obj.nonce);
+            xhr.open('POST', ps_ajax_obj.ajax_url, true);
+            formData.append('_ajax_nonce', ps_ajax_obj.nonce);
             formData.append('action', 'PostSelHandlePublic');
             formData.append('method', 'get_slider_settings');
             formData.append('id', slideId);
@@ -205,7 +206,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 let target = e.target
                 let link = target.src ? target.parentNode : target;
                 let control = link.getAttribute('data-control');
-                if(!control){
+                if (!control) {
                     return false;
                 }
                 let options;
@@ -231,7 +232,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         }
                         break;
                 }
-                let  links = this.querySelectorAll('a.img-link')
+                let links = this.querySelectorAll('a.img-link')
                 blueimp.Gallery(links, options)
             });
         });
@@ -251,7 +252,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     const postImgArr = document.querySelectorAll('img.lazy-image');
-    if(postImgArr){
+    if (postImgArr) {
         postImgArr.forEach((postImg) => {
             imageObserver.observe(postImg);
         });

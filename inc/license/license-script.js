@@ -41,7 +41,7 @@ function theme_aktivieren_button(url) {
         return false;
     }
     let html = `<a href="${url}" id="" type="button" class="btn btn-success">
-            <i class="bi bi-box-arrow-right"></i>&nbsp;Theme aktivieren
+            <i class="bi bi-box-arrow-right"></i>&nbsp; Plugin aktivieren
             </a>`;
 
     let saveBtn = document.getElementById('saveBtn');
