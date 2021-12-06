@@ -29,6 +29,7 @@ const POST_SELECT_MIN_WP_VERSION = '5.7';
 define('POST_SELECT_PLUGIN_DIR', dirname(__FILE__));
 //PLUGIN SLUG
 define('POST_SELECT_SLUG_PATH', plugin_basename(__FILE__));
+define('POST_SELECT_BASENAME', plugin_basename(__DIR__));
 //PLUGIN URL
 define('POST_SELECT_PLUGIN_URL', plugins_url('wp-post-selector'));
 //PLUGIN INC PATH
