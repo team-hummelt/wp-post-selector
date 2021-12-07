@@ -5,21 +5,40 @@
 .wp-block-hupa-theme-post-list .post-cover-img {
   -o-object-fit: cover !important;
   object-fit: cover !important;
-  height: 100% !important;
+  height: 350px !important;
   width: 200px !important;
 }
 .wp-block-hupa-theme-post-list .size-post-cover-img-large {
-  -o-object-fit: cover !important;
-  object-fit: cover !important;
-  height: 100% !important;
-  max-height: 300px;
-  width: 300px !important;
+  -o-object-fit: cover;
+  object-fit: cover;
+  height: 450px;
+  width: 300px;
 }
 .wp-block-hupa-theme-post-list .size-card-img-top-large {
   -o-object-fit: cover;
   object-fit: cover;
-  height: 450px !important;
+  height: 450px;
+  max-height: 100%;
   width: 100%;
+  border-top-right-radius: 0.25rem;
+  border-top-left-radius: 0.25rem;
+}
+.wp-block-hupa-theme-post-list .size-card-img-bottom-large {
+  -o-object-fit: cover;
+  object-fit: cover;
+  max-height: 450px;
+  height: 100%;
+  width: 100%;
+  border-bottom-right-radius: 0.25rem;
+  border-bottom-left-radius: 0.25rem;
+}
+.wp-block-hupa-theme-post-list .size-card-img-overlay-large {
+  -o-object-fit: cover;
+  object-fit: cover;
+  width: 100%;
+}
+.wp-block-hupa-theme-post-list .post-meta a {
+  text-decoration: none;
 }
 .wp-block-hupa-theme-post-list .news-wrapper {
   border: 1px solid #dee2e6;

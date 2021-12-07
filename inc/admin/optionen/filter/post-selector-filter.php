@@ -60,7 +60,7 @@ if (!class_exists('PostSelectorFilter')) {
             add_filter('delete_post_selector_slider', array($this, 'deletePostSelectorSlider'));
 
             //GET SLIDER TYPES
-            add_filter('get_post_select_data_type', array($this, 'getPostSelectDataType'));
+            add_filter('get_post_select_data_type', array($this, 'getPostSelectDataType'),10 ,2);
 
             //GET PAGE & POST SELECT
             add_filter('post_selector_get_theme_pages', array($this, 'postSelectorGetThemePages'));
@@ -191,7 +191,7 @@ if (!class_exists('PostSelectorFilter')) {
             return $return;
         }
 
-        public function getPostSelectDataType($attr)
+        public function getPostSelectDataType($query, $attr)
         {
 
             $attributes = $this->postSelectArrayToObject($attr);
@@ -201,24 +201,26 @@ if (!class_exists('PostSelectorFilter')) {
             $postArr = [];
             isset($attributes->imageCheckActive) ? $sendData->image = true : $sendData->image = false;
 
-            if (isset($attributes->selectedCat)) {
+            if (isset($attributes->selectedCat) && $attributes->selectedCat) {
                 $sendData->kategorie = true;
                 $attributes->postCount ? $sendData->postCount = $attributes->postCount : $sendData->postCount = '-1';
                 $sendData->katId = $attributes->selectedCat;
-                $post = $this->get_posts_by_data($sendData);
-                $post = $this->postSelectArrayToObject($post);
 
+                //$post = $this->get_posts_by_data($sendData, $attributes);
+                $post = $this->get_posts_by_category($query->posts, $attributes);
+                $post = $this->postSelectArrayToObject($post);
                 switch ($attributes->outputType) {
                     case 1:
                         do_action('load_slider_template', $post, $attributes);
                         break;
                     case 3:
+
                         do_action('load_news_template', $post, $attributes);
                         break;
-
                 }
             }
-            if (!isset($attributes->selectedCat)) {
+
+            if (!isset($attributes->selectedCat) || empty($attributes->selectedCat) && isset($attributes->selectedPosts) && $attributes->selectedPosts)  {
                 if ($attributes->selectedPosts) {
                     foreach ($attributes->selectedPosts as $tmp) {
                         $post = $this->get_posts_by_id($tmp);
@@ -233,7 +235,6 @@ if (!class_exists('PostSelectorFilter')) {
                             do_action('load_slider_template', $post, $attributes);
                             break;
                         case '3':
-                            print_r($post);
                             do_action('load_news_template', $post, $attributes);
                             break;
                     }
@@ -241,22 +242,55 @@ if (!class_exists('PostSelectorFilter')) {
             }
         }
 
-        private function get_posts_by_data($data): array
+        private function get_posts_by_category($query, $attr = false):array {
+            $page_id = get_queried_object_id();
+            global $post;
+            $postArr = [];
+
+            foreach ($query as $post) {
+                setup_postdata($post);
+                $customTitle = get_post_meta($post->ID, '_hupa_custom_title', true);
+                $customTitle ? $title = $customTitle : $title = get_the_title();
+                $image_id = get_post_thumbnail_id();
+                $attachment = (object)$this->wp_get_attachment($image_id);
+
+                $post_item = [
+                    'post_id' => get_the_ID(),
+                    'parent_id' => $page_id,
+                    'img_id' => $image_id,
+                    'title' => $title,
+                    'permalink' => get_the_permalink(),
+                    'author' => get_the_author(),
+                    'alt' => $attachment->alt,
+                    'captions' => $attachment->caption,
+                    'description' => $attachment->description,
+                    'href' => $attachment->href,
+                    'src' => $attachment->src,
+                    'img_title' => $attachment->title,
+                    'content' => get_the_content(),
+                    'excerpt' => get_the_excerpt(),
+                    'page_excerpt' => get_the_excerpt($page_id),
+                    'date' => esc_html(get_the_date()),
+                ];
+                $postArr[] = $post_item;
+            }
+            return $postArr;
+        }
+
+        private function get_posts_by_data($data, $attr = false): array
         {
             $page_id = get_queried_object_id();
-
             global $post;
+
             $args = [
-                'post_type' => get_post_types(),
+               'post_type' => get_post_types(),
                 'posts_per_page' => $data->postCount,
                 'category' => $data->katId,
-                'orderby' => 'date',
-                'order' => 'DESC',
-                'post_status' => 'publish',
-                'suppress_filters' => true
+                'post_status' => 'publish'
             ];
 
             $posts = get_posts($args);
+
             $postArr = [];
             foreach ($posts as $post) {
                 setup_postdata($post);
@@ -266,6 +300,7 @@ if (!class_exists('PostSelectorFilter')) {
                 //$thumb_url_array = wp_get_attachment_image_src($image_id, SLIDER_IMAGE_SIZE, false);
                 //print_r($thumb_url_array);
                 $attachment = (object)$this->wp_get_attachment($image_id);
+
                 $post_item = [
                     'post_id' => get_the_ID(),
                     'parent_id' => $page_id,
@@ -289,15 +324,14 @@ if (!class_exists('PostSelectorFilter')) {
 
                 $postArr[] = $post_item;
             }
-
             return $postArr;
         }
 
         private function get_posts_by_id($id): array
         {
-
             $page_id = get_queried_object_id();
             global $post;
+
             $post = get_post($id);
             setup_postdata($post);
             $customTitle = get_post_meta(get_the_ID(), '_hupa_custom_title', true);

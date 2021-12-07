@@ -50,50 +50,124 @@ if (!class_exists('PostNewsTemplates')) {
                 $imgLink = '';
                 $imgWrapper = '';
             }
-            $newsTemplate = 2;
+
+
             isset($attr->className) && $attr->className ? $className = $attr->className : $className = '';
+
+            isset($attr->kategorieShowActive) && $attr->kategorieShowActive ? $kategorieShowActive = '' : $kategorieShowActive = 'd-none';
+            isset($attr->authorShowActive) && $attr->authorShowActive ? $authorShowActive = true : $authorShowActive = false;
+            isset($attr->datumShowActive) && $attr->datumShowActive ? $datumShowActive = true : $datumShowActive = false;
+            isset($attr->urlNewTabActive) && $attr->urlNewTabActive ? $urlNewTabActive = ' target="_blank"' : $urlNewTabActive = 'd-none';
+
+            isset($attr->selectedNews) ? $selectedNews = (int)$attr->selectedNews : $selectedNews = 1;
+            isset($attr->urlValue) && $attr->urlValue ? $individuellUrl = $attr->urlValue : $individuellUrl = false;
+
             ?>
             <div class="wp-block-hupa-theme-post-list d-flex flex-wrap align-items-stretch py-3">
                 <?php foreach ($data as $tmp):
-                    $tmp->excerpt ? $excerpt = $tmp->excerpt : $excerpt = $tmp->page_excerpt;
-                    if ($attr->radioMedienLink == 2) {
-                        $src = $tmp->href;
-                    } else {
-                        $src = wp_get_attachment_image_src($tmp->img_id, 'large', false);
-                        $src = $src[0];
+
+                     $tmp->excerpt ? $excerpts = $tmp->excerpt : $excerpts = $tmp->page_excerpt;
+                     $excerpt = $excerpts;
+                      if(isset($attr->radioContend) && $attr->radioContend == 1){
+                          $excerpt = $excerpts;
+                      }
+
+                    if(isset($attr->radioContend) && $attr->radioContend == 2){
+                        $excerpt = $tmp->content;
+                        $attr->linkCheckActive = false;
                     }
-                    $attr->titleCheckActive ? $titleNone = '' : $titleNone = 'd-none ';
-                    $attr->linkCheckActive ? $linkNone = '' : $linkNone = 'd-none ';
+                    $targetBlank = '';
+                    $src = '';
+                    switch ($attr->radioMedienLink) {
+                        case 1:
+                            $src = wp_get_attachment_image_src($tmp->img_id, 'large', false);
+                            $src = $src[0];
+                            $targetBlank = '';
+                            break;
+                        case 2:
+                            $src = $tmp->href;
+                            $targetBlank = $urlNewTabActive;
+                            break;
+                        case 3:
+                            $targetBlank = $urlNewTabActive;
+                            if ($individuellUrl) {
+                                $metaCheckUrl = get_post_meta($tmp->post_id, '_hupa_show_custom_url', true);
+                                $metaUrl = get_post_meta($tmp->post_id, '_hupa_beitragsbild_url', true);
+                                if ($metaCheckUrl && filter_var($metaUrl, FILTER_VALIDATE_URL)) {
+                                    $src = $metaUrl;
+                                    $dataGallery = '';
+                                    $imgLink = '';
+                                } else {
+                                    if (isset($attr->lightBoxActive) && $attr->lightBoxActive && !$metaUrl) {
+                                        $dataGallery = 'data-control="single"';
+                                        $imgLink = 'img-link ';
+                                        $imgWrapper = 'light-box-controls';
+                                        $src = wp_get_attachment_image_src($tmp->img_id, 'large', false);
+                                        $src = $src[0];
+                                        $targetBlank = '';
+                                    } else {
+                                        $src = $tmp->href;
+                                        $targetBlank = $urlNewTabActive;
+                                        $dataGallery = '';
+                                        $imgLink = '';
+                                    }
+                                }
+                            } else {
+                                if (isset($attr->lightBoxActive) && $attr->lightBoxActive) {
+                                    $dataGallery = 'data-control="single"';
+                                    $imgLink = 'img-link ';
+                                    $imgWrapper = 'light-box-controls';
+                                    $src = wp_get_attachment_image_src($tmp->img_id, 'large', false);
+                                    $src = $src[0];
+                                    $targetBlank = '';
+                                } else {
+                                    $src = $tmp->href;
+                                    $targetBlank = $urlNewTabActive;
+                                    $dataGallery = '';
+                                    $imgLink = '';
+                                }
+                            }
+                            break;
+                    }
+
+                    isset($attr->titleCheckActive) && $attr->titleCheckActive ? $titleNone = '' : $titleNone = 'd-none ';
+                    isset($attr->linkCheckActive) && $attr->linkCheckActive ? $linkNone = '' : $linkNone = 'd-none ';
+
 
                     //JOB WARNING NEWS TEMPLATE 1
-                    if ($newsTemplate == 1) :
+                    if ($selectedNews == 1) :
                         if ($tmp->img_id && $ifImage) {
                             $lazyImg = get_the_post_thumbnail($tmp->post_id, 'post-cover-img-large', array('title' => $tmp->title));
-                            $lazyImg = preg_replace( '@(width.+height.+?".+?")@i', "", $lazyImg );
+                            $lazyImg = preg_replace('@(width.+height.+?".+?")@i', "", $lazyImg);
                             $hideImg = '';
-                            $imgSrc = wp_get_attachment_image_src($tmp->img_id, 'large', false);
                         } else {
                             $hideImg = 'd-none';
                             $lazyImg = '';
                         }
-
                         ?>
                         <div class="<?= $className ?> col-12 p-2">
                             <div class="news-wrapper d-flex overflow-hidden position-relative h-100 w-100">
                                 <div class="p-4 d-flex flex-column">
-                                    <strong class="post-news-kategorie d-block mb-2  text-muted">
+                                    <strong class="post-news-kategorie <?= $kategorieShowActive ?> d-block mb-2  text-muted">
                                         <?php $x = 1;
                                         $category = get_the_category($tmp->post_id);
                                         foreach ($category as $cat):
-                                            count($category) > $x  ? $bull = ' <div class="vr mx-1"></div> ' : $bull = '';
+                                            count($category) > $x ? $bull = ' <div class="vr mx-1"></div> ' : $bull = '';
                                             echo sprintf('<a  class="text-decoration-none link-secondary" href="%s">%s</a>', get_category_link($cat), $cat->name) . $bull;
                                             $x++;
                                             ?>
                                         <?php endforeach; ?>
                                     </strong>
                                     <h4 class="<?= $titleNone ?>mb-0 lh-1"><?= $tmp->title ?></h4>
-                                    <div class="mb-1 text-muted"><?= $tmp->date ?></div>
-                                    <p class="card-text mb-auto"><?= $excerpt ?></p>
+                                    <div class="mb-1 text-muted post-meta">
+                                        <?php if ($datumShowActive): ?>
+                                            <?= $tmp->date ?>
+                                        <?php endif; ?>
+                                        <?php if ($authorShowActive): ?>
+                                            <?= __('by', 'wp-post-selector') ?> <?= get_the_author_posts_link() ?>
+                                        <?php endif; ?>
+                                    </div>
+                                    <p class="card-text mb-auto pb-2"><?= $excerpt ?></p>
                                     <span>
                             <a href="<?= $tmp->permalink ?>"
                                class="<?= $linkNone ?>text-decoration-none">weiterlesen...</a>
@@ -111,40 +185,46 @@ if (!class_exists('PostNewsTemplates')) {
                         </div>
                     <?php endif;
                     //JOB WARNING NEWS TEMPLATE 2
-                    if ($newsTemplate == 2):
+                    if ($selectedNews == 2):
                         if ($tmp->img_id && $ifImage) {
 
                             $lazyImg = get_the_post_thumbnail($tmp->post_id, 'card-img-top-large', array('title' => $tmp->title));
-                            $lazyImg = preg_replace( '@(width.+height.+?".+?")@i', "", $lazyImg );
+                            $lazyImg = preg_replace('@(width.+height.+?".+?")@i', "", $lazyImg);
                             $hideImg = '';
-                            $imgSrc = wp_get_attachment_image_src($tmp->img_id, 'large', false);
                         } else {
                             $hideImg = 'd-none';
                             $lazyImg = '';
                         }
                         ?>
-                        <div class="<?= $className ?> card mb-3">
+                        <div class="<?= $className ?> card flex-fill mb-3">
                             <div class="<?= $imgWrapper ?> <?= $hideImg ?>">
                                 <?php if ($dataGallery || $attr->radioMedienLink == 2 || $ifImage): ?>
                                     <a class="<?= $imgLink ?>" title="<?= $tmp->title ?>" <?= $dataGallery ?>
-                                       href="<?= $src ?>">
+                                       href="<?= $src ?>" <?= $targetBlank ?>>
                                         <?= $lazyImg ?>
                                     </a>
                                 <?php endif; ?>
                             </div>
-                            <div class="card-body">
-                                <strong class="d-inline-block mb-2 text-muted">
+                            <div class="card-body pt-1 pb-3">
+                                <strong class="d-inline-block my-2 <?= $kategorieShowActive ?> text-muted">
                                     <?php $x = 1;
                                     $category = get_the_category($tmp->post_id);
                                     foreach ($category as $cat):
-                                        count($category) > $x  ? $bull = ' <div class="vr mx-1"></div> ' : $bull = '';
+                                        count($category) > $x ? $bull = ' <div class="vr"></div> ' : $bull = '';
                                         echo sprintf('<a  class="text-decoration-none link-secondary" href="%s">%s</a>', get_category_link($cat), $cat->name) . $bull;
                                         $x++;
                                         ?>
                                     <?php endforeach; ?>
                                 </strong>
-                                <h4 class="<?= $titleNone?> mb-0 "><?= $tmp->title ?></h4>
-                                <div class="mb-2 text-muted"><?= $tmp->date ?></div>
+                                <h4 class="<?= $titleNone ?> mb-0 "><?= $tmp->title ?></h4>
+                                <div class="mb-2 text-muted post-meta">
+                                    <?php if ($datumShowActive): ?>
+                                        <?= $tmp->date ?>
+                                    <?php endif; ?>
+                                    <?php if ($authorShowActive): ?>
+                                        <?= __('by', 'wp-post-selector') ?> <?= get_the_author_posts_link() ?>
+                                    <?php endif; ?>
+                                </div>
                                 <p class="card-text"><?= $excerpt ?></p>
                                 <p class="card-text"><span class="text-muted">
                                         <a href="<?= $tmp->permalink ?>"
@@ -153,6 +233,106 @@ if (!class_exists('PostNewsTemplates')) {
                                 </p>
                             </div>
                         </div>
+                    <?php endif;
+                    //JOB WARNING NEWS TEMPLATE 3
+                    if ($selectedNews == 3):
+                        if ($tmp->img_id && $ifImage) {
+
+                            $lazyImg = get_the_post_thumbnail($tmp->post_id, 'card-img-bottom-large', array('title' => $tmp->title));
+                            $lazyImg = preg_replace('@(width.+height.+?".+?")@i', "", $lazyImg);
+                            $hideImg = '';
+                        } else {
+                            $hideImg = 'd-none';
+                            $lazyImg = '';
+                        }
+                        ?>
+                        <div class="<?= $className ?> card flex-fill mb-3">
+                            <div class="card-body py-3">
+                                <strong class="d-inline-block mb-1 mt-2 <?= $kategorieShowActive ?> text-muted">
+                                    <?php $x = 1;
+                                    $category = get_the_category($tmp->post_id);
+                                    foreach ($category as $cat):
+                                        count($category) > $x ? $bull = ' <div class="vr"></div> ' : $bull = '';
+                                        echo sprintf('<a  class="text-decoration-none link-secondary" href="%s">%s</a>', get_category_link($cat), $cat->name) . $bull;
+                                        $x++;
+                                        ?>
+                                    <?php endforeach; ?>
+                                </strong>
+                                <h4 class="<?= $titleNone ?> mb-0 "><?= $tmp->title ?></h4>
+                                <div class="mb-2 text-muted post-meta">
+                                    <?php if ($datumShowActive): ?>
+                                        <?= $tmp->date ?>
+                                    <?php endif; ?>
+                                    <?php if ($authorShowActive): ?>
+                                        <?= __('by', 'wp-post-selector') ?> <?= get_the_author_posts_link() ?>
+                                    <?php endif; ?>
+                                </div>
+                                <p class="card-text"><?= $excerpt ?></p>
+                                <p class="card-text"><span class="text-muted">
+                                        <a href="<?= $tmp->permalink ?>"
+                                           class="<?= $linkNone ?>text-decoration-none">weiterlesen...</a>
+                                    </span>
+                                </p>
+                            </div>
+                            <div class="<?= $imgWrapper ?> <?= $hideImg ?>">
+                                <?php if ($dataGallery || $attr->radioMedienLink == 2 || $ifImage): ?>
+                                    <a class="<?= $imgLink ?>" title="<?= $tmp->title ?>" <?= $dataGallery ?>
+                                       href="<?= $src ?>" <?= $targetBlank ?>>
+                                        <?= $lazyImg ?>
+                                    </a>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    <?php endif;
+                    //JOB WARNING NEWS TEMPLATE 4
+                    if ($selectedNews == 4):
+
+                        if (!$ifImage) {
+                            return '';
+                        }
+                        $lazyImg = get_the_post_thumbnail($tmp->post_id, 'card-img-overlay-large', array('title' => $tmp->title));
+                        $lazyImg = preg_replace('@(width.+height.+?".+?")@i', "", $lazyImg);
+                        isset($attr->TextColor)  ? $TextColor = 'color: '. $attr->TextColor.';' : $TextColor = '';
+                        isset($attr->TextColor)  ? $LinkColor = 'style="color: '. $attr->TextColor.'eb;"' : $LinkColor = '';
+                        if(isset($attr->hoverBGColor) ) {
+                            $style = 'style="background-color:'.$attr->hoverBGColor.'50;'.$TextColor.' "';
+                        } else {
+                            $style = 'style="background-color:#00000050; color:#ffffff"';
+                        }
+                     if($LinkColor): ?>
+                        <style> .post-meta a { color: <?=$attr->TextColor?>eb;} </style>
+                     <?php endif; ?>
+                    <div class="<?= $className ?> post-news-overlay-wrapper mb-3">
+                        <div class="card">
+                            <?= $lazyImg ?>
+                            <div class="post-news-overlay d-flex flex-column h-100 card-img-overlay" <?=$style?>>
+                                <div class="fs-4 card-title <?= $titleNone ?>"><?= $tmp->title ?></div>
+                                <strong class="d-inline-block mb-0 <?= $kategorieShowActive ?> text-muted">
+                                    <?php $x = 1;
+                                    $category = get_the_category($tmp->post_id);
+                                    foreach ($category as $cat):
+                                        count($category) > $x ? $bull = ' <div class="vr"></div> ' : $bull = '';
+                                        echo sprintf('<a '.$LinkColor. '  class="text-decoration-none" href="%s">%s</a>', get_category_link($cat), $cat->name) . $bull;
+                                        $x++;
+                                        ?>
+                                    <?php endforeach; ?>
+                                </strong>
+
+                                <div class="mb-2 post-meta">
+                                    <?php if ($datumShowActive): ?>
+                                        <?= $tmp->date ?>
+                                    <?php endif; ?>
+                                    <?php if ($authorShowActive): ?>
+                                        <?= __('by', 'wp-post-selector') ?> <?= get_the_author_posts_link() ?>
+                                    <?php endif; ?>
+                                </div>
+                                <p class="card-text"><?= $excerpt ?></p>
+                                <p class="card-text mt-auto">
+                                    <a <?=$LinkColor?> href="<?= $tmp->permalink ?>"
+                                    class="<?= $linkNone ?>text-decoration-none">weiterlesen...</a></p>
+                            </div>
+                        </div>
+                    </div>
                     <?php endif;
                 endforeach; ?>
             </div>

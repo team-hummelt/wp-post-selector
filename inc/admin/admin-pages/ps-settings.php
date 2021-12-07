@@ -49,6 +49,18 @@ defined('ABSPATH') or die();
                     <!--  TODO JOB WARNING STARTSEITE -->
                     <div class="collapse show" id="collapsePostSelectOverviewSite"
                          data-bs-parent="#post_display_parent">
+                        <?php
+                        $args = array(
+
+                            'category' => 24,
+                            'posts_per_page' => -1,
+                            'orderby' => 'menu_order',
+                            'order'   => 'ASC',
+                        );
+                      //  $posts = get_posts( $args );
+                      //  print_r($posts);
+                        ?>
+
                         <div class="border rounded mt-1 mb-3 shadow-sm p-3 bg-custom-gray" style="min-height: 53vh">
                             <div class="d-flex align-items-center">
                                 <h5 class="card-title">
