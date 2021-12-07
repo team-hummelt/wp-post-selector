@@ -7,6 +7,22 @@
     width: 200px !important
   }
 
+  .size-post-cover-img-large {
+    -o-object-fit: cover !important;
+    object-fit: cover !important;
+    height: 100% !important;
+    max-height: 300px;
+    width: 300px !important
+  }
+
+  .size-card-img-top-large {
+    -o-object-fit: cover;
+    object-fit: cover;
+    height: 450px!important;
+    //height: 100%;
+    width: 100%;
+  }
+
   .news-wrapper {
     border: 1px solid #dee2e6;
     border-radius: .25rem;

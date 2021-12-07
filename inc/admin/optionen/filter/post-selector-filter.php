@@ -73,8 +73,13 @@ if (!class_exists('PostSelectorFilter')) {
             //GET SLIDER DEMOS
             add_filter('get_post_slider_demo', array($this, 'getPostSliderDemo'));
 
+            add_filter( 'post_hupa_thumbnail_html', array($this, 'post_remove_thumbnail_width_height'));
         }
 
+
+       public function post_remove_thumbnail_width_height( $imgHtml ):string {
+           return preg_replace( '@(width.+height.+?".+?")@i', "", $imgHtml );
+        }
         public function postSelectorSetSlider($record): object
         {
             global $wpdb;
@@ -228,6 +233,7 @@ if (!class_exists('PostSelectorFilter')) {
                             do_action('load_slider_template', $post, $attributes);
                             break;
                         case '3':
+                            print_r($post);
                             do_action('load_news_template', $post, $attributes);
                             break;
                     }
