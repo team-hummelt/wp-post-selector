@@ -47,7 +47,27 @@ function post_select_rest_endpoint_get_response( $request ): WP_REST_Response {
 				$response->slider = [];
 			}
 
+            $types = [
+                '0' => [
+                    'id' => 1,
+                    'name' => 'Card Image rechts'
+                ],
+                '1' => [
+                    'id' => 2,
+                    'name' => 'Card Image oben'
+                ],
+                '2' => [
+                    'id' => 3,
+                    'name' => 'Card Image unten'
+                ],
+                '3' => [
+                    'id' => 4,
+                    'name' => 'Image overlay'
+                ]
+            ];
+
 			$response->slider  = $retSlid;
+            $response->news = $types;
 			$response->radio_check = (int) $radio_check;
 			$response->galerie  = [];
 			break;

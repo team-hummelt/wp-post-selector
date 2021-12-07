@@ -64,6 +64,8 @@ if ( ! class_exists( 'PostSliderTemplates' ) ) {
 				$btnStyle = 'style=
                           "color: '.$btnBGHover.';
                            background-color: '.$attr->hoverBGColor.'00;
+                           font-weight:normal;
+                           font-style:normal;
                            border-color: '.$attr->TextColor.'33;"';
 
 				$onMouseBgHover = 'onmouseover="this.style.background=\''.$attr->TextColor.'\';';
