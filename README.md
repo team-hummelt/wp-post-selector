@@ -26,6 +26,9 @@ Auswahl von Beiträgen im Gutenberg-Block Editor mit verschiedenen Ausgabeoption
 
 ### Changelog
 ***
+= 1.1.0 =
+* Lizenz Informationen hinzugefügt
+
 = 1.0.9 =
 * Post-Selector Templates hinzugefügt
 * Post-Selector Template Auswahl

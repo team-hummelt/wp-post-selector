@@ -31,7 +31,9 @@ class Wp_Post_Selector_Activator {
 	 */
 	public static function activate() {
 		$register = POST_SELECT_PLUGIN_INC . 'register-wp-post-select.php';
-		unlink($register);
+        if(!get_option('post_selector_product_install_authorize')){
+            unlink($register);
+        }
 		delete_option("post_selector_product_install_authorize");
 		delete_option("post_selector_client_id");
 		delete_option("post_selector_client_secret");

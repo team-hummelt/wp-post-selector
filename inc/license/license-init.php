@@ -8,8 +8,7 @@ defined( 'ABSPATH' ) or die();
  * https://www.hummelt-werbeagentur.de/
  */
 
-
-//delete_option('post_selector_product_install_authorize');
 require 'register-hupa-plugin.php';
 require 'hupa_client_api_wp_remote.php';
+require 'api-exec-class.php';
 
