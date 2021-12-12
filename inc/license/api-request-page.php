@@ -8,8 +8,20 @@ defined('ABSPATH') or die();
  * License: Commercial - goto https://www.hummelt-werbeagentur.de/
  */
 
-
+global $post_selector_license_exec;
 $data = json_decode(file_get_contents("php://input"));
+
+if($data->make_id == 'make_exec'){
+    global $post_selector_license_exec;
+    $makeJob = $post_selector_license_exec->make_api_exec_job($data);
+    $backMsg =  [
+        'msg' => $makeJob->msg,
+        'status' => $makeJob->status,
+    ];
+    echo json_encode($backMsg);
+    exit();
+}
+
 
 if($data->client_id !== get_option('post_selector_client_id')){
     $backMsg =  [
@@ -35,21 +47,7 @@ switch ($data->make_id) {
         delete_option('post_selector_client_id');
         delete_option('post_selector_client_secret');
         deactivate_plugins( POST_SELECT_SLUG_PATH );
-        break;
-    case'2':
-        $message = json_decode($data->message);
-        $backMsg = [
-            'client_id' => get_option('post_selector_client_id'),
-            'reply' => 'Plugin Datei gelöscht',
-            'status' => true,
-        ];
-        update_option('post_selector_message',$message->msg);
-        //$file = POST_SELECT_PLUGIN_DIR . DIRECTORY_SEPARATOR . $data->aktivierung_path;
-        //unlink($file);
-        delete_option('post_selector_product_install_authorize');
-        delete_option('post_selector_client_id');
-        delete_option('post_selector_client_secret');
-        deactivate_plugins( POST_SELECT_SLUG_PATH );
+        set_transient('show_lizenz_info', true, 5);
         break;
     case'send_versions':
         $backMsg = [
@@ -59,7 +57,8 @@ switch ($data->make_id) {
         break;
     default:
         $backMsg = [
-          'status' => false
+          'status' => false,
+          'theme_version' => 'unbekannt'
         ];
 }
 

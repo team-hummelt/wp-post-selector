@@ -1,15 +1,14 @@
 <?php
 
-namespace Hupa\ThemeLicense;
+namespace Hupa\PostSelectorLicense;
 
 defined('ABSPATH') or die();
 
 /**
- * REGISTER HUPA CUSTOM THEME
+ * REGISTER HUPA Postselector Plugin
  * @package Hummelt & Partner WordPress Theme
  * Copyright 2021, Jens Wiecker
  * License: Commercial - goto https://www.hummelt-werbeagentur.de/
- * https://www.hummelt-werbeagentur.de/
  */
 final class RegisterHupaPostSelector
 {
@@ -67,13 +66,11 @@ final class RegisterHupaPostSelector
         require 'activate-post-selector-page.php';
     }
 
-
     /**
      * =========================================
      * =========== ADMIN AJAX HANDLE ===========
      * =========================================
      */
-
     public function post_selector_load_ajax_admin_options_script(): void
     {
         add_action('admin_enqueue_scripts', array($this, 'load_post_selector_admin_style'));
@@ -120,7 +117,6 @@ final class RegisterHupaPostSelector
      * =========== THEME ADMIN DASHBOARD STYLES ===========
      * ====================================================
      */
-
     public function load_post_selector_admin_style(): void
     {
         wp_enqueue_style('post-selector-license-style',plugins_url('wp-post-selector') . '/inc/license/assets/license-backend.css', array(), '');

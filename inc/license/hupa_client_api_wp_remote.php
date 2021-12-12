@@ -1,6 +1,6 @@
 <?php
 
-namespace Hupa\PluginLicense;
+namespace Hupa\PostSelectorPluginLicense;
 
 use Exception;
 use stdClass;
@@ -14,28 +14,26 @@ defined('ABSPATH') or die();
  */
 
 if (!class_exists('HupaApiPluginServerHandle')) {
-    add_action('plugin_loaded', array('Hupa\\PluginLicense\\HupaApiPluginServerHandle', 'init'), 0);
+    add_action('plugin_loaded', array('Hupa\\PostSelectorPluginLicense\\HupaApiPluginServerHandle', 'init'), 0);
 
     class HupaApiPluginServerHandle
     {
-        private static $api_filter_instance;
-        private string $hupa_server_url;
+        private static $instance;
+
 
         /**
          * @return static
          */
         public static function init(): self
         {
-            if (is_null(self::$api_filter_instance)) {
-                self::$api_filter_instance = new self;
+            if (is_null(self::$instance)) {
+                self::$instance = new self;
             }
-            return self::$api_filter_instance;
+            return self::$instance;
         }
 
         public function __construct()
         {
-
-            $this->hupa_server_url = get_option('hupa_server_url');
 
             //TODO Endpoints URL's
             add_filter('get_post_selector_api_urls', array($this, 'PostSelectorGetApiUrl'));
@@ -61,7 +59,7 @@ if (!class_exists('HupaApiPluginServerHandle')) {
         {
             $client_id =  get_option('post_selector_client_id');
             return match ($scope) {
-                'authorize_url' => $this->hupa_server_url . 'authorize?response_type=code&client_id=' . $client_id,
+                'authorize_url' => get_option('hupa_server_url') . 'authorize?response_type=code&client_id=' . $client_id,
                 default => '',
             };
         }
@@ -72,7 +70,7 @@ if (!class_exists('HupaApiPluginServerHandle')) {
             $error->status = false;
             $client_id =  get_option('post_selector_client_id');
             $client_secret = get_option('post_selector_client_secret');
-            $token_url =$this->hupa_server_url . 'token';
+            $token_url = get_option('hupa_server_url') . 'token';
             $authorization = base64_encode("$client_id:$client_secret");
 
             $args = array(
@@ -99,44 +97,33 @@ if (!class_exists('HupaApiPluginServerHandle')) {
             }
 
             update_option('post_selector_access_token', $apiData->access_token);
-            return $this->hupaPostselectorPOSTApiResource('install');
+            $body = [
+                'version' => POST_SELECTOR_PLUGIN_VERSION,
+            ];
+            return $this->hupaPostselectorPOSTApiResource('install', $body);
         }
 
         public function hupaPostselectorPOSTApiResource($scope, $body=false)
         {
-            $error = new stdClass();
-            $error->status = false;
-            $response = wp_remote_post($this->hupa_server_url . $scope, $this->PostSelectorApiPostArgs($body));
+            $response = wp_remote_post(get_option('hupa_server_url') . $scope, $this->PostSelectorApiPostArgs($body));
             if (is_wp_error($response)) {
-
-                $error->message = $response->get_error_message();
-                return $error;
+                return $response->get_error_message();
             }
-
-            $apiData = json_decode($response['body']);
-            if($apiData->error){
-                $errType = $this->get_error_message($apiData);
-                if($errType) {
-                   $this->PostSelectorGetApiClientCredentials();
+            if (is_array($response)) {
+                $query = json_decode($response['body']);
+                if (isset($query->error)) {
+                    if ($this->get_error_message($query)) {
+                        $this->PostSelectorGetApiClientCredentials();
+                    }
+                    $response = wp_remote_post(get_option('hupa_server_url') . $scope, $this->PostSelectorApiPostArgs($body));
+                    if (is_array($response)) {
+                        return json_decode($response['body']);
+                    }
+                } else {
+                    return $query;
                 }
             }
-
-            $response = wp_remote_post($this->hupa_server_url . $scope, $this->PostSelectorApiPostArgs($body));
-            if (is_wp_error($response)) {
-                $error->message = $response->get_error_message();
-                $error->apicode = $response['code'];
-                $error->apimessage = $response['message'];
-                return $error;
-            }
-            $apiData = json_decode($response['body']);
-            if(!$apiData->error){
-                $apiData->status = true;
-                return $apiData;
-            }
-
-            $error->error = $apiData->error;
-            $error->error_description = $apiData->error_description;
-            return $error;
+            return false;
         }
 
         public function PostSelectorGETApiResource($scope, $get = []) {
@@ -150,7 +137,7 @@ if (!class_exists('HupaApiPluginServerHandle')) {
                 $getUrl = '?' . $getUrl;
             }
 
-            $url = $this->hupa_server_url . $scope . $getUrl;
+            $url = get_option('hupa_server_url') . $scope . $getUrl;
             $args = $this->PostSelectorGETApiArgs();
 
             $response = wp_remote_get( $url, $args );
@@ -167,7 +154,7 @@ if (!class_exists('HupaApiPluginServerHandle')) {
                 }
             }
 
-            $response = wp_remote_get( $this->hupa_server_url, $this->PostSelectorGETApiArgs() );
+            $response = wp_remote_get(get_option('hupa_server_url'), $this->PostSelectorGETApiArgs() );
             if (is_wp_error($response)) {
                 $error->message = $response->get_error_message();
                 return $error;
@@ -222,7 +209,7 @@ if (!class_exists('HupaApiPluginServerHandle')) {
 
         private function PostSelectorGetApiClientCredentials():void
         {
-            $token_url = $this->hupa_server_url . 'token';
+            $token_url = get_option('hupa_server_url') . 'token';
             $client_id =  get_option('post_selector_client_id');
             $client_secret = get_option('post_selector_client_secret');
             $authorization = base64_encode("$client_id:$client_secret");
@@ -249,6 +236,42 @@ if (!class_exists('HupaApiPluginServerHandle')) {
                 $apiData = json_decode($response['body']);
                 update_option('post_selector_access_token', $apiData->access_token);
             }
+        }
+
+        public function PostSelectApiDownloadFile($url, $body = []) {
+
+            $bearerToken = get_option('post_selector_access_token');
+            $args = [
+                'method'        => 'POST',
+                'timeout'       => 45,
+                'redirection'   => 5,
+                'httpversion'   => '1.0',
+                'blocking'      => true,
+                'sslverify'     => true,
+                'headers' => [
+                    'Content-Type' => 'application/x-www-form-urlencoded',
+                    'Authorization' => "Bearer $bearerToken"
+                ],
+                'body'          => $body
+            ];
+
+            $response = wp_remote_post( $url, $args );
+
+            if (is_wp_error($response)) {
+                $this->PostSelectorGetApiClientCredentials();
+            }
+
+            $response = wp_remote_post( $url, $args );
+
+            if (is_wp_error($response)) {
+                print_r($response->get_error_message());
+                exit();
+            }
+
+            if( !is_array( $response ) ) {
+                exit('Download Fehlgeschlagen!');
+            }
+            return $response['body'];
         }
 
         private function get_error_message($error): bool
