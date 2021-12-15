@@ -87,6 +87,7 @@ if ( ! class_exists( 'PostSliderTemplates' ) ) {
 			isset($settings->label) ? $padding = 'style="padding-bottom:2.5rem!important"' : $padding = '';
             isset($settings->label) ? $arrow_bt = 'style="margin-top:-1.25rem"' : $arrow_bt = '';
             isset($attr->className) ? $customCss =  $attr->className : $customCss = '';
+            isset($attr->lightBoxActive) && $attr->lightBoxActive ? $lightBoxActive = $attr->lightBoxActive : $lightBoxActive = '';
 			?>
             <div class="wp-block-hupa-theme-post-list <?=$customCss?>">
                 <div data-id="<?= $attr->selectedSlider ?>" data-rand="<?= $rand ?>" class="splide splide<?= $rand ?>">
@@ -99,7 +100,7 @@ if ( ! class_exists( 'PostSliderTemplates' ) ) {
                         </button>
                     </div>
                     <div class="splide__track" <?=$padding?>>
-                        <div class="splide__list <?=$attr->lightBoxActive ? 'light-box-controls' : ''?>">
+                        <div class="splide__list <?=$lightBoxActive ? 'light-box-controls' : ''?>">
 							<?php foreach ( $data as $tmp ):
                                 isset($settings->img_size) ? $imgSize = $settings->img_size : $imgSize = '';
                                 $img_src_url = wp_get_attachment_image_src($tmp->img_id, $imgSize, false);
