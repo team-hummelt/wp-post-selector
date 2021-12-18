@@ -44,6 +44,25 @@ switch ( $method ) {
 		filter_input( INPUT_POST, 'hover', FILTER_SANITIZE_STRING ) ? $hover = 1 : $hover = 0;
 		filter_input( INPUT_POST, 'label', FILTER_SANITIZE_STRING ) ? $label = 1 : $label = 0;
 		filter_input( INPUT_POST, 'textauszug', FILTER_SANITIZE_STRING ) ? $textauszug = 1 : $textauszug = 0;
+
+        filter_input( INPUT_POST, 'img_link_aktiv', FILTER_SANITIZE_STRING ) ? $img_link_aktiv = 1 : $img_link_aktiv = 0;
+        $select_design_option = filter_input( INPUT_POST, 'select_design_option', FILTER_VALIDATE_INT );
+        $select_design_btn_link = filter_input( INPUT_POST, 'select_design_btn_link', FILTER_VALIDATE_INT );
+        filter_input( INPUT_POST, 'design_btn_aktiv', FILTER_SANITIZE_STRING ) ? $design_btn_aktiv = 1 : $design_btn_aktiv = 0;
+        $design_btn_txt  = filter_input( INPUT_POST, 'design_btn_txt', FILTER_SANITIZE_STRING);
+        $design_btn_css  = filter_input( INPUT_POST, 'design_btn_css', FILTER_SANITIZE_STRING);
+        $design_link_tag_txt  = filter_input( INPUT_POST, 'design_link_tag_txt', FILTER_SANITIZE_STRING);
+        filter_input( INPUT_POST, 'design_text_aktiv', FILTER_SANITIZE_STRING ) ? $design_text_aktiv = 1 : $design_text_aktiv = 0;
+        $select_design_text = filter_input( INPUT_POST, 'select_design_text', FILTER_VALIDATE_INT );
+        $design_titel_css  = filter_input( INPUT_POST, 'design_titel_css', FILTER_SANITIZE_STRING);
+        $design_auszug_css  = filter_input( INPUT_POST, 'design_auszug_css', FILTER_SANITIZE_STRING);
+        $select_title_tag = filter_input( INPUT_POST, 'select_title_tag', FILTER_VALIDATE_INT );
+
+        $design_container_height  = filter_input( INPUT_POST, 'design_container_height', FILTER_SANITIZE_STRING);
+        $inner_container_height  = filter_input( INPUT_POST, 'inner_container_height', FILTER_SANITIZE_STRING);
+        //inner_container_height
+
+
 		filter_input( INPUT_POST, 'rewind', FILTER_SANITIZE_STRING ) ? $rewind = 1 : $rewind = 0;
 
 		//Input Breakpoints
@@ -119,6 +138,22 @@ switch ( $method ) {
 			'hover'          => $hover,
 			'label'          => $label,
 			'textauszug'     => $textauszug,
+
+            'img_link_aktiv' => $img_link_aktiv,
+            'select_design_option' => $select_design_option,
+            'select_design_btn_link' => $select_design_btn_link,
+            'design_btn_aktiv' => $design_btn_aktiv,
+            'design_btn_txt' => $design_btn_txt,
+            'design_btn_css' => $design_btn_css,
+            'design_link_tag_txt' => $design_link_tag_txt,
+            'design_text_aktiv' => $design_text_aktiv,
+            'select_design_text' => $select_design_text,
+            'design_titel_css' => $design_titel_css,
+            'design_auszug_css' => $design_auszug_css,
+            'select_title_tag' => $select_title_tag,
+            'design_container_height' => $design_container_height,
+            'inner_container_height' => $inner_container_height,
+
 			'rewind'         => $rewind,
 			'speed'          => $speed,
 			'rewind_speed'   => $rewind_speed,
@@ -204,7 +239,7 @@ switch ( $method ) {
 				$record->id = $id;
 				apply_filters( 'update_post_selector_slider', $record );
 				$responseJson->status = true;
-				$responseJson->msg    = 'änderungen gespeichert!';
+				$responseJson->msg    = 'Änderungen gespeichert!';
 				break;
 		}
 
@@ -435,14 +470,17 @@ switch ( $method ) {
             foreach ($images->record as $tmp){
                 $src = wp_get_attachment_image_src( $tmp->img_id, 'medium', false );
                 $url = wp_get_attachment_image_src( $tmp->img_id, 'large', false );
+                isset($tmp->img_bezeichnung) && $tmp->img_bezeichnung ? $img_bezeichnung = $tmp->img_bezeichnung : $img_bezeichnung = '';
+                isset($tmp->beschreibung) && $tmp->beschreibung ? $beschreibung = $tmp->beschreibung : $beschreibung = '';
+                isset($tmp->img_title) && $tmp->img_title ? $img_title = $tmp->img_title : $img_title = '';
                 $img_item = [
                     'id' => $tmp->id,
                     'src' => $src[0],
                     'url' => $url[0],
                     'img_id' => $tmp->img_id,
-                    'bezeichnung' => $tmp->img_bezeichnung,
-                    'beschreibung' => $tmp->beschreibung,
-                    'title' => $tmp->img_title
+                    'bezeichnung' => $img_bezeichnung,
+                    'beschreibung' => $beschreibung,
+                    'title' => $img_title
                 ];
                 $img_arr[] = $img_item;
             }
@@ -562,6 +600,7 @@ switch ( $method ) {
 			return $responseJson;
 		}
 		$responseJson->record = $load_toast->record;
+        $responseJson->select_optionen = apply_filters('ps_select_design_optionen',false);
 		$responseJson->status = true;
 		break;
 

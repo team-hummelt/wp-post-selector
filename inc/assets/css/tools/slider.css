@@ -1,9 +1,9 @@
 /* Error: Undefined variable.
  *    ,
- * 40 |     border: 2px solid $rs-three;
+ * 45 |     border: 2px solid $rs-three;
  *    |                       ^^^^^^^^^
  *    '
- *   slider.scss 40:23  root stylesheet */
+ *   slider.scss 45:23  root stylesheet */
 
 body::before {
   font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono",
@@ -13,5 +13,5 @@ body::before {
   padding: 1em;
   margin-bottom: 1em;
   border-bottom: 2px solid black;
-  content: "Error: Undefined variable.\a    \2577 \a 40 \2502      border: 2px solid $rs-three;\d\a    \2502                        ^^^^^^^^^\a    \2575 \a   slider.scss 40:23  root stylesheet";
+  content: "Error: Undefined variable.\a    \2577 \a 45 \2502      border: 2px solid $rs-three;\d\a    \2502                        ^^^^^^^^^\a    \2575 \a   slider.scss 45:23  root stylesheet";
 }
