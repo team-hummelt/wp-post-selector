@@ -126,6 +126,30 @@ if (!class_exists('HupaApiPluginServerHandle')) {
             return false;
         }
 
+
+        public function postSelServerPOSTApiResource($scope, $body = false)
+        {
+            $response = wp_remote_post(get_option('hupa_server_url') . $scope, $this->PostSelectorApiPostArgs($body));
+            if (is_wp_error($response)) {
+                return $response->get_error_message();
+            }
+            if (is_array($response)) {
+                $query = json_decode($response['body']);
+                if (isset($query->error)) {
+                    if ($this->get_error_message($query)) {
+                        $this->PostSelectorGetApiClientCredentials();
+                    }
+                    $response = wp_remote_post(get_option('hupa_server_url') . $scope, $this->PostSelectorApiPostArgs($body));
+                    if (is_array($response)) {
+                        return $response['body'];
+                    }
+                } else {
+                    return $response['body'];
+                }
+            }
+            return false;
+        }
+
         public function PostSelectorGETApiResource($scope, $get = []) {
 
             $error = new stdClass();
