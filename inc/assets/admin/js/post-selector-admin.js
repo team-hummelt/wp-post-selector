@@ -176,7 +176,7 @@ jQuery(document).ready(function ($) {
         let galerieId = tableWrapper.attr('data-id');
         switch (type) {
             case 'grid':
-                 load_galerie_item(galerieId, 'galerie-images');
+                load_galerie_item(galerieId, 'galerie-images');
                 break;
             case'table':
                 if (tableWrapper.hasClass('is-loaded')) {
@@ -737,7 +737,7 @@ jQuery(document).ready(function ($) {
                     addSliderBtn.prop('disabled', false);
                 }
                 if (data.load_template) {
-                    slider_form_template(data.record, data.type, data.id);
+                    slider_form_template(data, data.type, data.id);
                     addSliderBtn.prop('disabled', true);
                 }
             } else {
@@ -1432,7 +1432,9 @@ jQuery(document).ready(function ($) {
     function slider_form_template(data = false, type = false, id = '') {
 
         let sld;
-        data ? sld = data.data : sld = '';
+        let optionSelect;
+        data ? sld = data.record.data : sld = '';
+        data ? optionSelect = data.select_optionen : optionSelect = '';
         let html = `
         <div class="d-flex flex-wrap">
         <div>
@@ -1456,7 +1458,7 @@ jQuery(document).ready(function ($) {
         <div class="row">
         <div class="col-md-6  col-xl-6 mb-3">
         <label for="InputBezeichnung" class="form-label">Bezeichnung <span class="text-danger">*</span> </label>
-        <input type="text" name="bezeichnung" value="${data ? data.bezeichnung : ''}" class="form-control" id="InputBezeichnung" required>
+        <input type="text" name="bezeichnung" value="${data ? data.record.bezeichnung : ''}" class="form-control" id="InputBezeichnung" required>
         </div> 
         </div>
         <div class="row">
@@ -1861,7 +1863,7 @@ jQuery(document).ready(function ($) {
         <label class="form-label">Hover</label>
         <div class="form-check form-switch">
         <input class="form-check-input" name="hover" type="checkbox" 
-        role="switch" id="checkHover" ${sld ? sld.hover ? 'checked' : '' : 'checked'}>
+        role="switch" id="checkHover" ${sld ? sld.hover ? 'checked' : '' : 'checked'} ${sld && sld.select_design_option ? 'disabled' : ''}>
         <label class="form-check-label"
         for="checkHover">aktiv</label>
         </div>
@@ -1871,7 +1873,7 @@ jQuery(document).ready(function ($) {
         <label class="form-label">Bild Label</label>
         <div class="form-check form-switch">
         <input class="form-check-input" name="label" type="checkbox" 
-        role="switch" id="labelCheck" ${sld && sld.label ? 'checked' : ''} ${sld && sld.hover ? 'disabled' : ''}>
+        role="switch" id="labelCheck" ${sld && sld.label ? 'checked' : ''} ${sld && sld.hover || sld && sld.select_design_option ? 'disabled' : ''}>
         <label class="form-check-label"
         for="labelCheck">aktiv</label>
         </div>
@@ -1881,13 +1883,165 @@ jQuery(document).ready(function ($) {
         <label class="form-label">Textauszug</label>
         <div class="form-check form-switch">
         <input class="form-check-input" name="textauszug" type="checkbox" 
-        role="switch" id="textauszugCheck" ${sld && sld.textauszug ? 'checked' : ''}>
+        role="switch" id="textauszugCheck" ${sld && sld.textauszug ? 'checked' : ''} ${sld && sld.select_design_option ? 'disabled' : ''}>
         <label class="form-check-label"
         for="textauszugCheck">aktiv</label>
         </div>
         </div>
         
+        <div class="col-sm-6 col-md-4 col-xl-2 mb-3">
+        <label class="form-label">Image Link</label>
+        <div class="form-check form-switch">
+        <input class="form-check-input" name="img_link_aktiv" type="checkbox" 
+        role="switch" id="imageLinkAktivCheck" ${sld && sld.img_link_aktiv ? 'checked' : ''}>
+        <label class="form-check-label"
+        for="imageLinkAktivCheck">aktiv</label>
         </div>
+        </div>
+        <!-- Design Optionen -->
+        <hr>
+        <div class="row">
+        <div class="col-md-6 col-lg-4 col-xl-3">
+        <label for="selectDesignOption" class="form-label">Design Optionen </label>
+        <select class="change_design_optionen form-select w-100 " name="select_design_option" id="selectDesignOption" >`;
+        $.each(optionSelect.select_design, function (key, val) {
+            let selOpt;
+            sld && sld.select_design_option == val.id ? selOpt = 'selected' : selOpt = '';
+            html += `<option value="${val.id}" ${selOpt}>${val.name}</option>`;
+        });
+        html += ` </select>
+        </div>
+        <div class="col-md-6 col-lg-4 col-xl-3 mb-3"></div>
+        </div>
+        <div class="form-text mt-1 mb-3">
+         <span class="d-block">Die Design Optionen wirken sich nur auf den <i class="text-danger">Post-Selector</i> 
+         und die ausgewählten <b class="strong-font-weight">Beiträge</b>
+         bzw. der ausgewählten <b class="strong-font-weight">Kategorie</b> aus.</span>
+         Für die Ausgabe Typen <i class="text-danger">Grid, Galerie</i> und <i class="text-danger">News</i> sind diese Optionen <span class="text-danger">wirkungslos</span>.</div>
+        </div>
+        <div class="design_optionen_wrapper ${sld && sld.select_design_option ? '' : ' d-none'}">
+        <hr>
+        <h6>Button Optionen</h6>
+        <hr>
+        <div class="col-sm-6 col-md-4 col-xl-2 mb-3">
+        <label class="form-label">Button anzeigen</label>
+        <div class="form-check form-switch">
+        <input class="form-check-input" name="design_btn_aktiv" type="checkbox" 
+        role="switch" id="btnAktivCheck" ${sld && sld.design_btn_aktiv ? 'checked' : ''}>
+        <label class="form-check-label"
+        for="btnAktivCheck">aktiv</label>
+        </div>
+        </div>
+        <fieldset id="designBtnOptFieldset" ${sld && sld.design_btn_aktiv ? '' : 'disabled'}>
+        <div class="row mb-3">
+        <div class="col-md-6 col-lg-4 col-xl-3">
+       <label for="InputBtnBeschriftung" class="form-label">Button Beschriftung </label>
+        <input type="text" name="design_btn_txt" value="${sld && sld.design_btn_txt ? sld.design_btn_txt : 'Button Beschriftung'}" 
+        class="form-control" id="InputBtnBeschriftung">
+        </div>
+        <div class="col-md-6 col-lg-4 col-xl-3">
+           <label for="selectDesignBtnLink" class="form-label">Button Link </label>
+           <select onchange="this.blur()" class="form-select w-100 " name="select_design_btn_link" id="selectDesignBtnLink" >`;
+
+        $.each(optionSelect.select_link, function (key, val) {
+            let selBtnOpt;
+            sld && sld.select_design_btn_link == val.id ? selBtnOpt = 'selected' : selBtnOpt = '';
+            html += `<option value="${val.id}" ${selBtnOpt}>${val.name}</option>`;
+        });
+        html += `</select>  
+
+        </div>
+        </div>
+        <div class="row mb-3">
+        <div class="col-md-6 col-lg-4 col-xl-3">
+         <label for="selectDesignTitleTag" class="form-label">Title Tag auswahl </label>
+         <select class="form-select w-100 " name="select_title_tag" id="selectDesignTitleTag">`;
+        $.each(optionSelect.select_title_tag, function (key, val) {
+            let selBtnOpt;
+            sld && sld.select_title_tag == val.id ? selBtnOpt = 'selected' : selBtnOpt = '';
+            html += `<option value="${val.id}" ${selBtnOpt}>${val.name}</option>`;
+        });
+        html += `</select>
+        </div>
+        <div class="col-md-6 col-lg-4 col-xl-3">
+        <label for="InputLinkTag" class="form-label">Title Tag</label>
+        <input type="text" placeholder="z.B. zum Beitrag" 
+        name="design_link_tag_txt" value="${sld && sld.design_link_tag_txt ? sld.design_link_tag_txt : ''}" 
+        class="form-control" id="InputLinkTag" ${sld && sld.select_title_tag != 2 ? 'disabled' : ''}>
+        </div>
+        </div>
+        
+        <div class="row">
+        <div class="col">
+        <label for="InputBtnCSS" class="form-label">Button extra CSS </label>
+        <input type="text" placeholder="z.B. btn-secondary" 
+        name="design_btn_css" value="${sld && sld.design_btn_css ? sld.design_btn_css : ''}" 
+        class="form-control" id="InputBtnCSS">
+        </div>
+        <div class="col-md-6 col-lg-4 col-xl-6"></div>
+        </div>
+        </fieldset>
+        <hr>
+        <h6>Text Optionen</h6>
+        <hr>
+       <div class="col-sm-6 col-md-4 col-xl-2 mb-3">
+        <label class="form-label">Text anzeigen</label>
+        <div class="form-check form-switch">
+        <input class="form-check-input" name="design_text_aktiv" type="checkbox" 
+        role="switch" id="btnTxtAktivCheck" ${sld && sld.design_text_aktiv ? 'checked' : ''}>
+        <label class="form-check-label"
+        for="btnTxtAktivCheck">aktiv</label>
+        </div>
+        </div>
+       
+       <fieldset id="designBtnTxtOptFieldset" ${sld && sld.design_text_aktiv ? '' : 'disabled'}>
+        <div class="row mb-3">
+        <div class="col-md-6 col-lg-4 col-xl-3">
+        <label for="selectDesignText" class="form-label">Text auswahl </label>
+         <select onchange="this.blur()" class="form-select w-100 " name="select_design_text" id="selectDesignText" style="min-width: 100%">`;
+        $.each(optionSelect.select_text, function (key, val) {
+            let selBtnOpt;
+            sld && sld.select_design_text == val.id ? selBtnOpt = 'selected' : selBtnOpt = '';
+            html += `<option value="${val.id}" ${selBtnOpt}>${val.name}</option>`;
+        });
+        html += `</select>
+        </div>
+        </div>
+       <div class="row mb-3">
+        <div class="col-md-6 col-lg-4 col-xl-3">
+        <label for="InputTitelCSS" class="form-label">Beitragstitel extra CSS </label>
+        <input type="text" 
+        name="design_titel_css" value="${sld && sld.design_titel_css ? sld.design_titel_css : ''}" 
+        class="form-control" id="InputTitelCSS">
+        </div>
+        <div class="col-md-6 col-lg-4 col-xl-3">
+        <label for="InputAuszugCSS" class="form-label">Textauszug extra CSS </label>
+        <input type="text"
+        name="design_auszug_css" value="${sld && sld.design_auszug_css ? sld.design_auszug_css : ''}" 
+        class="form-control" id="InputAuszugCSS">
+        </div>
+        </div>
+        </fieldset>
+        <hr>
+        <h6>Container Optionen</h6>
+        <hr>
+       <div class="row mb-3">
+        <div class="col-md-6 col-lg-4 col-xl-3">
+        <label for="InputContainerHeight" class="form-label">Container Höhe <small>(Gesamthöhe)</small></label>
+        <input type="text"
+        name="design_container_height" value="${sld && sld.design_container_height ? sld.design_container_height : '450px'}" 
+        class="form-control" id="InputContainerHeight">
+        </div>
+        
+        <div class="col-md-6 col-lg-4 col-xl-3">
+       <label for="InputAuszugHeight" class="form-label">Container Höhe <small>(Textauszug)</small></label>
+        <input type="text"
+        name="inner_container_height" value="${sld && sld.inner_container_height ? sld.inner_container_height : '150px'}" 
+        class="form-control" id="InputAuszugHeight">
+        </div>
+        </div>
+       </div>
+         <!---END Design----->
         <hr>
         <h5>Breakpoints <small class="small">( Responsive )</small></h5>
         <div class="form-text">Eigenschaften die in einer bestimmten
@@ -2081,7 +2235,7 @@ jQuery(document).ready(function ($) {
         let tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
         let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
             return new bootstrap.Tooltip(tooltipTriggerEl)
-        })
+        });
     }
 
 
@@ -2167,6 +2321,55 @@ jQuery(document).ready(function ($) {
             parentTr.removeClass('table-warning');
         }
     })
+
+    $(document).on('change', ".change_design_optionen", function () {
+        $(this).trigger('blur');
+        let label = $('#labelCheck');
+        let textauszugCheck = $('#textauszugCheck');
+        let checkHover = $('#checkHover');
+        let design_optionen_wrapper = $('.design_optionen_wrapper');
+        if ($(this).val() == '1') {
+            label.attr('disabled', 'disabled');
+            textauszugCheck.prop('disabled', true);
+            checkHover.prop('disabled', true);
+            design_optionen_wrapper.removeClass('d-none');
+        } else {
+            label.prop('disabled', false);
+            textauszugCheck.prop('disabled', false);
+            checkHover.prop('disabled', false);
+            design_optionen_wrapper.addClass('d-none');
+        }
+
+    });
+
+    $(document).on('click', "#btnAktivCheck", function () {
+        let desField = $('#designBtnOptFieldset');
+        if ($(this).prop('checked')) {
+            desField.prop('disabled', false);
+        } else {
+            desField.prop('disabled', true);
+        }
+    });
+
+    $(document).on('click', "#btnTxtAktivCheck", function () {
+        let desField = $('#designBtnTxtOptFieldset');
+        if ($(this).prop('checked')) {
+            desField.prop('disabled', false);
+        } else {
+            desField.prop('disabled', true);
+        }
+    });
+
+    $(document).on('change', "#selectDesignTitleTag", function () {
+        $(this).trigger('blur');
+        let txtField = $('#InputLinkTag');
+        if ($(this).val() != '2') {
+            txtField.prop('disabled', true);
+        } else {
+            txtField.prop('disabled', false);
+        }
+    });
+
 
     /**=============================================================
      ================ Galerie Table Check ALL IMAGE ================

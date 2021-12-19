@@ -16,7 +16,6 @@ defined('ABSPATH') or die();
  * @package Hummelt & Partner WordPress Theme
  * Copyright 2021, Jens Wiecker
  * License: Commercial - goto https://www.hummelt-werbeagentur.de/
- * https://www.hummelt-werbeagentur.de/
  */
 
 if (!class_exists('PostSelectorFilter')) {
@@ -60,7 +59,7 @@ if (!class_exists('PostSelectorFilter')) {
             add_filter('delete_post_selector_slider', array($this, 'deletePostSelectorSlider'));
 
             //GET SLIDER TYPES
-            add_filter('get_post_select_data_type', array($this, 'getPostSelectDataType'),10 ,2);
+            add_filter('get_post_select_data_type', array($this, 'getPostSelectDataType'), 10, 2);
 
             //GET PAGE & POST SELECT
             add_filter('post_selector_get_theme_pages', array($this, 'postSelectorGetThemePages'));
@@ -68,18 +67,22 @@ if (!class_exists('PostSelectorFilter')) {
 
 
             add_filter('post_selector_wp_get_attachment', array($this, 'wp_get_attachment'));
-            //
+
+            // Design Optionen Select
+            add_filter('ps_select_design_optionen', array($this, 'psSelectDesignOptionen'));
 
             //GET SLIDER DEMOS
             add_filter('get_post_slider_demo', array($this, 'getPostSliderDemo'));
 
-            add_filter( 'post_hupa_thumbnail_html', array($this, 'post_remove_thumbnail_width_height'));
+            add_filter('post_hupa_thumbnail_html', array($this, 'post_remove_thumbnail_width_height'));
         }
 
 
-       public function post_remove_thumbnail_width_height( $imgHtml ):string {
-           return preg_replace( '@(width.+height.+?".+?")@i', "", $imgHtml );
+        public function post_remove_thumbnail_width_height($imgHtml): string
+        {
+            return preg_replace('@(width.+height.+?".+?")@i', "", $imgHtml);
         }
+
         public function postSelectorSetSlider($record): object
         {
             global $wpdb;
@@ -150,7 +153,7 @@ if (!class_exists('PostSelectorFilter')) {
             $fetchMethod ? $fetch = 'get_results' : $fetch = 'get_row';
             $table = $wpdb->prefix . $this->table_slider;
             $col ? $select = $col : $select = '*';
-            $result = $wpdb->$fetch("SELECT {$select}  FROM {$table} {$args}");
+            $result = $wpdb->$fetch("SELECT {$select}, DATE_FORMAT(created_at, '%d.%m.%Y %H:%i') AS created  FROM {$table} {$args}");
             if (!$result) {
                 return $return;
             }
@@ -195,33 +198,38 @@ if (!class_exists('PostSelectorFilter')) {
         {
 
             $attributes = $this->postSelectArrayToObject($attr);
+
             $record = new stdClass();
             $record->status = false;
             $sendData = new stdClass();
             $postArr = [];
             isset($attributes->imageCheckActive) ? $sendData->image = true : $sendData->image = false;
 
-            if (isset($attributes->selectedCat) && $attributes->selectedCat) {
+            if (isset($attributes->selectedCat) && !empty($attributes->selectedCat)) {
                 $sendData->kategorie = true;
-                $attributes->postCount ? $sendData->postCount = $attributes->postCount : $sendData->postCount = '-1';
+                isset($attributes->postCount) && $attributes->postCount ? $sendData->postCount = $attributes->postCount : $sendData->postCount = '-1';
                 $sendData->katId = $attributes->selectedCat;
 
                 //$post = $this->get_posts_by_data($sendData, $attributes);
-                $post = $this->get_posts_by_category($query->posts, $attributes);
+                if (isset($query) && !empty($query)) {
+                    $post = $this->get_posts_by_category($query->posts, $attributes);
+                } else {
+                    $post = $this->get_posts_by_data($sendData, $attributes);
+                }
+
                 $post = $this->postSelectArrayToObject($post);
                 switch ($attributes->outputType) {
                     case 1:
                         do_action('load_slider_template', $post, $attributes);
                         break;
                     case 3:
-
                         do_action('load_news_template', $post, $attributes);
                         break;
                 }
             }
 
-            if (!isset($attributes->selectedCat) || empty($attributes->selectedCat) && isset($attributes->selectedPosts) && $attributes->selectedPosts)  {
-                if ($attributes->selectedPosts) {
+            if (!isset($attributes->selectedCat) || empty($attributes->selectedCat) && isset($attributes->selectedPosts) && !empty($attributes->selectedPosts)) {
+                if (isset($attributes->selectedPosts) && $attributes->selectedPosts) {
                     foreach ($attributes->selectedPosts as $tmp) {
                         $post = $this->get_posts_by_id($tmp);
                         $postArr[] = $post;
@@ -242,7 +250,8 @@ if (!class_exists('PostSelectorFilter')) {
             }
         }
 
-        private function get_posts_by_category($query, $attr = false):array {
+        private function get_posts_by_category($query, $attr = false): array
+        {
             $page_id = get_queried_object_id();
             global $post;
             $postArr = [];
@@ -283,7 +292,7 @@ if (!class_exists('PostSelectorFilter')) {
             global $post;
 
             $args = [
-               'post_type' => get_post_types(),
+                'post_type' => get_post_types(),
                 'posts_per_page' => $data->postCount,
                 'category' => $data->katId,
                 'post_status' => 'publish'
@@ -449,6 +458,22 @@ if (!class_exists('PostSelectorFilter')) {
                         'keyboard' => 1,
                         'hover' => 1,
                         'label' => 0,
+
+                        'img_link_aktiv' => 1,
+                        'select_design_option' => 0,
+                        'select_design_btn_link' => 1,
+                        'design_btn_aktiv' => 0,
+                        'design_btn_txt' => 'Button Beschriftung',
+                        'design_btn_css' => '',
+                        'design_link_tag_txt' => '',
+                        'design_text_aktiv' => 0,
+                        'select_design_text' => 1,
+                        'design_titel_css' => '',
+                        'design_auszug_css' => '',
+                        'select_title_tag' => 1,
+                        'design_container_height'=> '450px',
+                        'inner_container_height' => '150px',
+
                         'textauszug' => 1,
                         'rewind' => 0,
                         'speed' => 500,
@@ -517,6 +542,22 @@ if (!class_exists('PostSelectorFilter')) {
                         'keyboard' => 0,
                         'hover' => 0,
                         'label' => 1,
+
+                        'img_link_aktiv' => 1,
+                        'select_design_option' => 0,
+                        'select_design_btn_link' => 1,
+                        'design_btn_aktiv' => 0,
+                        'design_btn_txt' => 'Button Beschriftung',
+                        'design_btn_css' => '',
+                        'design_link_tag_txt' => '',
+                        'design_text_aktiv' => 0,
+                        'design_titel_css' => '',
+                        'design_auszug_css' => '',
+                        'select_title_tag' => 1,
+                        'select_design_text' => 1,
+                        'design_container_height'=> '450px',
+                        'inner_container_height' => '150px',
+
                         'textauszug' => 0,
                         'rewind' => 1,
                         'speed' => 1200,
@@ -573,6 +614,74 @@ if (!class_exists('PostSelectorFilter')) {
             $return->record = $sliderSettings;
 
             return $return;
+        }
+
+        public function psSelectDesignOptionen($args = false): object
+        {
+            $selectDesign = [
+                '0' => [
+                    'id' => 0,
+                    'name' => 'auswählen...'
+                ],
+                '1' => [
+                    'id' => 1,
+                    'name' => 'erweitert'
+                ]
+            ];
+
+            $selectLinkType = [
+                '0'=> [
+                    'id' => 1,
+                    'name' => 'Light Box',
+                ],
+                '1'=> [
+                    'id' => 2,
+                    'name' => 'zum Beitrag',
+                ],
+                '2'=> [
+                    'id' => 3,
+                    'name' => 'Bildanhang Seite',
+                ],
+                '3'=> [
+                    'id' => 4,
+                    'name' => 'extra Url',
+                ]
+            ];
+
+            $selectTextOption = [
+                '0' => [
+                    'id' => 1,
+                    'name' => 'Beitragstitel'
+                ],
+                '1' => [
+                    'id' => 2,
+                    'name' => 'Textauszug'
+                ],
+                '2' => [
+                    'id' => 3,
+                    'name' => 'Beitragstitel & Textauszug'
+                ]
+            ];
+
+            $selectTitleTag = [
+                '0' => [
+                    'id' => 1,
+                    'name' => 'Beitragstitel'
+                ],
+                '1' => [
+                    'id' => 2,
+                    'name' => 'individuell'
+                ]
+            ];
+
+            $returnArray = [
+                'select_design' => $selectDesign,
+                'select_link' => $selectLinkType,
+                'select_text' => $selectTextOption,
+                'select_title_tag' => $selectTitleTag
+            ];
+
+            return $this->postSelectArrayToObject($returnArray);
         }
 
         /**

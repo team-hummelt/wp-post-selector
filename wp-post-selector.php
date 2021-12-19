@@ -10,13 +10,13 @@
  * Plugin Name:       Post-Selector - Gutenberg Block Plugin
  * Plugin URI:        https://www.hummelt-werbeagentur.de/leistungen/
  * Description:       Auswahl von Beiträgen im Gutenberg-Block Editor mit verschiedenen Ausgabeoptionen.
- * Version:           1.1.0
+ * Version:           1.1.1
  * Author:            Jens Wiecker
  * License:           MIT License
  * Requires PHP:      8.0
  * Requires at least: 5.8
- * Tested up to:      5.8
- * Stable tag:        1.1.0
+ * Tested up to:      5.7
+ * Stable tag:        1.1.1
  */
 
 defined( 'ABSPATH' ) or die();
@@ -74,12 +74,18 @@ require POST_SELECT_PLUGIN_INC . 'admin/optionen/optionen-init.php';
 if(get_option('post_selector_product_install_authorize')) {
     require 'inc/register-wp-post-select.php';
     require 'inc/update-checker/autoload.php';
-    $postSelectorUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
-        'https://github.com/team-hummelt/wp-post-selector/',
-        __FILE__,
-        'wp-post-selector'
-    );
-    $postSelectorUpdateChecker->getVcsApi()->enableReleaseAssets();
+
+
+    if(get_option('hupa_post_selector_server_api')['update_aktiv'] == '1') {
+        $postSelectorUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
+            get_option('hupa_post_selector_server_api')['update_url'],
+            __FILE__,
+            POST_SELECT_BASENAME
+        );
+        if (get_option('hupa_post_selector_server_api')['update_type'] == '1') {
+            $postSelectorUpdateChecker->getVcsApi()->enableReleaseAssets();
+        }
+    }
 }
 
 function showWPPostSelectorSitemapInfo() {

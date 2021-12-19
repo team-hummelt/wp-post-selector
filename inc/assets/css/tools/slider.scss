@@ -5,6 +5,11 @@
 .splide {
   margin: auto;
 
+  .bottom-wrapper {
+    position: absolute;
+  }
+
+
   .slide-hover {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -56,6 +61,7 @@
     text-align: center;
     color: #fff;
   }
+
 
   .splide__arrow {
     position: absolute;
