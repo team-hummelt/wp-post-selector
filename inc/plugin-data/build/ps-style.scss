@@ -21,10 +21,20 @@
     //border: 1px solid #bbb;
   }
 
+  /*.post-start-content {
+    overflow: hidden;
+    height: 80px;
+    background: -webkit-linear-gradient(#000, #bbb);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }*/
+
   .one-wrapper-inner {
     padding: .25rem .5rem;
     overflow: hidden;
-    //min-height: 150px;
+   // background: -webkit-linear-gradient(#000, #a8a8a8);
+   // -webkit-background-clip: text;
+   // -webkit-text-fill-color: transparent;
   }
 
   .splide-custom-one-title {

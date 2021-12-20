@@ -129,7 +129,7 @@ if (!class_exists('PostSliderTemplates')) {
                                 if ($radioMedienLink == 2) {
                                     $src = $tmp->href;
                                 } else {
-                                    $src = $img_full_url;
+                                    $src = $img_full_url[0];
                                 }
                                 if (isset($attr->linkCheckActive) && $attr->linkCheckActive) {
                                     $btnShowLink = '';
