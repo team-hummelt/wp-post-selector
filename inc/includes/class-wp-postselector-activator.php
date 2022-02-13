@@ -34,6 +34,9 @@ class Wp_Post_Selector_Activator {
         if(!get_option('post_selector_product_install_authorize')){
             unlink($register);
         }
+        if(!get_option('ps_user_role')){
+            update_option('ps_user_role', 'manage_options');
+        }
 		delete_option("post_selector_product_install_authorize");
 		delete_option("post_selector_client_id");
 		delete_option("post_selector_client_secret");

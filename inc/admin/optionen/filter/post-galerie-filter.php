@@ -66,6 +66,8 @@ if (!class_exists('PostSelectorGalerieFilter')) {
             // UPDATE POSITION
             add_filter('post_update_sortable_position', array($this, 'postSelectorUpdateSortablePosition'), 10, 2);
 
+            //User Role Select
+            add_filter('ps_user_roles_select', array($this, 'post_selector_user_roles_select'));
 
             //JOB WARNING HELPER
             //GET Galerie Types Select
@@ -77,6 +79,16 @@ if (!class_exists('PostSelectorGalerieFilter')) {
 
         }
 
+        public function post_selector_user_roles_select(): array {
+
+                return [
+                    'read'           => esc_html__( 'Subscriber', 'wp-post-selector' ),
+                    'edit_posts'     => esc_html__( 'Contributor', 'wp-post-selector' ),
+                    'publish_posts'  => esc_html__( 'Author', 'wp-post-selector' ),
+                    'publish_pages'  => esc_html__( 'Editor', 'wp-post-selector' ),
+                    'manage_options' => esc_html__( 'Administrator', 'wp-post-selector' )
+                ];
+         }
 
         public function postSelectorSetGalerie($record): object
         {
@@ -100,9 +112,10 @@ if (!class_exists('PostSelectorGalerieFilter')) {
                     'beschreibung' => $record->beschreibung,
                     'lazy_load_aktiv' => $record->lazy_load_aktiv,
                     'lazy_load_ani_aktiv' => $record->lazy_load_ani_aktiv,
-                    'animate_select' => $record->animate_select
+                    'animate_select' => $record->animate_select,
+                    'link_target' => $record->link_target
                 ),
-                array('%s', '%d', '%s', '%s','%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%s', '%d', '%d', '%s')
+                array('%s', '%d', '%s', '%s','%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%s', '%d', '%d', '%s', '%d')
             );
 
             $return = new stdClass();
@@ -142,10 +155,11 @@ if (!class_exists('PostSelectorGalerieFilter')) {
                     'beschreibung' => $record->beschreibung,
                     'lazy_load_aktiv' => $record->lazy_load_aktiv,
                     'lazy_load_ani_aktiv' => $record->lazy_load_ani_aktiv,
-                    'animate_select' => $record->animate_select
+                    'animate_select' => $record->animate_select,
+                    'link_target' => $record->link_target,
                 ),
                 array('id' => $record->id),
-                array('%s', '%d', '%s','%s', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%s', '%d', '%d', '%s'),
+                array('%s', '%d', '%s','%s', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%s', '%d', '%d', '%s', '%d'),
                 array('%d')
             );
         }
@@ -217,9 +231,10 @@ if (!class_exists('PostSelectorGalerieFilter')) {
                     'hover_aktiv' => $record->hover_aktiv,
                     'hover_title_aktiv' => $record->hover_title_aktiv,
                     'hover_beschreibung_aktiv' => $record->hover_beschreibung_aktiv,
+                    'link_target' => $record->link_target
                 ),
                 array('id' => $record->id),
-                array('%s', '%s', '%s', '%s', '%d', '%d', '%d', '%d', '%d'),
+                array('%s', '%s', '%s', '%s', '%d', '%d', '%d', '%d', '%d', '%d'),
                 array('%d')
             );
         }

@@ -1,38 +1,167 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-08-01 22:00+0200\n"
-"PO-Revision-Date: 2021-08-01 22:00+0200\n"
+"POT-Creation-Date: 2022-02-13 02:10+0100\n"
+"PO-Revision-Date: 2022-02-13 02:12+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.0\n"
-"X-Poedit-Basepath: ..\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.0.1\n"
+"X-Poedit-Basepath: ..\n"
 "X-Poedit-KeywordsList: __;_e;esc_html;esc_html__;esc_att;esc_attr__;"
 "esc_attr_e\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: inc/plugin-data/node_modules\n"
 
-#: inc/plugin-data/build/index.js:2885 inc/plugin-data/src/index.js:26
+#: inc/admin/admin-pages/ps-settings.php:18
+#: inc/admin/admin-pages/ps-settings.php:22
+#: inc/admin/admin-pages/ps-settings.php:104 inc/plugin-data/src/index.js:27
 msgid "Post Selector"
 msgstr ""
 
-#: inc/plugin-data/build/index.js:2934 inc/plugin-data/src/index.js:79
+#: inc/admin/admin-pages/ps-settings.php:23
+msgid "Übersicht"
+msgstr ""
+
+#: inc/admin/admin-pages/ps-settings.php:28
+#: inc/admin/admin-pages/ps-settings.php:35
+msgid "Slider"
+msgstr ""
+
+#: inc/admin/admin-pages/ps-settings.php:38
+#: inc/admin/admin-pages/ps-settings.php:44
+msgid "Galerie"
+msgstr ""
+
+#: inc/admin/admin-pages/ps-settings.php:47
+#: inc/admin/admin-pages/ps-settings.php:53
+#: inc/admin/admin-pages/ps-settings.php:104
+msgid "Settings"
+msgstr "Einstellungen"
+
+#: inc/admin/admin-pages/ps-settings.php:77
+msgid "Post Selector Slider"
+msgstr ""
+
+#: inc/admin/admin-pages/ps-settings.php:111
+msgid "Minimum requirement for using this Plugin"
+msgstr "Mindestvoraussetzung für die Verwendung dieses Plugins"
+
+#: inc/admin/admin-pages/ps-settings.php:118
+msgid "User Role"
+msgstr "Benutzer Rolle"
+
+#: inc/admin/optionen/filter/post-galerie-filter.php:85
+msgid "Subscriber"
+msgstr "Abonnent"
+
+#: inc/admin/optionen/filter/post-galerie-filter.php:86
+msgid "Contributor"
+msgstr "Mitarbeiter"
+
+#: inc/admin/optionen/filter/post-galerie-filter.php:87
+msgid "Author"
+msgstr "Autor"
+
+#: inc/admin/optionen/filter/post-galerie-filter.php:88
+msgid "Editor"
+msgstr "Redakteur"
+
+#: inc/admin/optionen/filter/post-galerie-filter.php:89
+msgid "Administrator"
+msgstr "Administrator"
+
+#: inc/admin/optionen/templates/news-template.php:177
+#: inc/admin/optionen/templates/news-template.php:239
+#: inc/admin/optionen/templates/news-template.php:281
+#: inc/admin/optionen/templates/news-template.php:342
+msgid "by"
+msgstr ""
+
+#: inc/galerie-data/src/index.js:24
+msgid "Post Selector Galerie"
+msgstr ""
+
+#: inc/galerie-data/src/index.js:44
+msgid " Gutenberg Galerie BY Jens Wiecker"
+msgstr ""
+
+#: inc/galerie-data/src/index.js:45
+msgid "Gutenberg POST Selector Galerie"
+msgstr ""
+
+#: inc/galerie-data/src/index.js:123 inc/plugin-data/src/index.js:548
+msgid "Hover Hintergrundfarbe"
+msgstr ""
+
+#: inc/license/activate-post-selector-page.php:66
+msgid "Client ID"
+msgstr ""
+
+#: inc/license/activate-post-selector-page.php:74
+msgid "Client secret"
+msgstr ""
+
+#: inc/license/register-hupa-plugin.php:53
+#: inc/license/register-hupa-plugin.php:54
+msgid "WP-Post-Selector"
+msgstr ""
+
+#: inc/plugin-data/src/index.js:119
 msgid " gutenberg post selector BY Jens Wiecker"
 msgstr ""
 
-#: inc/plugin-data/build/index.js:2934 inc/plugin-data/src/index.js:80
+#: inc/plugin-data/src/index.js:120
 msgid "Gutenberg GRID SLIDER"
 msgstr ""
 
-#: inc/plugin-data/build/index.js:3191 inc/plugin-data/src/index.js:290
-msgid "Hover background colour"
-msgstr "Hover Hintergrundfarbe"
+#: inc/plugin-data/src/index.js:564
+msgid "Beiträge auswählen"
+msgstr ""
 
-#: inc/plugin-data/build/index.js:3201 inc/plugin-data/src/index.js:306
-msgid "Select posts"
-msgstr "Beiträge auswählen"
+#: inc/register-wp-post-select.php:80 inc/register-wp-post-select.php:81
+msgid "Post-Selector"
+msgstr ""
+
+#: inc/register-wp-post-select.php:212
+#, php-format
+msgid ""
+"This plugin has been disabled because it requires a PHP version greater than "
+"%s and a WordPress version greater than %s. Your PHP version can be updated "
+"by your hosting provider."
+msgstr ""
+"Dieses Plugin wurde deaktiviert, weil es eine PHP-Version größer als %s und "
+"eine WordPress-Version größer als %s benötigt. Ihre PHP-Version kann von "
+"Ihrem Hosting-Anbieter aktualisiert werden."
+
+#: inc/update-checker/yahnis-elsts/plugin-update-checker/Puc/v4p11/Plugin/Ui.php:54
+msgid "View details"
+msgstr ""
+
+#: inc/update-checker/yahnis-elsts/plugin-update-checker/Puc/v4p11/Plugin/Ui.php:77
+#, php-format
+msgid "More information about %s"
+msgstr ""
+
+#: inc/update-checker/yahnis-elsts/plugin-update-checker/Puc/v4p11/Plugin/Ui.php:128
+msgid "Check for updates"
+msgstr ""
+
+#: inc/update-checker/yahnis-elsts/plugin-update-checker/Puc/v4p11/Plugin/Ui.php:224
+#, php-format
+msgid "Unknown update checker status \"%s\""
+msgstr ""
+
+#: inc/update-checker/yahnis-elsts/plugin-update-checker/Puc/v4p11/Vcs/PluginUpdateChecker.php:98
+msgid "There is no changelog available."
+msgstr ""
+
+#~ msgid "Hover background colour"
+#~ msgstr "Hover Hintergrundfarbe"
+
+#~ msgid "Select posts"
+#~ msgstr "Beiträge auswählen"

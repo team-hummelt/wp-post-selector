@@ -10,7 +10,7 @@ hummelt und partner | Werbeagentur GmbH
 * Tags: Gutenberg, Custom Posts
 * Requires at least: 5.8
 * Tested up to: 5.8
-* Stable tag: v1.1.1
+* Stable tag: v1.1.2
 * Requires PHP: 8.0
 
 ***
@@ -25,7 +25,14 @@ hummelt und partner | Werbeagentur GmbH
 Auswahl von Beiträgen im Gutenberg-Block Editor mit verschiedenen Ausgabeoptionen.
 
 ### Changelog
+
 ***
+= 1.1.2 =
+* Option Ausgabereihenfolge für Postion und Datum hinzugefügt
+* Option Galerie Link im neuen Tab öffnen hinzugefügt
+* Option Plugin Benutzer Rolle hinzugefügt
+* Ausgabefehler behoben
+
 = 1.1.1 =
 * Update Option über Server hinzugefügt
 * Custom Footer & Header Fehler gefixt

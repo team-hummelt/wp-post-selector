@@ -272,6 +272,7 @@ switch ( $method ) {
         filter_input(INPUT_POST, 'lazy_load_aktiv', FILTER_SANITIZE_STRING) ? $record->lazy_load_aktiv = true : $record->lazy_load_aktiv = false;
         filter_input(INPUT_POST, 'lazy_load_ani_aktiv', FILTER_SANITIZE_STRING) ? $record->lazy_load_ani_aktiv = true : $record->lazy_load_ani_aktiv = false;
 
+        filter_input(INPUT_POST, 'link_target', FILTER_SANITIZE_STRING) ? $record->link_target = true : $record->link_target = false;
 
         $img_size = filter_input( INPUT_POST, 'image_size', FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH );
 
@@ -528,6 +529,7 @@ switch ( $method ) {
                 filter_input(INPUT_POST, 'hover_title_aktiv', FILTER_SANITIZE_STRING) ? $record->hover_title_aktiv = true : $record->hover_title_aktiv = false;
                 filter_input(INPUT_POST, 'hover_beschreibung_aktiv', FILTER_SANITIZE_STRING) ? $record->hover_beschreibung_aktiv = true : $record->hover_beschreibung_aktiv = false;
                 filter_input(INPUT_POST, 'galerie_settings_aktiv', FILTER_SANITIZE_STRING) ? $record->galerie_settings_aktiv = true : $record->galerie_settings_aktiv = false;
+                filter_input(INPUT_POST, 'link_target', FILTER_SANITIZE_STRING) ? $record->link_target = true : $record->link_target = false;
 
                 $link = filter_input( INPUT_POST, 'link', FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH );
                 $url = filter_input(INPUT_POST, "url", FILTER_VALIDATE_URL);
@@ -727,6 +729,19 @@ switch ( $method ) {
 
             $responseJson->status = true;
         }
+        break;
+
+    case'update_ps_settings':
+        $responseJson->spinner = true;
+        $userRole   = filter_input( INPUT_POST, 'user_role', FILTER_SANITIZE_STRING );
+        if(!$userRole){
+            $responseJson->msg = 'Es wurden keine Daten übertragen!';
+            return $responseJson;
+        }
+
+        update_option('ps_user_role', $userRole);
+        $responseJson->status = true;
+        $responseJson->msg = date('H:i:s', current_time('timestamp'));
         break;
 
     case 'galerie_data_table':

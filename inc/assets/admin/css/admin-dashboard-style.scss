@@ -12,6 +12,11 @@ body .wp-bs-starter-wrapper {
   min-width: 8.5rem;
 }
 
+.no-blur:focus, .no-blur:active, .no-blur:focus {
+  outline: none !important;
+  box-shadow: none!important;
+  overflow: hidden!important;
+}
 
 .post-selector-gallery-grid {
   display: grid;

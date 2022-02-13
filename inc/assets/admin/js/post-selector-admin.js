@@ -163,6 +163,8 @@ jQuery(document).ready(function ($) {
         }
     });
 
+
+
     /**===================================================
      ================ CHANGE GRID | DATA TABLE ================
      =====================================================
@@ -449,13 +451,19 @@ jQuery(document).ready(function ($) {
         </div>
          <hr>
           <div class="d-flex flex-wrap"> 
+          <div class="form-check form-switch me-3">
+           <input data-type="#imgSettingsTargetOption" class="toggle_form_disabled form-check-input" 
+           name="link_target" type="checkbox" role="switch" id="TargetImageAktiv" ${record.link_target == '1' ? 'checked' : ''}>
+           <label class="form-check-label" for="TargetImageAktiv">Link im neuem Tab öffnen</label>
+         </div>
+          
          <div class="form-check form-switch me-3">
            <input data-type="#imgSettingsHoverOption" class="toggle_form_disabled form-check-input" 
            name="hover_aktiv" type="checkbox" role="switch" id="hoverImageAktiv" ${record.hover_aktiv == '1' ? 'checked' : ''}>
            <label class="form-check-label" for="hoverImageAktiv">Image Hover</label>
         </div>
         
-        <hr>
+        <hr> 
          <div class="d-flex flex-wrap"> 
          <div class="check-min-width form-check form-switch me-3">
            <input class="form-check-input" name="hover_title_aktiv" 
@@ -593,6 +601,13 @@ jQuery(document).ready(function ($) {
         </div>
          <hr>
         <div class="d-flex flex-wrap"> 
+        
+        <div class="form-check form-switch me-3 my-2">
+           <input data-type="#imgSettingsTargetOption" class="toggle_form_disabled form-check-input" 
+           name="link_target" type="checkbox" role="switch" id="TargetImageAktiv" checked>
+           <label class="form-check-label" for="TargetImageAktiv">Link im neuem Tab öffnen</label>
+         </div>
+        
          <div class="check-min-width form-check form-switch me-3 my-2">
            <input data-type="#imgHoverOption" class="toggle_form_disabled form-check-input" name="hover_aktiv" type="checkbox" role="switch" id="hoverAktiv">
            <label class="form-check-label" for="hoverAktiv">Image Hover</label>
@@ -939,6 +954,13 @@ jQuery(document).ready(function ($) {
                            </div>
                             <hr>
                           <div class="d-flex flex-wrap">   
+                          <div class="form-check form-switch me-3 my-2">
+                            <input data-type="#imgSettingsTargetOption" class="toggle_form_disabled form-check-input" 
+                            name="link_target" type="checkbox" role="switch" id="TargetImageAktiv" ${record.link_target == '1' ? 'checked' : ''}>
+                            <label class="form-check-label" for="TargetImageAktiv">Link im neuem Tab öffnen</label>
+                           </div>
+                          
+                          
                             <div class="check-min-width  form-check form-switch me-3 my-2">
                               <input data-type="#imgHoverOption" class="toggle_form_disabled form-check-input" name="hover_aktiv" 
                               type="checkbox" role="switch" id="hoverAktiv" ${record.hover_aktiv == '1' ? 'checked' : ''}>
@@ -2419,6 +2441,9 @@ jQuery(document).ready(function ($) {
 
     })
 
+
+
+
     function delete_selected_images() {
         let items = $('.check-table-items');
         let itemsArray = [];
@@ -2501,6 +2526,82 @@ jQuery(document).ready(function ($) {
                 });
                 // send_xhr_form_data(changeSelect, false);
             }
+        });
+    }
+
+    /**==========================================================
+     ================ SETTINGS FORMULAR AUTOSAVE ================
+     ============================================================
+     */
+    let psChangeFormSettingsTimeout;
+    $('.send-ajax-ps-admin-settings').on('input propertychange change', function (e) {
+        $('.ajax-status-spinner').html('<i class="fa fa-spinner fa-spin"></i>&nbsp; Saving...');
+        clearTimeout(psChangeFormSettingsTimeout);
+        psChangeFormSettingsTimeout = setTimeout(function () {
+            send_xhr_ps_form_data(e.target.form, true, send_settings_callback)
+        }, 1000);
+    });
+
+    function send_settings_callback() {
+        let data = JSON.parse(this.responseText);
+        if(data.spinner){
+            show_ajax_spinner(data);
+        }
+
+    }
+
+    function send_xhr_ps_form_data(data, is_formular = true, callback = NULL) {
+
+        let xhr = new XMLHttpRequest();
+        let formData = new FormData();
+
+        if (is_formular) {
+            let input = new FormData(data);
+            for (let [name, value] of input) {
+                formData.append(name, value);
+            }
+        } else {
+            for (let [name, value] of Object.entries(data)) {
+                formData.append(name, value);
+            }
+        }
+        formData.append('_ajax_nonce', ps_ajax_obj.nonce);
+        formData.append('action', 'PostSelHandle');
+
+        //Response
+        xhr.onreadystatechange = function () {
+            if (this.readyState === 4 && this.status === 200) {
+                if (typeof callback === 'function') {
+                    xhr.addEventListener("load", callback);
+                    return false;
+                } else {
+                    let data = JSON.parse(this.responseText);
+                    if (data.status) {
+                        success_message(data.msg);
+                    } else {
+                        warning_message('Error: no return');
+                    }
+                }
+            }
+        }
+        xhr.open('POST', ps_ajax_obj.ajax_url, true);
+        xhr.send(formData);
+    }
+
+    function show_ajax_spinner(data, el = '') {
+        let msg = '';
+        let ajaxSpinner = document.querySelectorAll(".ajax-status-spinner");
+        if(el){
+            ajaxSpinner = el;
+        }
+        if (data.status) {
+            msg = '<i class="text-success fa fa-check"></i>&nbsp; Saved! Last: ' + data.msg;
+        } else {
+            msg = '<i class="text-danger fa fa-exclamation-triangle"></i>&nbsp; ' + data.msg;
+        }
+        let spinner = Array.prototype.slice.call(ajaxSpinner, 0);
+        spinner.forEach(function (spinner) {
+            spinner.innerHTML = msg;
         });
     }
 
