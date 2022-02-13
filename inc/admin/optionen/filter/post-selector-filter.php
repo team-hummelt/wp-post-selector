@@ -215,6 +215,7 @@ if (!class_exists('PostSelectorFilter')) {
 
                 if (isset($query) && !empty($query)) {
                     $post = $this->get_posts_by_category($query->posts, $attributes);
+
                 } else {
                     $post = $this->get_posts_by_data($sendData, $attributes);
                 }
@@ -227,6 +228,7 @@ if (!class_exists('PostSelectorFilter')) {
 
                 $postSort = $this->order_by_args($post, $type, $radioOrderBy);
                 $post = $this->postSelectArrayToObject($postSort);
+
                 switch ($attributes->outputType) {
                     case 1:
                         do_action('load_slider_template', $post, $attributes);
@@ -244,6 +246,7 @@ if (!class_exists('PostSelectorFilter')) {
                         $postArr[] = $post;
                     }
                 }
+
 
                 $type = match ($radioOrder) {
                     '1' => 'menu_order',
@@ -270,7 +273,8 @@ if (!class_exists('PostSelectorFilter')) {
 
             switch ($order){
                 case'1':
-                    usort($postArr, fn ($b, $a) => $a[$value] - $b[$value]);
+                    usort($postArr, fn ($a, $b) => $a[$value] - $b[$value]);
+                     return  array_reverse($postArr);
                     break;
                 case '2':
                     usort($postArr, fn ($a, $b) => $a[$value] - $b[$value]);
