@@ -26,8 +26,8 @@ function callback_post_selector_block($attributes)
             'post_type' => 'post',
             'cat' => $attributes['selectedCat'],
             'posts_per_page' => $count,
-            'orderby' => $orderBy,
-            'order' => $order,
+          //  'orderby' => $orderBy,
+          //  'order' => $order,
         );
         $posts = new WP_Query($args);
 
@@ -35,7 +35,7 @@ function callback_post_selector_block($attributes)
         $posts = new WP_Query([
             'post__in' => $selected_posts,
             'post_type' => get_post_types(),
-            'order_by' => 'posts__in'
+            //'order_by' => 'posts__in'
         ]);
     }
 
