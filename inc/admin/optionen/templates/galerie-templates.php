@@ -193,6 +193,8 @@ if (!class_exists('PostGalerieTemplates')) {
                 $hover_aktiv = $this->get_galerie_vs_image_settings($galerieSettings, $tmp, 'hover_aktiv');
                 $hover_title_aktiv = $this->get_galerie_vs_image_settings($galerieSettings, $tmp, 'hover_title_aktiv');
                 $hover_beschreibung_aktiv = $this->get_galerie_vs_image_settings($galerieSettings, $tmp, 'hover_beschreibung_aktiv');
+                $link_target = $this->get_galerie_vs_image_settings($galerieSettings, $tmp, 'link_target');
+
 
                 $lightbox_aktiv = $galerieSettings->lightbox_aktiv;
                 $caption_aktiv = $galerieSettings->caption_aktiv;
@@ -230,11 +232,17 @@ if (!class_exists('PostGalerieTemplates')) {
                 $hover_aktiv ? $hover_none = '' : $hover_none = ' d-none';
                 $hover_title_aktiv ? $title = $tmp->img_title : $title = '';
                 $hover_beschreibung_aktiv ? $img_beschreibung = $tmp->img_beschreibung : $img_beschreibung = '';
-                $img_src = wp_get_attachment_image_src($tmp->img_id, $typeSettings->img_size, false);
-                $img_full = wp_get_attachment_image_src($tmp->img_id, 'full', false);
                 $caption_aktiv ? $caption = $tmp->img_caption : $caption = '';
                 $caption_aktiv ? $caption_none = '' : $caption_none = ' d-none';
-
+                $link_target ? $target = 'target="_blank"' : $target = '';
+                $brokenImg = POST_SELECT_PLUGIN_URL . '/inc/assets/images/img-broken.svg';
+                if (!$tmp->img_id) {
+                    $img_src[0] = $brokenImg;
+                    $img_full[0] = $brokenImg;
+                } else {
+                    $img_src = wp_get_attachment_image_src($tmp->img_id, $typeSettings->img_size, false);
+                    $img_full = wp_get_attachment_image_src($tmp->img_id, 'full', false);
+                }
                 if ($is_link) {
                     global $post;
                     $wpPage = explode('#', $link);
@@ -269,7 +277,7 @@ if (!class_exists('PostGalerieTemplates')) {
                 }
 
                 if (!$hover_aktiv && $lightbox_aktiv && $link || !$hover_aktiv && !$lightbox_aktiv && $link) {
-                    $lightbox_start = '<a class="slider-href-link" title="' . $title . '" href="' . $link . '">';
+                    $lightbox_start = '<a '. $target . ' class="slider-href-link" title="' . $title . '" href="' . $link . '">';
                     $lightbox_end = '</a>';
                 }
 
@@ -312,7 +320,7 @@ if (!class_exists('PostGalerieTemplates')) {
                                 </div>
                                 <div class="hover-button mt-auto" '.$bgHoverStyle.'>
                                     <a title="' . $title . '" ' . $data_control . ' href="' . $img_full[0] . '" class="' . $img_link . ' btn-grid-hover btn-img' . $lightbox_none . '" ' . $btnOut . '></a>
-                                    <a href="' . $link . '" class="btn-grid-hover btn-link' . $btnShowLink . '" title="' . $link . '" ' . $btnOut . '></a>
+                                    <a '.$target. ' href="' . $link . '" class="btn-grid-hover btn-link' . $btnShowLink . '" title="' . $link . '" ' . $btnOut . '></a>
                                 </div>
                             </div>
                           </div>
@@ -341,7 +349,7 @@ if (!class_exists('PostGalerieTemplates')) {
                                 </div>
                                 <div class="hover-button mt-auto" '.$bgHoverStyle.'>
                                     <a title="' . $title . '" ' . $data_control . ' href="' . $img_full[0] . '" class="' . $img_link . ' btn-grid-hover btn-img' . $lightbox_none . '" ' . $btnOut . '></a>
-                                    <a href="' . $link . '" class="btn-grid-hover btn-link' . $btnShowLink . '" title="' . $link . '" ' . $btnOut . '></a>
+                                    <a ' . $target . ' href="' . $link . '" class="btn-grid-hover btn-link' . $btnShowLink . '" title="' . $link . '" ' . $btnOut . '></a>
                                  </div>
                              </div>
                             </div>
@@ -363,7 +371,7 @@ if (!class_exists('PostGalerieTemplates')) {
                                 </div>
                                 <div class="hover-button mt-auto" '.$bgHoverStyle.'>
                                     <a title="' . $title . '" ' . $data_control . ' href="' . $img_full[0] . '" class="' . $img_link . ' btn-grid-hover btn-img' . $lightbox_none . '" ' . $btnOut . '></a>
-                                    <a href="' . $link . '" class="btn-grid-hover btn-link' . $btnShowLink . '" title="' . $link . '" ' . $btnOut . '></a>
+                                    <a ' . $target . ' href="' . $link . '" class="btn-grid-hover btn-link' . $btnShowLink . '" title="' . $link . '" ' . $btnOut . '></a>
                                  </div>  
                              </div>
                             </div>

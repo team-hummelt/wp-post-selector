@@ -43,6 +43,16 @@ defined('ABSPATH') or die();
                         <i class="fa fa-image"></i>&nbsp;
                         <?= __('Galerie', 'wp-post-selector') ?>
                     </button>
+
+                    <button data-site="<?= __('Settings', 'wp-post-selector') ?>"
+                            data-type="settings"
+                            type="button" id="postEditCollapseBtn"
+                            data-bs-toggle="collapse" data-bs-target="#collapseSettingsSite"
+                            class="btn-post-collapse ms-auto btn btn-hupa btn-outline-secondary btn-sm">
+                        <i class="fa fa-cogs"></i>&nbsp;
+                        <?= __('Settings', 'wp-post-selector') ?>
+                    </button>
+
                 </div>
                 <hr>
                 <div id="post_display_parent">
@@ -85,10 +95,50 @@ defined('ABSPATH') or die();
                         </div>
                     </div>
                     <!--  TODO JOB WARNING Galerie -->
-                    <div class="collapse" id="collapseGalerieSite" data-bs-parent="#post_display_parent"> </div>
+                    <div class="collapse" id="collapseGalerieSite" data-bs-parent="#post_display_parent"></div>
+                    <!-- JOB SETTINGS SEITE -->
+                    <div class="collapse" id="collapseSettingsSite" data-bs-parent="#post_display_parent">
+                        <div class="border rounded mt-1 mb-3 shadow-sm p-3 bg-custom-gray" style="min-height: 53vh">
+                            <div class="d-flex align-items-center">
+                                <h5 class="card-title">
+                                    <i class="font-blue fa fa-cogs"></i>&nbsp; <?= __('Post Selector', 'wp-post-selector') ?> <?= __('Settings', 'wp-post-selector') ?>
+                                </h5>
+                                <div class="ajax-status-spinner ms-auto d-inline-block mb-2 pe-2"></div>
+                            </div>
+                            <hr class="mt-1">
+                            <h6>
+                                <i class="font-blue fa fa-arrow-circle-down"></i>
+                                <?= esc_html__('Minimum requirement for using this Plugin', 'wp-post-selector') ?>
+                            </h6>
+                            <hr>
+                            <form class="send-ajax-ps-admin-settings">
+                                <input type="hidden" name="method" value="update_ps_settings">
+                                <div class="row  g-2">
+                                    <div class="col-xl-6 col">
+                                        <div class="mb-3">
+                                            <label for="capabilitySelect"
+                                                   class="form-label mb-1 strong-font-weight"><?= esc_html__('User Role', 'wp-post-selector') ?>
+                                            </label>
+                                            <select name="user_role"
+                                                    id="capabilitySelect" class="form-select no-blur">
+                                                <?php
+                                                $select = apply_filters('ps_user_roles_select', '');
+                                                foreach ($select as $key => $val):
+                                                    $key == get_option('ps_user_role') ? $sel = 'selected' : $sel = ''; ?>
+                                                    <option value="<?= $key ?>" <?= $sel ?>><?= $val ?></option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
                 </div><!--parent-->
             </div>
-            <small class="card-body-bottom" style="right: 1.5rem">DB: <i class="hupa-color"><?=POST_SELECT_PLUGIN_DB_VERSION?></i> | Version:
+            <small class="card-body-bottom" style="right: 1.5rem">DB: <i
+                        class="hupa-color"><?= POST_SELECT_PLUGIN_DB_VERSION ?></i> | Version:
                 <i class="hupa-color">v<?= POST_SELECTOR_PLUGIN_VERSION ?></i>
             </small>
         </div>

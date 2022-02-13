@@ -122,10 +122,18 @@ if (!class_exists('PostSliderTemplates')) {
                     </div>
                     <div class="splide__track" <?= $padding ?>>
                         <div class="splide__list <?= $lightBoxActive ? 'light-box-controls' : '' ?>">
-                            <?php foreach ($data as $tmp):
+                            <?php
+                            $brokenImg = POST_SELECT_PLUGIN_URL . '/inc/assets/images/img-broken.svg';
+                            foreach ($data as $tmp):
                                 isset($settings->img_size) ? $imgSize = $settings->img_size : $imgSize = '';
-                                $img_src_url = wp_get_attachment_image_src($tmp->img_id, $imgSize, false);
-                                $img_full_url = wp_get_attachment_image_src($tmp->img_id, 'full', false);
+                                if (!$tmp->img_id) {
+                                    $img_src_url[0] = $brokenImg;
+                                    $img_full_url[0] = $brokenImg;
+                                } else {
+                                    $img_src_url = wp_get_attachment_image_src($tmp->img_id, $imgSize, false);
+                                    $img_full_url = wp_get_attachment_image_src($tmp->img_id, 'full', false);
+                                }
+
                                 if ($radioMedienLink == 2) {
                                     $src = $tmp->href;
                                 } else {
@@ -286,8 +294,15 @@ if (!class_exists('PostSliderTemplates')) {
                                 }
 
                                 isset($settings->img_size) ? $imgSize = $settings->img_size : $imgSize = '';
-                                $img_src_url = wp_get_attachment_image_src($tmp->img_id, $imgSize, false);
-                                $img_full_url = wp_get_attachment_image_src($tmp->img_id, 'full', false);
+                                $brokenImg = POST_SELECT_PLUGIN_URL . '/inc/assets/images/img-broken.svg';
+                                if (!$tmp->img_id) {
+                                    $img_src_url[0] = $brokenImg;
+                                    $img_full_url[0] = $brokenImg;
+                                } else {
+                                    $img_src_url = wp_get_attachment_image_src($tmp->img_id, $imgSize, false);
+                                    $img_full_url = wp_get_attachment_image_src($tmp->img_id, 'full', false);
+                                }
+
                                 if ($radioMedienLink == 2) {
                                     $src = $tmp->href;
                                 } else {

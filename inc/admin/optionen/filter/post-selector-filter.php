@@ -5,6 +5,7 @@ namespace Post\Selector;
 
 use Exception;
 use JetBrains\PhpStorm\ArrayShape;
+
 use JetBrains\PhpStorm\Pure;
 use stdClass;
 use WP_Query;
@@ -204,20 +205,28 @@ if (!class_exists('PostSelectorFilter')) {
             $sendData = new stdClass();
             $postArr = [];
             isset($attributes->imageCheckActive) ? $sendData->image = true : $sendData->image = false;
+            isset($attributes->radioOrder) ? $radioOrder = $attributes->radioOrder : $radioOrder = 1;
+            isset($attributes->radioOrderBy) ? $radioOrderBy = $attributes->radioOrderBy : $radioOrderBy = 1;
 
             if (isset($attributes->selectedCat) && !empty($attributes->selectedCat)) {
                 $sendData->kategorie = true;
                 isset($attributes->postCount) && $attributes->postCount ? $sendData->postCount = $attributes->postCount : $sendData->postCount = '-1';
                 $sendData->katId = $attributes->selectedCat;
 
-                //$post = $this->get_posts_by_data($sendData, $attributes);
                 if (isset($query) && !empty($query)) {
                     $post = $this->get_posts_by_category($query->posts, $attributes);
                 } else {
                     $post = $this->get_posts_by_data($sendData, $attributes);
                 }
 
-                $post = $this->postSelectArrayToObject($post);
+                $type = match ($radioOrder) {
+                    '1' => 'menu_order',
+                    '2' => 'post_date',
+                    default => '',
+                };
+
+                $postSort = $this->order_by_args($post, $type, $radioOrderBy);
+                $post = $this->postSelectArrayToObject($postSort);
                 switch ($attributes->outputType) {
                     case 1:
                         do_action('load_slider_template', $post, $attributes);
@@ -236,6 +245,13 @@ if (!class_exists('PostSelectorFilter')) {
                     }
                 }
 
+                $type = match ($radioOrder) {
+                    '1' => 'menu_order',
+                    '2' => 'post_date',
+                    default => '',
+                };
+
+                $postArr = $this->order_by_args($postArr, $type, $radioOrderBy);
                 $post = $this->postSelectArrayToObject($postArr);
                 if (isset($attributes->outputType)) {
                     switch ($attributes->outputType) {
@@ -248,6 +264,20 @@ if (!class_exists('PostSelectorFilter')) {
                     }
                 }
             }
+        }
+
+        private function order_by_args($postArr,$value, $order) {
+
+            switch ($order){
+                case'1':
+                    usort($postArr, fn ($b, $a) => $a[$value] - $b[$value]);
+                    break;
+                case '2':
+                    usort($postArr, fn ($a, $b) => $a[$value] - $b[$value]);
+                    break;
+            }
+
+            return $postArr;
         }
 
         private function get_posts_by_category($query, $attr = false): array
@@ -280,6 +310,8 @@ if (!class_exists('PostSelectorFilter')) {
                     'excerpt' => get_the_excerpt(),
                     'page_excerpt' => get_the_excerpt($page_id),
                     'date' => esc_html(get_the_date()),
+                    'post_date' => strtotime($post->post_date),
+                    'menu_order' => $post->menu_order
                 ];
                 $postArr[] = $post_item;
             }
@@ -306,8 +338,6 @@ if (!class_exists('PostSelectorFilter')) {
                 $customTitle = get_post_meta(get_the_ID(), '_hupa_custom_title', true);
                 $customTitle ? $title = $customTitle : $title = get_the_title();
                 $image_id = get_post_thumbnail_id();
-                //$thumb_url_array = wp_get_attachment_image_src($image_id, SLIDER_IMAGE_SIZE, false);
-                //print_r($thumb_url_array);
                 $attachment = (object)$this->wp_get_attachment($image_id);
 
                 $post_item = [
@@ -315,8 +345,6 @@ if (!class_exists('PostSelectorFilter')) {
                     'parent_id' => $page_id,
                     'img_id' => $image_id,
                     'title' => $title,
-                    //'image'        => get_the_post_thumbnail_url(),
-                    //'image' => $thumb_url_array[0],
                     'permalink' => get_the_permalink(),
                     'author' => get_the_author(),
                     'alt' => $attachment->alt,
@@ -329,6 +357,8 @@ if (!class_exists('PostSelectorFilter')) {
                     'excerpt' => get_the_excerpt(),
                     'page_excerpt' => get_the_excerpt($page_id),
                     'date' => esc_html(get_the_date()),
+                    'post_date' => strtotime($post->post_date),
+                    'menu_order' => $post->menu_order
                 ];
 
                 $postArr[] = $post_item;
@@ -368,6 +398,8 @@ if (!class_exists('PostSelectorFilter')) {
                 'excerpt' => get_the_excerpt(),
                 'captions' => $attachment->caption,
                 'date' => esc_html(get_the_date()),
+                'post_date' => strtotime($post->post_date),
+                'menu_order' => $post->menu_order
             ];
         }
 

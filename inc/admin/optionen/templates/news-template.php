@@ -40,7 +40,7 @@ if (!class_exists('PostNewsTemplates')) {
         public function loadNewsTemplate($data, $attr)
         {
 
-            $attr->imageCheckActive ? $ifImage = true : $ifImage = false;
+            isset($attr->imageCheckActive) && !empty($attr->imageCheckActive) ? $ifImage = true : $ifImage = false;
             if (isset($attr->lightBoxActive) && $attr->lightBoxActive) {
                 $dataGallery = 'data-control="single"';
                 $imgLink = 'img-link ';
@@ -78,11 +78,16 @@ if (!class_exists('PostNewsTemplates')) {
                     }
                     $targetBlank = '';
                     $src = '';
-                    switch ($attr->radioMedienLink) {
+
+                    isset($attr->radioMedienLink) && !empty($attr->radioMedienLink) ? $radioMedienLink = $attr->radioMedienLink : $radioMedienLink = false;
+                    $brokenImg = POST_SELECT_PLUGIN_URL . '/inc/assets/images/img-broken.svg';
+                    switch ($radioMedienLink) {
                         case 1:
-                            $src = wp_get_attachment_image_src($tmp->img_id, 'large', false);
-                            $src = $src[0];
-                            $targetBlank = '';
+                            if($tmp->img_id){
+                                $src = wp_get_attachment_image_src($tmp->img_id, 'large', false);
+                                $src = $src[0];
+                                $targetBlank = '';
+                            }
                             break;
                         case 2:
                             $src = $tmp->href;
@@ -102,8 +107,11 @@ if (!class_exists('PostNewsTemplates')) {
                                         $dataGallery = 'data-control="single"';
                                         $imgLink = 'img-link ';
                                         $imgWrapper = 'light-box-controls';
-                                        $src = wp_get_attachment_image_src($tmp->img_id, 'large', false);
-                                        $src = $src[0];
+                                        if($tmp->img_id){
+                                            $src = wp_get_attachment_image_src($tmp->img_id, 'large', false);
+                                            $src = $src[0];
+                                        }
+
                                         $targetBlank = '';
                                     } else {
                                         $src = $tmp->href;
@@ -117,8 +125,10 @@ if (!class_exists('PostNewsTemplates')) {
                                     $dataGallery = 'data-control="single"';
                                     $imgLink = 'img-link ';
                                     $imgWrapper = 'light-box-controls';
-                                    $src = wp_get_attachment_image_src($tmp->img_id, 'large', false);
-                                    $src = $src[0];
+                                    if($tmp->img_id){
+                                        $src = wp_get_attachment_image_src($tmp->img_id, 'large', false);
+                                        $src = $src[0];
+                                    }
                                     $targetBlank = '';
                                 } else {
                                     $src = $tmp->href;
@@ -174,7 +184,9 @@ if (!class_exists('PostNewsTemplates')) {
                            </span>
                                 </div>
                                 <div class="<?= $imgWrapper ?> col-auto d-none d-lg-block ms-auto <?= $hideImg ?>">
-                                    <?php if ($dataGallery || $attr->radioMedienLink == 2 || $ifImage): ?>
+                                    <?php
+                                    isset($attr->radioMedienLink) ? $radioMedienLink = $attr->radioMedienLink : $radioMedienLink = 1;
+                                    if ($dataGallery || $radioMedienLink == 2 || $ifImage): ?>
                                         <a class="<?= $imgLink ?>" title="<?= $tmp->title ?>" <?= $dataGallery ?>
                                            href="<?= $src ?>">
                                             <?= $lazyImg ?>
@@ -198,7 +210,9 @@ if (!class_exists('PostNewsTemplates')) {
                         ?>
                         <div class="<?= $className ?> card flex-fill mb-3">
                             <div class="<?= $imgWrapper ?> <?= $hideImg ?>">
-                                <?php if ($dataGallery || $attr->radioMedienLink == 2 || $ifImage): ?>
+                                <?php
+                                isset($attr->radioMedienLink) ? $radioMedienLink = $attr->radioMedienLink : $radioMedienLink = 1;
+                                if ($dataGallery || $radioMedienLink == 2 || $ifImage): ?>
                                     <a class="<?= $imgLink ?>" title="<?= $tmp->title ?>" <?= $dataGallery ?>
                                        href="<?= $src ?>" <?= $targetBlank ?>>
                                         <?= $lazyImg ?>
@@ -275,7 +289,9 @@ if (!class_exists('PostNewsTemplates')) {
                                 </p>
                             </div>
                             <div class="<?= $imgWrapper ?> <?= $hideImg ?>">
-                                <?php if ($dataGallery || $attr->radioMedienLink == 2 || $ifImage): ?>
+                                <?php
+                                isset($attr->radioMedienLink) ? $radioMedienLink = $attr->radioMedienLink : $radioMedienLink = 1;
+                                if ($dataGallery || $radioMedienLink == 2 || $ifImage): ?>
                                     <a class="<?= $imgLink ?>" title="<?= $tmp->title ?>" <?= $dataGallery ?>
                                        href="<?= $src ?>" <?= $targetBlank ?>>
                                         <?= $lazyImg ?>

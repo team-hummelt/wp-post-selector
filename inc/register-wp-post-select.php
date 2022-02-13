@@ -79,7 +79,7 @@ final class RegisterGutenbergPostSelector {
 		$hook_suffix = add_menu_page(
 			__( 'Post-Selector', 'wp-post-selector' ),
 			__( 'Post-Selector', 'wp-post-selector' ),
-			'manage_options',
+            get_option('ps_user_role'),
 			'post-selector-settings',
 			array( $this, 'admin_postselector_settings_page' ),
 			'dashicons-slides', 7
