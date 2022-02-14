@@ -223,7 +223,7 @@ if (!class_exists('PostSelectorFilter')) {
                 $type = match ($radioOrder) {
                     '1' => 'menu_order',
                     '2' => 'post_date',
-                    default => '',
+                    default => 'post_date',
                 };
 
                 $postSort = $this->order_by_args($post, $type, $radioOrderBy);
@@ -251,7 +251,7 @@ if (!class_exists('PostSelectorFilter')) {
                 $type = match ($radioOrder) {
                     '1' => 'menu_order',
                     '2' => 'post_date',
-                    default => '',
+                    default => 'post_date',
                 };
 
                 $postArr = $this->order_by_args($postArr, $type, $radioOrderBy);
@@ -270,12 +270,10 @@ if (!class_exists('PostSelectorFilter')) {
         }
 
         private function order_by_args($postArr,$value, $order) {
-
             switch ($order){
                 case'1':
                     usort($postArr, fn ($a, $b) => $a[$value] - $b[$value]);
                      return  array_reverse($postArr);
-                    break;
                 case '2':
                     usort($postArr, fn ($a, $b) => $a[$value] - $b[$value]);
                     break;
