@@ -10,7 +10,7 @@ hummelt und partner | Werbeagentur GmbH
 * Tags: Gutenberg, Custom Posts
 * Requires at least: 5.9
 * Tested up to: 5.8
-* Stable tag: v1.1.2
+* Stable tag: v1.1.3
 * Requires PHP: 8.0
 
 ***
