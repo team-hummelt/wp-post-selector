@@ -1,12 +1,24 @@
 
+.ps-template-eins {
+  h4 {
+    font-size: 24px;
+    .post-title-link {
+      text-decoration: none;
+    }
+  }
 
+  .post-meta {
+    padding-bottom: .25rem;
+    font-size: 16px;
+    padding-top: .25rem;
+  }
+}
 
 .post-custom-template-one {
   .splide__track {
     overflow: unset!important;
     overflow-x: clip!important;
   }
-
 
   .btn:focus, .btn:active, .active.btn:active, .active.btn:focus {
     outline: none !important;
@@ -68,7 +80,7 @@
   .size-post-cover-img-large {
     -o-object-fit: cover;
     object-fit: cover;
-    height: 450px ;
+    height: 100%;
     width: 300px
   }
 
