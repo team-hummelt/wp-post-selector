@@ -29,7 +29,7 @@ Auswahl von Beiträgen im Gutenberg-Block Editor mit verschiedenen Ausgabeoption
 ***
 = 1.1.3 =
 * Ausgabeinhalt Option erweitert
-* Option Beitragstitel als Link hinzugefügt
+* Option Beitragstitel als Link anzeigen hinzugefügt
 * Pagination für Kategorie News-Ausgabe hinzugefügt
 
 = 1.1.2 =
