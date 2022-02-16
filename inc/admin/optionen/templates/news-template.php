@@ -49,22 +49,20 @@ if ( ! class_exists( 'PostNewsTemplates' ) ) {
 
 
             isset( $attr->className ) && $attr->className ? $className = $attr->className : $className = '';
-
             isset( $attr->kategorieShowActive ) && $attr->kategorieShowActive ? $kategorieShowActive = '' : $kategorieShowActive = 'd-none';
             isset( $attr->authorShowActive ) && $attr->authorShowActive ? $authorShowActive = true : $authorShowActive = false;
             isset( $attr->datumShowActive ) && $attr->datumShowActive ? $datumShowActive = true : $datumShowActive = false;
             isset( $attr->urlNewTabActive ) && $attr->urlNewTabActive ? $urlNewTabActive = ' target="_blank"' : $urlNewTabActive = 'd-none';
-
             isset( $attr->linkCheckActive ) && $attr->linkCheckActive ? $linkCheckActive = true : $linkCheckActive = false;
             isset( $attr->titleLinkCheck ) && $attr->titleLinkCheck ? $titleLinkCheck = true : $titleLinkCheck = false;
 
             isset( $attr->selectedNews ) ? $selectedNews = (int) $attr->selectedNews : $selectedNews = 1;
             isset( $attr->urlValue ) && $attr->urlValue ? $individuellUrl = $attr->urlValue : $individuellUrl = false;
+            isset($attr->radioMedienLink) ? $radioMedienLink =  $attr->radioMedienLink : $radioMedienLink = 1;
 
             ?>
             <div class="wp-block-hupa-theme-post-list d-flex flex-wrap align-items-stretch py-3">
                 <?php foreach ( $data as $tmp ):
-
                     $tmp->excerpt ? $excerpts = $tmp->excerpt : $excerpts = $tmp->page_excerpt;
                     $excerpt = $excerpts;
                     if ( isset( $attr->radioContend ) && $attr->radioContend == 1 ) {
@@ -80,11 +78,14 @@ if ( ! class_exists( 'PostNewsTemplates' ) ) {
 
                     $targetBlank = '';
                     $src         = '';
-                    isset($attr->radioMedienLink) ? $radioMedienLink = $attr->radioMedienLink : $radioMedienLink = 0;
                     switch ( $radioMedienLink ) {
                         case 1:
-                            $src         = wp_get_attachment_image_src( $tmp->img_id, 'large', false );
-                            $src         = $src[0];
+                            if($tmp->img_id){
+                                $src         = wp_get_attachment_image_src( $tmp->img_id, 'large', false );
+                                $src = $src[0];
+                            } else {
+                                $src = '';
+                            }
                             $targetBlank = '';
                             break;
                         case 2:
@@ -151,7 +152,7 @@ if ( ! class_exists( 'PostNewsTemplates' ) ) {
                         <div class="<?= $className ?> col-12 p-2 ps-template-eins">
                             <div class="news-wrapper d-flex overflow-hidden position-relative h-100 w-100">
                                 <div class="p-4 d-flex flex-column">
-                                    <strong class="post-news-kategorie <?= $kategorieShowActive ?> d-block mb-3  text-muted">
+                                    <strong class="post-news-kategorie <?= $kategorieShowActive ?> d-block mb-2  text-muted">
                                         <?php $x  = 1;
                                         $category = get_the_category( $tmp->post_id );
                                         foreach ( $category as $cat ):
