@@ -8,7 +8,7 @@
   }
 
   .post-meta {
-    padding-bottom: 1rem;
+    padding-bottom: .25rem;
     font-size: 16px;
     padding-top: .25rem;
   }
@@ -19,7 +19,6 @@
     overflow: unset!important;
     overflow-x: clip!important;
   }
-
 
   .btn:focus, .btn:active, .active.btn:active, .active.btn:focus {
     outline: none !important;
