@@ -8,7 +8,7 @@ hummelt und partner | Werbeagentur GmbH
 ***
 * Contributors: jwiecker
 * Tags: Gutenberg, Custom Posts
-* Requires at least: 5.8
+* Requires at least: 5.9
 * Tested up to: 5.8
 * Stable tag: v1.1.2
 * Requires PHP: 8.0
@@ -27,6 +27,11 @@ Auswahl von Beiträgen im Gutenberg-Block Editor mit verschiedenen Ausgabeoption
 ### Changelog
 
 ***
+= 1.1.3 =
+* Ausgabeinhalt Option erweitert
+* Option Beitragstitel als Link hinzugefügt
+* Pagination für Kategorie News-Ausgabe hinzugefügt
+
 = 1.1.2 =
 * Option Ausgabereihenfolge für Postion und Datum hinzugefügt
 * Option Galerie Link im neuen Tab öffnen hinzugefügt
